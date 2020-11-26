@@ -14,7 +14,11 @@ tf_parse(
 \arguments{
 \item{file}{a .pdf or .html file (could be a url) where containing swimming results.  Must be formatted in a "normal" fashion - see vignette}
 
-\item{replacement}{}
+\item{avoid}{xxx}
+
+\item{typo}{xxx}
+
+\item{replacement}{xxx}
 }
 \value{
 a dataframe

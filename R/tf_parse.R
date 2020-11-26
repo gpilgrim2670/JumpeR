@@ -4,14 +4,15 @@
 #'
 #' @author Greg Pilgrim \email{gpilgrim2670@@gmail.com}
 #'
-#' @importFrom SwimmeR add_lines_list
+#' @importFrom SwimmeR add_row_numbers
+#' @importFrom SwimmeR event_parse
 #' @importFrom dplyr mutate
 #' @importFrom stringr str_remove
 #'
 #' @param file a .pdf or .html file (could be a url) where containing swimming results.  Must be formatted in a "normal" fashion - see vignette
-#' @param avoid
-#' @param typo
-#' @param replacement
+#' @param avoid xxx
+#' @param typo xxx
+#' @param replacement xxx
 #'
 #' @return a dataframe
 #'
@@ -62,8 +63,8 @@ tf_parse <-
       #### set up strings ####
       Name_String <-
         "_?[:alpha:]+\\s?\\'?[:alpha:\\-\\'\\.]*\\s?[:alpha:\\-\\'\\.]*\\s?[:alpha:\\-\\'\\.]*,?\\s?[:alpha:\\-\\'\\.]*\\s?[:alpha:]*\\s?[:alpha:]*\\s?[:alpha:]*\\.?,? [:alpha:]+\\s?[:alpha:\\-\\'\\.]*\\s?[:alpha:\\-\\']*\\s?[:alpha:]*\\s?[:alpha:]*\\s?[:alpha:\\.]*"
-      Time_Score_String <- "\\d{0,2}\\:?\\d{1,3}\\.\\d{2}m?"
-      Time_Score_Specials_String <- paste0(Time_Score_String, "|^NT$|^NP$|^DQ$|^DNS$")
+      Time_Score_String <- "\\d{0,2}\\:?\\-\\d{1,3}\\.\\d{2}m?"
+      Time_Score_Specials_String <- paste0(Time_Score_String, "|^NT$|^NP$|^DQ$|^DNS$|^DNF$|^FOUL$")
       Wind_String <- "\\+\\d\\.\\d|\\-\\d\\.\\d|^NWS$|^\\d\\.\\d$"
       Age_String <- "^SR$|^JR$|^SO$|^FR$|^[:digit:]{1,3}$"
 
