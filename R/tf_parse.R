@@ -67,7 +67,7 @@ tf_parse <-
         "_?[:alpha:]+\\s?\\'?[:alpha:\\-\\'\\.]*\\s?[:alpha:\\-\\'\\.]*\\s?[:alpha:\\-\\'\\.]*,?\\s?[:alpha:\\-\\'\\.]*\\s?[:alpha:]*\\s?[:alpha:]*\\s?[:alpha:]*\\.?,? [:alpha:]+\\s?[:alpha:\\-\\'\\.]*\\s?[:alpha:\\-\\']*\\s?[:alpha:]*\\s?[:alpha:]*\\s?[:alpha:\\.]*"
       Result_String <- "\\d{0,2}\\:?\\-?\\d{1,2}\\.\\d{2}m?"
       Result_Specials_String <- paste0(Result_String, "|^NT$|^NP$|^DQ$|^DNS$|^DNF$|^FOUL$")
-      Wind_String <- "\\+\\d\\.\\d|\\-\\d\\.\\d|^NWS$|^\\d\\.\\d$"
+      Wind_String <- "\\+\\d\\.\\d|\\-\\d\\.\\d|^NWS$|^NWI$|^\\d\\.\\d$"
       Age_String <- "^SR$|^JR$|^SO$|^FR$|^[:digit:]{1,3}$"
 
       #### clean input data ####
@@ -136,7 +136,34 @@ tf_parse <-
       if (length(data_length_10) > 0) {
         suppressWarnings(
           df_10 <- data_length_10 %>%
-            list_transform()
+            list_transform() %>%
+            mutate(Place = V1) %>%
+            mutate(Bib_Number = case_when(str_detect(V2, "^\\d{1,3}$") ~ V2,
+                                          TRUE ~ "NA")) %>%
+            mutate(Name = case_when(str_detect(V2, Name_String) ~ V2,
+                                    str_detect(V3, Name_String) ~ V3,
+                                    TRUE ~ "NA")) %>%
+            mutate(Age = case_when(str_detect(V3, Age_String) ~ V3,
+                                   str_detect(V4, Age_String) ~ V4,
+                                   TRUE ~ "NA")) %>%
+            mutate(Team = case_when(str_detect(V3, Age_String) & str_detect(V4, "[:alpha:]{2,}") ~ V4,
+                                    str_detect(V4, Age_String) & str_detect(V5, "[:alpha:]{2,}") ~ V5,
+                                    TRUE ~ "NA")) %>%
+            mutate(Prelims_Result = case_when(str_detect(V5, Result_Specials_String) & str_detect(V6, Result_Specials_String) ~ V5,
+                                              str_detect(V6, Result_Specials_String) & str_detect(V7, Result_Specials_String) ~ V6,
+                                              TRUE ~ "NA")) %>%
+            mutate(Finals_Result = case_when(str_detect(V5, Result_Specials_String) == TRUE & str_detect(V6, Result_Specials_String) == FALSE ~ V5,
+                                             str_detect(V6, Result_Specials_String) & str_detect(V7, Result_Specials_String) ~ V7,
+                                             TRUE ~ "NA")) %>%
+            mutate(Wind_Speed = case_when(str_detect(V8, Wind_String) ~ V8,
+                                          TRUE ~ "NA")) %>%
+            mutate(Points = case_when(str_detect(V8, Wind_Speed) == FALSE & str_detect(V8, "^\\d\\.?\\d?$") == TRUE & str_detect(V9, "\\d{1,2}") == FALSE ~ V8,
+                                      str_detect(V8, Wind_Speed) == TRUE & str_detect(V9, "^\\d\\.?\\d?$") == TRUE ~ V9,
+                                      TRUE ~ "NA")) %>%
+            mutate(Notes = case_when(str_detect(V9, Points) == FALSE ~ V9,
+                                     TRUE ~ "NA")) %>%
+            select(Place, Bib_Number, Name, Age, Team, Prelims_Result, Finals_Result, Wind_Speed, Points, Notes, 'Row_Numb' = V10) %>%
+            na_if("^NA$")
         )
 
       } else {
@@ -148,7 +175,35 @@ tf_parse <-
       if (length(data_length_9) > 0) {
         suppressWarnings(
           df_9 <- data_length_9 %>%
-            list_transform()
+            list_transform() %>%
+            mutate(Place = V1) %>%
+            mutate(Bib_Number = case_when(str_detect(V2, "^\\d{1,3}$") ~ V2,
+                                          TRUE ~ "NA")) %>%
+            mutate(Name = case_when(str_detect(V2, Name_String) ~ V2,
+                                    str_detect(V3, Name_String) ~ V3,
+                                    TRUE ~ "NA")) %>%
+            mutate(Age = case_when(str_detect(V3, Age_String) ~ V3,
+                                   str_detect(V4, Age_String) ~ V4,
+                                   TRUE ~ "NA")) %>%
+            mutate(Team = case_when(str_detect(V3, Age_String) & str_detect(V4, "[:alpha:]{2,}") ~ V4,
+                                    str_detect(V4, Age_String) & str_detect(V5, "[:alpha:]{2,}") ~ V5,
+                                    TRUE ~ "NA")) %>%
+            mutate(Prelims_Result = case_when(str_detect(V6, Result_Specials_String) & str_detect(V7, Result_Specials_String) ~ V6,
+                                              TRUE ~ "NA")) %>%
+            mutate(Finals_Result = case_when(str_detect(V6, Result_Specials_String) & str_detect(V7, Result_Specials_String) ~ V7,
+                                             str_detect(V6, Result_Specials_String) == TRUE & str_detect(V5, Result_Specials_String) == FALSE & str_detect(V7, Result_Specials_String) == FALSE ~ V6,
+                                             TRUE ~ "NA")) %>%
+            mutate(Wind_Speed = case_when(str_detect(V7, Wind_String) ~ V7,
+                                          str_detect(V7, Wind_String) == FALSE & str_detect(V8, Wind_String) == TRUE ~ V8,
+                                          TRUE ~ "NA")) %>%
+            mutate(Heat = case_when(str_detect(V7, Wind_String) == FALSE & str_detect(V7, "^\\d{1,2}$") == TRUE & str_detect(V8, "^\\d\\d?\\.?\\d?$") == TRUE ~ V7,
+                                      TRUE ~ "NA")) %>%
+            mutate(Points = case_when(str_detect(V7, Heat) == TRUE & str_detect(V8, "^\\d\\d?\\.?\\d?$") ~ V8,
+                                    TRUE ~ "NA")) %>%
+            mutate(Notes = case_when(str_detect(V8, Points) == FALSE & str_detect(V8, "^\\d\\.?\\d?$") == FALSE ~ V8,
+                                     TRUE ~ "NA")) %>%
+            select(Place, Bib_Number, Name, Age, Team, Prelims_Result, Finals_Result, Wind_Speed, Heat, Points, Notes, 'Row_Numb' = V9) %>%
+            na_if("^NA$")
         )
 
       } else {
@@ -160,7 +215,28 @@ tf_parse <-
       if (length(data_length_8) > 0) {
         suppressWarnings(
           df_8<- data_length_8 %>%
-            list_transform()
+            list_transform() %>%
+            mutate(Place = V1) %>%
+            mutate(Bib_Number = case_when(str_detect(V2, "^\\d{1,3}$") ~ V2,
+                                          TRUE ~ "NA")) %>%
+            mutate(Name = case_when(str_detect(V2, Name_String) ~ V2,
+                                    str_detect(V3, Name_String) ~ V3,
+                                    TRUE ~ "NA")) %>%
+            mutate(Age = case_when(str_detect(V3, Age_String) ~ V3,
+                                   str_detect(V4, Age_String) ~ V4,
+                                   TRUE ~ "NA")) %>%
+            mutate(Team = case_when(str_detect(V3, Age_String) & str_detect(V4, "[:alpha:]{2,}") ~ V4,
+                                    str_detect(V4, Age_String) & str_detect(V5, "[:alpha:]{2,}") ~ V5,
+                                    TRUE ~ "NA")) %>%
+            mutate(Finals_Result = case_when(str_detect(V5, Result_Specials_String) & str_detect(V6, Result_Specials_String) == FALSE ~ V5,
+                                             str_detect(V6, Result_Specials_String) == TRUE & str_detect(V5, Result_Specials_String) == FALSE & str_detect(V7, Result_Specials_String) == FALSE ~ V6,
+                                             TRUE ~ "NA")) %>%
+            mutate(Wind_Speed = case_when(str_detect(V7, Wind_String) ~ V7,
+                                          TRUE ~ "NA")) %>%
+            mutate(Notes = case_when(str_detect(V7, Wind_String) == FALSE & str_detect(V7, "^\\d\\.?\\d?$") == FALSE ~ V7,
+                                     TRUE ~ "NA")) %>%
+            select(Place, Bib_Number, Name, Age, Team, Finals_Result, Wind_Speed, Notes, 'Row_Numb' = V8) %>%
+            na_if("^NA$")
         )
 
       } else {
@@ -172,7 +248,26 @@ tf_parse <-
       if (length(data_length_7) > 0) {
         suppressWarnings(
           df_7 <- data_length_7 %>%
-            list_transform()
+            list_transform() %>%
+            mutate(Place = V1) %>%
+            mutate(Bib_Number = case_when(str_detect(V2, "^\\d{1,3}$") ~ V2,
+                                          TRUE ~ "NA")) %>%
+            mutate(Name = case_when(str_detect(V2, Name_String) ~ V2,
+                                    str_detect(V3, Name_String) ~ V3,
+                                    TRUE ~ "NA")) %>%
+            mutate(Age = case_when(str_detect(V3, Age_String) ~ V3,
+                                   str_detect(V4, Age_String) ~ V4,
+                                   TRUE ~ "NA")) %>%
+            mutate(Team = case_when(str_detect(V3, Age_String) & str_detect(V4, "[:alpha:]{2,}") ~ V4,
+                                    str_detect(V4, Age_String) & str_detect(V5, "[:alpha:]{2,}") ~ V5,
+                                    TRUE ~ "NA")) %>%
+            mutate(Finals_Result = case_when(str_detect(V5, Result_Specials_String) & str_detect(V6, Result_Specials_String) == FALSE ~ V5,
+                                             str_detect(V6, Result_Specials_String) == TRUE & str_detect(V5, Result_Specials_String) == FALSE & str_detect(V7, Result_Specials_String) == FALSE ~ V6,
+                                             TRUE ~ "NA")) %>%
+            mutate(Wind_Speed = case_when(str_detect(V6, Wind_String) ~ V6,
+                                          TRUE ~ "NA")) %>%
+            select(Place, Bib_Number, Name, Age, Team, Finals_Result, Wind_Speed, 'Row_Numb' = V7) %>%
+            na_if("^NA$")
         )
 
       } else {
