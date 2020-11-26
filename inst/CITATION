@@ -1,0 +1,14 @@
+citHeader("To cite JumpeR in publications use:")
+
+citEntry(
+  entry    = "manual",
+  title    = "{JumpeR}: {P}ackage for working with Track and Field Data",
+  author   = "Gregory A. Pilgrim",
+  year     = "2020",
+  note     = "version 0.0.1",
+  url      = "https://github.com/gpilgrim2670/JumpeR",
+  textVersion = paste("Pilgrim, Gregory A. (2019).",
+        "JumpeR: Package for working with Track and Field data.",
+        "version 0.0.1.",
+        "https://github.com/gpilgrim2670/JumpeR")
+  )
