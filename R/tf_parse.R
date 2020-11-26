@@ -4,12 +4,10 @@
 #'
 #' @author Greg Pilgrim \email{gpilgrim2670@@gmail.com}
 #'
-#' @importFrom SwimmeR add_row_numbers
-#' @importFrom SwimmeR event_parse
 #' @importFrom dplyr mutate
 #' @importFrom stringr str_remove
 #'
-#' @param file a .pdf or .html file (could be a url) where containing swimming results.  Must be formatted in a "normal" fashion - see vignette
+#' @param file a .pdf or .html file (could be a url) where containing track and field results.  Must be formatted in a "normal" fashion - see vignette
 #' @param avoid xxx
 #' @param typo xxx
 #' @param replacement xxx
@@ -44,53 +42,54 @@ tf_parse <-
     avoid_minimal <- c("^\\s{1,}r\\:")
 
     #### testing setup ####
-    file <-
-      system.file("extdata", "Results-IVP-Track-Field-Championship-2019-20-v2.pdf", package = "JumpeR")
+    file_1 <-
+       system.file("extdata", "Results-IVP-Track-Field-Championship-2019-20-v2.pdf", package = "JumpeR")
 
-    file <- read_results(file)
+    file_2 <- "http://results.yentiming.com/2019/Indoor/12-21-18-west.htm"
+
+    file_1 <- read_results(file_1)
+    file_2 <- read_results(file_2)
+    file <- c(file_1, file_2)
     avoid <- avoid_default
     typo <- typo_default
     replacement <- replacement_default
 
     #### assign row numbers ####
-    as_lines_list_2 <- SwimmeR:::add_row_numbers(text = file)
+    as_lines_list_2 <- add_row_numbers(text = file)
 
       #### Pulls out event labels from text ####
-    events <- SwimmeR:::event_parse(as_lines_list_2) %>%
+    events <- event_parse(as_lines_list_2) %>%
       dplyr::mutate(Event = stringr::str_remove(Event, " Women$| Men$"))
 
 
       #### set up strings ####
       Name_String <-
         "_?[:alpha:]+\\s?\\'?[:alpha:\\-\\'\\.]*\\s?[:alpha:\\-\\'\\.]*\\s?[:alpha:\\-\\'\\.]*,?\\s?[:alpha:\\-\\'\\.]*\\s?[:alpha:]*\\s?[:alpha:]*\\s?[:alpha:]*\\.?,? [:alpha:]+\\s?[:alpha:\\-\\'\\.]*\\s?[:alpha:\\-\\']*\\s?[:alpha:]*\\s?[:alpha:]*\\s?[:alpha:\\.]*"
-      Time_Score_String <- "\\d{0,2}\\:?\\-\\d{1,3}\\.\\d{2}m?"
-      Time_Score_Specials_String <- paste0(Time_Score_String, "|^NT$|^NP$|^DQ$|^DNS$|^DNF$|^FOUL$")
+      Result_String <- "\\d{0,2}\\:?\\-?\\d{1,2}\\.\\d{2}m?"
+      Result_Specials_String <- paste0(Result_String, "|^NT$|^NP$|^DQ$|^DNS$|^DNF$|^FOUL$")
       Wind_String <- "\\+\\d\\.\\d|\\-\\d\\.\\d|^NWS$|^\\d\\.\\d$"
       Age_String <- "^SR$|^JR$|^SO$|^FR$|^[:digit:]{1,3}$"
 
       #### clean input data ####
       suppressWarnings(
         data_1 <- as_lines_list_2 %>%
-          # stringr::str_replace_all(stats::setNames(replacement, typo)) %>% # moved to top 8/26
           stringr::str_replace_all("\\*(\\d{1,})", replacement = "\\1") %>%  # removes * placed in front of place number in ties
-          stringr::str_extract_all(
-            "\n\\s*\\d*\\s* #? \\d{0,3} \\*?[:alpha:].*|\n\\s*\\d* \\d*\\-[:alpha:].*|\n\\s*-{2,5}\\s* [:alpha:].*|\n\\s*\\d* \\d*\\-[:alpha:].*"
-          ) %>%
           .[purrr::map(., length) > 0] %>%
           .[purrr::map(., stringr::str_length) > 50] %>%
-          .[purrr::map_lgl(., stringr::str_detect, paste0(Time_Score_String,"|DQ"))] %>% # must have \\.\\d\\d because all swimming and diving times do
-          # .[purrr::map_lgl(., stringr::str_detect, "\\.\\d\\d")] %>% # must have \\.\\d\\d because all swimming and diving times do
+          .[purrr::map_lgl(., stringr::str_detect, paste0(Result_String,"|DQ|DNS"))] %>% # must Results_String because all results do
+          .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "\\d{3}\\.\\d{2}")))] %>% # closes loophole in Result_String where a number like 100.00 could get through even though it's not a valid result
           .[purrr::map_lgl(., stringr::str_detect, "[:alpha:]{2,}")] %>% # must have at least two letters in a row
-          .[purrr::map_lgl(., ~ !any(stringr::str_detect(., avoid)))] %>%
+          .[purrr::map_lgl(., ~ !any(stringr::str_detect(., avoid)))] %>% # remove lines contained in avoid
           stringr::str_remove_all("\n") %>%
+          stringr::str_remove_all("\\d{0,2}\\:?\\d{1,2}\\.\\d{3}") %>%
           # trimws() %>%
-          stringr::str_replace_all(stats::setNames(replacement, typo)) %>% # moved to top of pipeline 8/26
-          # remove 'A', 'B' etc. relay designators - should this go in typo instead?
-          stringr::str_replace_all("  \\'[A-Z]\\'  ", "  ") %>%
+          stringr::str_replace_all(stats::setNames(replacement, typo)) %>%
+          # remove 'A', 'B' etc. relay designators
+          stringr::str_replace_all(" \\'[A-Z]\\' ", "  ") %>% # tf specific  - removes relay A, B etc. designators
           stringr::str_replace_all("  [A-Z]  ", "  ") %>%
           stringr::str_replace_all("\\'\\'", "  ") %>%
-          # remove q from next to time 10/21/2020
-          stringr::str_remove_all(" q ") %>% # removes " q " sometimes used to designate a qualifying time
+          stringr::str_remove_all("(?<=\\.\\d{2})[Q|q](?=\\s)") %>% # tf specific - removes "q" or "Q" sometimes used to designate a qualifying result
+          stringr::str_remove_all("(?<=\\s)[J|j](?=\\d)") %>% # tf specific - removes "j" or "J" sometimes used to designate a judged result
           stringr::str_replace_all("-{2,5}", "10000") %>% #8/26
           stringr::str_replace_all("(\\.\\d{2})\\d+", "\\1 ") %>% # added 8/21 for illinois to deal with points column merging with final times column
           stringr::str_replace_all("\\d{1,2} (\\d{1,})$", "  \\1 ") %>% # added 8/21 for illinois to deal with points column merging with final times column
@@ -98,6 +97,15 @@ tf_parse <-
           stringr::str_replace_all(" \\+", "  \\+") %>%  # tf speciifc, for windspeed
           stringr::str_replace_all(" \\-", "  \\-") %>%  # tf speciifc, for windspeed
           stringr::str_replace_all("#", "  ") %>%  # tf specific, leading pound sign to spaces
+          stringr::str_replace_all("(?<=\\d) (?=[:alpha:])", "  ") %>% # tf specific - split place and name
+          stringr::str_replace_all("(?<=\\dm) (?=[\\-|\\+|\\d])", "  ") %>% # tf specific - split distance and windspeed
+          stringr::str_replace_all("(?<=\\d) (?=[\\-|\\+|\\d])", "  ") %>% # tf specific - split time and windspeed
+          stringr::str_replace_all("(?<=\\d{3}) (?=[:alpha:])", "  ") %>% # tf specific - split bib number and name
+          stringr::str_replace_all("(?<=\\d{2}) (?=[:alpha:])", "  ") %>% # tf specific - split age and team
+          stringr::str_replace_all("(?<=[:alpha:]) (?=\\d)", "  ") %>% # tf specific - split name and age
+          stringr::str_replace_all("(?<=\\,) (?=\\d)", "  ") %>% # tf specific - split name and age
+          stringr::str_replace_all("(?<=\\d\\.\\d) (?=\\d{1,2}\\s)", "  ") %>% # tf specific - split off wind and heat number
+          stringr::str_replace_all("(?<=\\d) (?=\\d{1,}$)", "  ") %>% # tf specific - split off row_numb
           trimws()
       )
 
@@ -106,17 +114,107 @@ tf_parse <-
         unlist(purrr::map(data_1, stringr::str_split, "\\s{2,}"),
                recursive = FALSE)
 
+      unique(map(data_1, length))
+
       #### breaks data into subsets based on how many variables it has ####
-      data_length_3 <- data_1[purrr::map(data_1, length) == 3]
       data_length_4 <- data_1[purrr::map(data_1, length) == 4]
       data_length_5 <- data_1[purrr::map(data_1, length) == 5]
       data_length_6 <- data_1[purrr::map(data_1, length) == 6]
       data_length_7 <- data_1[purrr::map(data_1, length) == 7]
+      data_length_8 <- data_1[purrr::map(data_1, length) == 8]
+      data_length_9 <- data_1[purrr::map(data_1, length) == 9]
+      data_length_10 <- data_1[purrr::map(data_1, length) == 10]
 
       # treatment of DQs new 8/19
       suppressWarnings(DQ <-
                          data_1[stringr::str_detect(data_1, Time_Score_String, negate = TRUE) == TRUE])
       DQ_length_3 <- DQ[purrr::map(DQ, length) == 3]
       DQ_length_4 <- DQ[purrr::map(DQ, length) == 4]
+
+
+      #### ten variables ####
+      if (length(data_length_10) > 0) {
+        suppressWarnings(
+          df_10 <- data_length_10 %>%
+            list_transform()
+        )
+
+      } else {
+        df_10 <- data.frame(Row_Numb = character(),
+                           stringsAsFactors = FALSE)
+      }
+
+      #### nine variables ####
+      if (length(data_length_9) > 0) {
+        suppressWarnings(
+          df_9 <- data_length_9 %>%
+            list_transform()
+        )
+
+      } else {
+        df_9 <- data.frame(Row_Numb = character(),
+                            stringsAsFactors = FALSE)
+      }
+
+      #### eight variables ####
+      if (length(data_length_8) > 0) {
+        suppressWarnings(
+          df_8<- data_length_8 %>%
+            list_transform()
+        )
+
+      } else {
+        df_8 <- data.frame(Row_Numb = character(),
+                            stringsAsFactors = FALSE)
+      }
+
+      #### seven variables ####
+      if (length(data_length_7) > 0) {
+        suppressWarnings(
+          df_7 <- data_length_7 %>%
+            list_transform()
+        )
+
+      } else {
+        df_7 <- data.frame(Row_Numb = character(),
+                            stringsAsFactors = FALSE)
+      }
+
+      #### six variables ####
+      if (length(data_length_6) > 0) {
+        suppressWarnings(
+          df_6 <- data_length_6 %>%
+            list_transform()
+        )
+
+      } else {
+        df_6 <- data.frame(Row_Numb = character(),
+                            stringsAsFactors = FALSE)
+      }
+
+      #### five variables ####
+      if (length(data_length_5) > 0) {
+        suppressWarnings(
+          df_5 <- data_length_5 %>%
+            list_transform()
+        )
+
+      } else {
+        df_5<- data.frame(Row_Numb = character(),
+                            stringsAsFactors = FALSE)
+      }
+
+      #### four variables ####
+      if (length(data_length_4) > 0) {
+        suppressWarnings(
+          df_4 <- data_length_4 %>%
+            list_transform()
+        )
+
+      } else {
+        df_4 <- data.frame(Row_Numb = character(),
+                            stringsAsFactors = FALSE)
+      }
+
 
   }
