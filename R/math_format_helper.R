@@ -21,7 +21,7 @@ math_format_helper <- function(x) {
     feet <- as.numeric(stringr::str_split_fixed(x, "-", n = 2)[,1])
     inches <- as.numeric(stringr::str_split_fixed(x, "-", n = 2)[,2])
     if (inches >= 12) stop("Inches must be less than 12 in a field formatted length")
-    x <- (feet*12) + inches
+    x <- round((feet*12) + inches, 2)
   } else if(str_detect(x, "m$") == TRUE) {
     x <- as.numeric(str_remove(x, "m$"))
   } else {

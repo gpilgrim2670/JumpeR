@@ -14,11 +14,11 @@ tf_parse(
 \arguments{
 \item{file}{a .pdf or .html file (could be a url) where containing track and field results.  Must be formatted in a "normal" fashion - see vignette}
 
-\item{avoid}{xxx}
+\item{avoid}{a list of strings.  Rows in \code{file} containing these strings will not be included. For example "Record:", often used to label records, could be passed to \code{avoid}.  The default is \code{avoid_default}, which contains many strings similar to "Record:".  Users can supply their own lists to \code{avoid}.}
 
-\item{typo}{xxx}
+\item{typo}{a list of strings that are typos in the original results.  \code{tf_parse} is particularly sensitive to accidental double spaces, so "Central  High School", with two spaces between "Central" and "High" is a problem, which can be fixed.  Pass "Central  High School" to \code{typo}.}
 
-\item{replacement}{xxx}
+\item{replacement}{a list of fixes for the strings in \code{typo}.  Here one could pass "Central High School" (one space between "Central" and "High") to fix the issue described in \code{typo}}
 }
 \value{
 a dataframe

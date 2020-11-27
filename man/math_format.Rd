@@ -18,7 +18,7 @@ Takes a character string (or list) representing time in track format (e.g. 1:35.
 \examples{
 math_format("1:35.93")
 math_format("16:45.19")
-math_format("25.43"))
+math_format("25.43")
 math_format(c("1:35.93", "16:45.19", NA, "25.43"))
 
 }
