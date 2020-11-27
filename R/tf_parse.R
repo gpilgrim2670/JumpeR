@@ -279,7 +279,29 @@ tf_parse <-
       if (length(data_length_6) > 0) {
         suppressWarnings(
           df_6 <- data_length_6 %>%
-            list_transform()
+            list_transform() %>%
+            mutate(Place = V1) %>%
+            mutate(Name = case_when(str_detect(V2, Name_String) ~ V2,
+                                    str_detect(V3, Name_String) ~ V3,
+                                    TRUE ~ "NA")) %>%
+            mutate(Age = case_when(str_detect(V3, Age_String) ~ V3,
+                                   str_detect(V4, Age_String) ~ V4,
+                                   TRUE ~ "NA")) %>%
+            mutate(Team = case_when(str_detect(V3, Age_String) & str_detect(V4, "[:alpha:]{2,}") ~ V4,
+                                    str_detect(V4, Age_String) & str_detect(V5, "[:alpha:]{2,}") ~ V5,
+                                    TRUE ~ "NA")) %>%
+            mutate(Team = case_when(Team == "NA"  ~ Name,
+                                    TRUE ~ Team),
+                   Name = case_when(Team == Name~ "NA",
+                                    TRUE ~ Name)) %>%
+            mutate(Age = case_when(Name == "NA" ~ "NA",
+                                   TRUE ~ Age)) %>%
+            mutate(Prelims_Result = case_when(str_detect(V3, Result_Specials_String) == TRUE & str_detect(V4, Result_Specials_String) == TRUE ~ V3,
+                                              TRUE ~ "NA")) %>%
+            mutate(Finals_Result = case_when(str_detect(V3, Result_Specials_String) == TRUE & str_detect(V4, Result_Specials_String) == TRUE ~ V4,
+                                             str_detect(V4, Result_Specials_String) == FALSE & str_detect(V5, Result_Specials_String) == TRUE ~ V5)) %>%
+            select(Place, Name, Age, Team, Prelims_Result, Finals_Result, 'Row_Numb' = V6) %>%
+            na_if("^NA$")
         )
 
       } else {
@@ -291,7 +313,8 @@ tf_parse <-
       if (length(data_length_5) > 0) {
         suppressWarnings(
           df_5 <- data_length_5 %>%
-            list_transform()
+            list_transform() %>%
+            select("Place" = V1, "Team" = V2, "Finals_Result" = V3, "Row_Numb" = V5)
         )
 
       } else {
@@ -303,7 +326,8 @@ tf_parse <-
       if (length(data_length_4) > 0) {
         suppressWarnings(
           df_4 <- data_length_4 %>%
-            list_transform()
+            list_transform() %>%
+            select("Place" = V1, "Team" = V2, "Finals_Result" = V3, "Row_Numb" = V4)
         )
 
       } else {
@@ -311,5 +335,40 @@ tf_parse <-
                             stringsAsFactors = FALSE)
       }
 
+      Min_Row_Numb <- min(events$Event_Row_Min)
+      suppressWarnings(
+        data <- dplyr::bind_rows(df_10, df_9, df_8, df_7, df_6, df_5, df_4) %>%
+          dplyr::mutate(Row_Numb = as.numeric(Row_Numb)) %>%
+          dplyr::arrange(Row_Numb) %>%
+          dplyr::mutate(Exhibition = 0) %>%
+          dplyr::mutate(DQ = 0) %>%
+          ### moved up from below for DQ work 8/20
+          dplyr::mutate(DQ = dplyr::case_when(Place == 10000 & Exhibition == 0 ~ 1, # added exhibition condition 8/27
+                                              TRUE ~ DQ)) %>%
+          na_if(10000) %>%
+          dplyr::mutate(dplyr::across(c(Name, Team), ~ stringr::str_replace_all(., "10000", "--"))) %>% # remove any "10000"s added in erroniuously
+          ####
+          na_if("DNS") %>%
+          na_if("DNF") %>%
+          na_if("DQ") %>%
+          dplyr::mutate(
+            Place = as.numeric(Place),
+            Place = dplyr::case_when(
+              is.na(dplyr::lag(Place)) == TRUE ~ Place,
+              dplyr::lag(Place) == Place ~ Place + 0.1,
+              dplyr::lag(Place) != Place ~ Place
+            ),
+            Place = as.character(Place),
+            Row_Numb = as.numeric(Row_Numb)
+          ) %>%
+          dplyr::filter(Row_Numb >= Min_Row_Numb)
+      )
+
+      if("Points" %in% names(data) == FALSE)
+      {data$Points <- NA}
+
+      #### add in events based on row number ranges ####
+      data  <-
+        transform(data, Event = events$Event[findInterval(Row_Numb, events$Event_Row_Min)])
 
   }
