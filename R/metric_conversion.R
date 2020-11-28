@@ -6,7 +6,7 @@
 #'
 #' @importFrom purrr map_chr
 #'
-#' @param x A character vector of distance(s) in feet-inches format (e.g. "12-07.45"), to be converted to meters "(3.85m")
+#' @param x A character vector of distance(s) in feet-inches format (e.g. "12-07.45"), to be converted to meters ("3.85m")
 #' @return returns the value of the string \code{x} which represents a distance in meters
 #'
 #' @examples

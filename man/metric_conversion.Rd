@@ -7,7 +7,7 @@
 metric_conversion(x)
 }
 \arguments{
-\item{x}{A character vector of distance(s) in feet-inches format (e.g. "12-07.45"), to be converted to meters "(3.85m")}
+\item{x}{A character vector of distance(s) in feet-inches format (e.g. "12-07.45"), to be converted to meters ("3.85m")}
 }
 \value{
 returns the value of the string \code{x} which represents a distance in meters

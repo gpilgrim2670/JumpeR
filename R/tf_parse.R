@@ -72,9 +72,15 @@ tf_parse <-
     #
     # file <- c(file_1, file_2, file_3, file_4, file_5)
     #
-    # avoid <- c("[:alpha:]\\: .*")
-    # typo <- typo_default
-    # replacement <- replacement_default
+
+    # file <-
+    #   system.file("extdata", "sa-performance-trial-1-day-1-results.pdf", package = "JumpeR")
+    #
+    # file <- read_results(file)
+
+    avoid <- c("[:alpha:]\\: .*")
+    typo <- typo_default
+    replacement <- replacement_default
 
     #### assign row numbers ####
     as_lines_list_2 <- add_row_numbers(text = file)
@@ -92,7 +98,7 @@ tf_parse <-
       paste0(Result_String, "|^NT$|^NP$|^DQ$|^DNS$|^DNF$|^FOUL$")
     Wind_String <-
       "\\+\\d\\.\\d|\\-\\d\\.\\d|^NWS$|^NWI$|^\\d\\.\\d$"
-    Age_String <- "^SR$|^JR$|^SO$|^FR$|^[:digit:]{1,3}$"
+    Age_String <- "^SR$|^JR$|^SO$|^FR$|^M?W?[:digit:]{1,3}$"
 
     #### clean input data ####
     suppressWarnings(
@@ -100,7 +106,7 @@ tf_parse <-
         stringr::str_replace_all("\\*(\\d{1,})", replacement = "\\1") %>%  # removes * placed in front of place number in ties
         .[purrr::map(., length) > 0] %>%
         .[purrr::map(., stringr::str_length) > 50] %>%
-        .[purrr::map_lgl(., stringr::str_detect, paste0(Result_String, "|DQ|DNS"))] %>% # must Results_String because all results do
+        .[purrr::map_lgl(., stringr::str_detect, paste0(Result_String, "|DQ|DNS|DNF"))] %>% # must Results_String because all results do
         .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "\\d{3}\\.\\d{2}")))] %>% # closes loophole in Result_String where a number like 100.00 could get through even though it's not a valid result
         .[purrr::map_lgl(., ~ !any(
           stringr::str_detect(., "^[0-9\\(\\)\\.FOULPASSm\\s\\-\\+]+$")
@@ -135,6 +141,8 @@ tf_parse <-
         stringr::str_replace_all(" SR ", "  SR  ") %>% # tf specific - split age and team
         stringr::str_replace_all("(?<=[:alpha:]) (?=\\d)", "  ") %>% # tf specific - split name and age
         stringr::str_replace_all("(?<=\\,) (?=\\d)", "  ") %>% # tf specific - split name and age
+        stringr::str_replace_all(" (M\\d{1,3}) ", "  \\1  ") %>% # tf specific - gendered ages M
+        stringr::str_replace_all(" (W\\d{1,3}) ", "  \\1  ") %>% # tf specific - gendered ages W
         stringr::str_replace_all("(?<=\\d\\.\\d) (?=\\d{1,2}\\s)", "  ") %>% # tf specific - split off wind and heat number
         stringr::str_replace_all("(?<=\\d) (?=\\d{1,}$)", "  ") %>% # tf specific - split off row_numb
         trimws()
@@ -668,6 +676,14 @@ tf_parse <-
         ) %>%
         dplyr::filter(Row_Numb >= Min_Row_Numb)
     )
+
+    #### Address Gendered Ages
+    data <- data %>%
+      dplyr::mutate(Gender = stringr::str_extract(Age, "^M|^W")) %>%
+      dplyr::mutate(Age = dplyr::case_when(
+        is.na(Gender) == FALSE ~ stringr::str_remove(Age, Gender),
+        TRUE ~ Age
+      ))
 
     # if("Points" %in% names(data) == FALSE)
     # {data$Points <- NA}

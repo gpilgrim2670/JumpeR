@@ -2,15 +2,15 @@
 % Please edit documentation in R/metric_conversion_helper.R
 \name{metric_conversion_helper}
 \alias{metric_conversion_helper}
-\title{Converts distances in feet/inches to meters}
+\title{Converts distances in feet-inches to meters}
 \usage{
 metric_conversion_helper(x)
 }
 \arguments{
-\item{x}{A character vector of distance(s) to be converted from feet/inches to meters}
+\item{x}{A character vector of distance(s) to be converted from feet-inches to meters}
 }
 \description{
-Converts distances in feet/inches to meters
+Converts distances in feet-inches to meters
 }
 \author{
 Greg Pilgrim \email{gpilgrim2670@gmail.com}
