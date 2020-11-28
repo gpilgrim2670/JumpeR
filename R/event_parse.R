@@ -20,12 +20,16 @@
 #' @seealso \code{event_parse} is a helper function inside \code{\link{tf_parse}}
 
 event_parse <- function(text) {
+
+  # text <- as_lines_list_2
+
   events <- text %>%
     .[purrr::map_lgl(
       .,
       stringr::str_detect,
-      "Event \\d{1,}|Women .* Yard|Women .* Meter|Girls .* Yard|Girls .* Meter|Men .* Yard|Men .* Meter|Boys .* Yard|Boys .* Meter|Mixed .* Yard|Mixed .* Meter|Boys.* Long|Girls.* Long|Men.* Long|Women.* Long|Boys.* Pole|Girls.* Pole|Men.* Pole|Women.* Pole|Boys.* Triple|Girls.* Triple|Men.* Triple|Women.* Triple|Boys.* Shot|Girls.* Shot|Men.* Shot|Women.* Shot|Boys.* Javalin|Girls.* Javalin|Men.* Javalin|Women.* Javalin|Boys.* Weight|Girls.* Weight|Men.* Weight|Women.* Weight|Medley|Heptathlon|Pentathlon"
+      "Event \\d{1,}|Women .* Yard|Women .* Meter|Girls .* Yard|Girls .* Meter|Men .* Yard|Men .* Meter|Boys .* Yard|Boys .* Meter|Mixed .* Yard|Mixed .* Meter|Boys.* Long|Girls.* Long|Men.* Long|Women.* Long|Boys.* Pole|Girls.* Pole|Men.* Pole|Women.* Pole|Boys.* Triple|Girls.* Triple|Men.* Triple|Women.* Triple|Boys.* Shot|Girls.* Shot|Men.* Shot|Women.* Shot|Boys.* Javalin|Girls.* Javalin|Men.* Javalin|Women.* Javalin|Boys.* Weight|Girls.* Weight|Men.* Weight|Women.* Weight|Medley|Heptathlon|Pentathlon|Boys.* High|Girls.* High|Men.* High|Women.* High"
     )]
+
   events <- stringr::str_replace(events, ".*Event \\d{1,4} ", "")
   events <- stringr::str_replace(events, "Open  ", "") ## Addition
   events <-
@@ -38,6 +42,8 @@ event_parse <- function(text) {
     stringr::str_replace_all("\\(", "") %>%
     stringr::str_replace_all("\\)", "") %>%
     # stringr::str_replace(".*(?=(Wom|Men|Boy|Girl))", "") %>% # new 10/16
+    str_replace_all("\\s{2,}", " ") %>% # in case there are improperly formatted events with to many spaces - 1
+    str_replace(" (\\d{1,}$)", "   \\1") %>% # in case there are improperly formatted events with to many spaces - 2 - moves row numbers back out multiple spaces
     trimws()
 
   events <-

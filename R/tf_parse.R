@@ -62,7 +62,7 @@ tf_parse <-
     # file_3 <- system.file("extdata", "underdistance-2020-result.pdf", package = "JumpeR")
     #
     # file_4 <- "http://results.yentiming.com/2020/Indoor/2-29-20-MOC.htm"
-    # file_5 <- "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
+    # file <- "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
     #
     # file_1 <- read_results(file_1)
     # file_2 <- read_results(file_2)
@@ -74,7 +74,7 @@ tf_parse <-
     #
 
     # file <-
-    #   system.file("extdata", "sa-performance-trial-1-day-1-results.pdf", package = "JumpeR")
+    #   system.file("extdata", "SMTFA-2019-Full-Results.pdf", package = "JumpeR")
     #
     # file <- read_results(file)
 
@@ -95,7 +95,7 @@ tf_parse <-
       "_?[:alpha:]+\\s?\\'?[:alpha:\\-\\'\\.]*\\s?[:alpha:\\-\\'\\.]*\\s?[:alpha:\\-\\'\\.]*,?\\s?[:alpha:\\-\\'\\.]*\\s?[:alpha:]*\\s?[:alpha:]*\\s?[:alpha:]*\\.?,? [:alpha:]+\\s?[:alpha:\\-\\'\\.]*\\s?[:alpha:\\-\\']*\\s?[:alpha:]*\\s?[:alpha:]*\\s?[:alpha:\\.]*"
     Result_String <- "\\d{0,2}\\:?\\-?\\d{1,2}\\.\\d{2}m?"
     Result_Specials_String <-
-      paste0(Result_String, "|^NT$|^NP$|^DQ$|^DNS$|^DNF$|^FOUL$")
+      paste0(Result_String, "|^NT$|^NP$|^DQ$|^DNS$|^DNF$|^FOUL$|^NH$|^SCR$|FS")
     Wind_String <-
       "\\+\\d\\.\\d|\\-\\d\\.\\d|^NWS$|^NWI$|^\\d\\.\\d$"
     Age_String <- "^SR$|^JR$|^SO$|^FR$|^M?W?[:digit:]{1,3}$"
@@ -106,11 +106,14 @@ tf_parse <-
         stringr::str_replace_all("\\*(\\d{1,})", replacement = "\\1") %>%  # removes * placed in front of place number in ties
         .[purrr::map(., length) > 0] %>%
         .[purrr::map(., stringr::str_length) > 50] %>%
-        .[purrr::map_lgl(., stringr::str_detect, paste0(Result_String, "|DQ|DNS|DNF"))] %>% # must Results_String because all results do
+        .[purrr::map_lgl(., stringr::str_detect, paste0(Result_String, "|DQ|DNS|DNF|FOUL|NH|SCR|FS"))] %>% # must Results_String because all results do
         .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "\\d{3}\\.\\d{2}")))] %>% # closes loophole in Result_String where a number like 100.00 could get through even though it's not a valid result
         .[purrr::map_lgl(., ~ !any(
           stringr::str_detect(., "^[0-9\\(\\)\\.FOULPASSm\\s\\-\\+]+$")
         ))] %>% # closes loophole where throwing splits lines get in because they contain FOUL or PASS plus valid results
+        .[purrr::map_lgl(., ~ !any(
+          stringr::str_detect(., "Event .*\\d")
+        ))] %>% # removes event titles that also include distances, like "Event 1 Short Hurdles 0.762m"
         .[purrr::map_lgl(., stringr::str_detect, "[:alpha:]{2,}")] %>% # must have at least two letters in a row
         .[purrr::map_lgl(., ~ !any(stringr::str_detect(., avoid)))] %>% # remove lines contained in avoid
         stringr::str_remove_all("\n") %>%
@@ -145,6 +148,8 @@ tf_parse <-
         stringr::str_replace_all(" (W\\d{1,3}) ", "  \\1  ") %>% # tf specific - gendered ages W
         stringr::str_replace_all("(?<=\\d\\.\\d) (?=\\d{1,2}\\s)", "  ") %>% # tf specific - split off wind and heat number
         stringr::str_replace_all("(?<=\\d) (?=\\d{1,}$)", "  ") %>% # tf specific - split off row_numb
+        stringr::str_replace_all(" \\., ", "  Period, ") %>%
+        stringr::str_replace_all("([:alpha])(\\.[:alpha:])", "\\1 \\2") %>%
         trimws()
     )
 
@@ -178,7 +183,7 @@ tf_parse <-
           list_transform() %>%
           dplyr::mutate(Place = V1) %>%
           dplyr::mutate(
-            Bib_Number = dplyr::case_when(stringr::str_detect(V2, "^\\d{1,3}$") ~ V2,
+            Bib_Number = dplyr::case_when(stringr::str_detect(V2, "^\\d{1,6}$") ~ V2,
                                           TRUE ~ "NA")
           ) %>%
           dplyr::mutate(
@@ -192,6 +197,7 @@ tf_parse <-
             Age = dplyr::case_when(
               stringr::str_detect(V3, Age_String) ~ V3,
               stringr::str_detect(V4, Age_String) ~ V4,
+              stringr::str_detect(V5, Age_String) ~ V5,
               TRUE ~ "NA"
             )
           ) %>%
@@ -201,6 +207,8 @@ tf_parse <-
                 stringr::str_detect(V4, "[:alpha:]{2,}") ~ V4,
               stringr::str_detect(V4, Age_String) &
                 stringr::str_detect(V5, "[:alpha:]{2,}") ~ V5,
+              stringr::str_detect(V5, Age_String) &
+                stringr::str_detect(V6, "[:alpha:]{2,}") ~ V6,
               TRUE ~ "NA"
             )
           ) %>%
@@ -217,8 +225,14 @@ tf_parse <-
             Finals_Result = dplyr::case_when(
               stringr::str_detect(V5, Result_Specials_String) == TRUE &
                 stringr::str_detect(V6, Result_Specials_String) == FALSE ~ V5,
+              stringr::str_detect(V6, Result_Specials_String) == TRUE &
+                stringr::str_detect(V5, Result_Specials_String) == FALSE &
+                stringr::str_detect(V7, Result_Specials_String) == FALSE ~ V6,
               stringr::str_detect(V6, Result_Specials_String) &
                 stringr::str_detect(V7, Result_Specials_String) ~ V7,
+              stringr::str_detect(V7, Result_Specials_String) == TRUE &
+                stringr::str_detect(V6, Result_Specials_String) == FALSE &
+                stringr::str_detect(V8, Result_Specials_String) == FALSE ~ V7,
               TRUE ~ "NA"
             )
           ) %>%
@@ -228,10 +242,10 @@ tf_parse <-
           ) %>%
           dplyr::mutate(
             Points = dplyr::case_when(
-              stringr::str_detect(V8, Wind_Speed) == FALSE &
+              stringr::str_detect(V8, Wind_String) == FALSE &
                 stringr::str_detect(V8, "^\\d\\.?\\d?$") == TRUE &
                 stringr::str_detect(V9, "\\d{1,2}") == FALSE ~ V8,
-              stringr::str_detect(V8, Wind_Speed) == TRUE &
+              stringr::str_detect(V8, Wind_String) == TRUE &
                 stringr::str_detect(V9, "^\\d\\.?\\d?$") == TRUE ~ V9,
               TRUE ~ "NA"
             )
@@ -268,7 +282,7 @@ tf_parse <-
           list_transform() %>%
           dplyr::mutate(Place = V1) %>%
           dplyr::mutate(
-            Bib_Number = dplyr::case_when(stringr::str_detect(V2, "^\\d{1,3}$") ~ V2,
+            Bib_Number = dplyr::case_when(stringr::str_detect(V2, "^\\d{1,6}$") ~ V2,
                                           TRUE ~ "NA")
           ) %>%
           dplyr::mutate(
@@ -370,7 +384,7 @@ tf_parse <-
           list_transform() %>%
           dplyr::mutate(Place = V1) %>%
           dplyr::mutate(
-            Bib_Number = dplyr::case_when(stringr::str_detect(V2, "^\\d{1,3}$") ~ V2,
+            Bib_Number = dplyr::case_when(stringr::str_detect(V2, "^\\d{1,6}$") ~ V2,
                                           TRUE ~ "NA")
           ) %>%
           dplyr::mutate(
@@ -443,7 +457,7 @@ tf_parse <-
           list_transform() %>%
           dplyr::mutate(Place = V1) %>%
           dplyr::mutate(
-            Bib_Number = dplyr::case_when(stringr::str_detect(V2, "^\\d{1,3}$") ~ V2,
+            Bib_Number = dplyr::case_when(stringr::str_detect(V2, "^\\d{1,6}$") ~ V2,
                                           TRUE ~ "NA")
           ) %>%
           dplyr::mutate(
@@ -514,6 +528,8 @@ tf_parse <-
               TRUE ~ "NA"
             )
           ) %>%
+          dplyr::mutate(Bib_Number = case_when(str_detect(V2, "^\\d{1,6}$") ~ V2,
+                                               TRUE ~ "NA")) %>%
           dplyr::mutate(
             Age = dplyr::case_when(
               stringr::str_detect(V3, Age_String) ~ V3,
@@ -523,12 +539,17 @@ tf_parse <-
           ) %>%
           dplyr::mutate(
             Team = dplyr::case_when(
+              stringr::str_detect(V3, Result_Specials_String) == TRUE ~ V2,
               stringr::str_detect(V2, Name_String) == TRUE &
                 stringr::str_detect(V3, Age_String) == FALSE &
                 stringr::str_detect(V4, Result_Specials_String) == TRUE ~ V3,
               stringr::str_detect(V3, Age_String) &
                 stringr::str_detect(V4, "[:alpha:]{2,}") ~ V4,
+              stringr::str_detect(V3, Name_String) == TRUE &
+                stringr::str_detect(V5, Result_Specials_String) == TRUE &
+                stringr::str_detect(V4, "[:alpha:]{2,}") ~ V4,
               stringr::str_detect(V4, Age_String) &
+                stringr::str_detect(V3, Result_Specials_String) == FALSE &
                 stringr::str_detect(V5, "[:alpha:]{2,}") ~ V5,
               TRUE ~ "NA"
             )
@@ -562,6 +583,7 @@ tf_parse <-
           ) %>%
           dplyr::select(
             Place,
+            Bib_Number,
             Name,
             Age,
             Team,
@@ -614,6 +636,7 @@ tf_parse <-
           dplyr::na_if("NA") %>%
           dplyr::select(
             "Place" = V1,
+            Name,
             Team,
             Prelims_Result,
             Finals_Result,
@@ -664,13 +687,18 @@ tf_parse <-
         dplyr::na_if("DNS") %>%
         dplyr::na_if("DNF") %>%
         dplyr::na_if("DQ") %>%
+        dplyr::na_if("FOUL") %>%
+        dplyr::na_if("NH") %>%
+        dplyr::na_if("NWI") %>%
+        dplyr::na_if("SCR") %>%
+        dplyr::na_if("FS") %>%
         dplyr::mutate(
-          Place = as.numeric(Place),
-          Place = dplyr::case_when(
-            is.na(dplyr::lag(Place)) == TRUE ~ Place,
-            dplyr::lag(Place) == Place ~ Place + 0.1,
-            dplyr::lag(Place) != Place ~ Place
-          ),
+          # Place = as.numeric(Place), # from swim_parse for dealing with ties
+          # Place = dplyr::case_when(
+          #   is.na(dplyr::lag(Place)) == TRUE ~ Place,
+          #   dplyr::lag(Place) == Place ~ Place + 0.1,
+          #   dplyr::lag(Place) != Place ~ Place
+          # ),
           Place = as.character(Place),
           Row_Numb = as.numeric(Row_Numb)
         ) %>%
@@ -684,6 +712,10 @@ tf_parse <-
         is.na(Gender) == FALSE ~ stringr::str_remove(Age, Gender),
         TRUE ~ Age
       ))
+
+    #### Address Names with "." renamed to "Period"
+    data <- data %>%
+      dplyr::mutate(Name = stringr::str_replace(Name, "Period", "\\."))
 
     # if("Points" %in% names(data) == FALSE)
     # {data$Points <- NA}
