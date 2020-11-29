@@ -37,10 +37,16 @@ tf_parse(
   )
 ```
 
-## Getting help
+# Getting help
 
 You're welcome to contact me with bug reports, feature requests, etc. for `JumpeR`.
 
 If you find bug, please provide a minimal reproducible example at [github](https://github.com/gpilgrim2670/JumpeR).
 
 `JumpeR` is conceptually very similar to the `SwimmeR` package, which I also developed and maintain.  I do a lot of demos on how to use `SwimmeR` at my blog [Swimming + Data Science](https://pilgrim.netlify.app/).  `SwimmeR` also has a vignette.  Call `vignette("SwimmeR")`.  If you download from github don't forget to set `build_vignettes = TRUE`.
+
+# Why is it called JumpeR?
+
+1. The name RunneR was already taken on CRAN
+2. I never liked running, but I have always enjoyed the long jump
+3. Vague memories of [this Third Eye Blind song](https://www.youtube.com/watch?v=gRYZijLZR-Q)
