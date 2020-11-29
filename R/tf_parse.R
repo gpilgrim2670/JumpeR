@@ -71,8 +71,6 @@ tf_parse <-
     # file_5 <- read_results(file_5)
     #
     # file <- c(file_1, file_2, file_3, file_4, file_5)
-    #
-
     # file <-
     #   system.file("extdata", "SMTFA-2019-Full-Results.pdf", package = "JumpeR")
     #
@@ -478,6 +476,9 @@ tf_parse <-
             Team = dplyr::case_when(
               stringr::str_detect(V3, Age_String) &
                 stringr::str_detect(V4, "[:alpha:]{2,}") ~ V4,
+                stringr::str_detect(V3, Name_String) == TRUE &
+                stringr::str_detect(V5, Result_Specials_String) == TRUE &
+                stringr::str_detect(V4, "[:alpha:]{2,}") ~ V4,
               stringr::str_detect(V4, Age_String) &
                 stringr::str_detect(V5, "[:alpha:]{2,}") ~ V5,
               TRUE ~ "NA"
@@ -717,15 +718,21 @@ tf_parse <-
     data <- data %>%
       dplyr::mutate(Name = stringr::str_replace(Name, "Period", "\\."))
 
-    # if("Points" %in% names(data) == FALSE)
-    # {data$Points <- NA}
+    if("Points" %in% names(data) == FALSE)
+    {data$Points <- NA}
+
+    if("Heat" %in% names(data) == FALSE)
+    {data$Heat <- NA}
+
+    if("Notes" %in% names(data) == FALSE)
+    {data$Notes <- NA}
 
     #### add in events based on row number ranges ####
     data  <-
       transform(data, Event = events$Event[findInterval(Row_Numb, events$Event_Row_Min)])
 
     data <- data %>%
-      dplyr::select(-Row_Numb,-Exhibition)
+      dplyr::select(-Row_Numb, -Exhibition, -Points, -Heat, -Notes)
 
     ### remove empty columns (all values are NA) ###
     data <- Filter(function(x)
