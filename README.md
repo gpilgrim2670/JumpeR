@@ -27,12 +27,20 @@ Version 0.0.1 of `JumpeR` reads track and field results into `R`, similar to wha
 
 See `?tf_parse` or the package vignette for more information.
 
-## Example
+## Examples
 
 ```r
 tf_parse(
     read_results(
       "http://results.yentiming.com/2020/Indoor/2-29-20-MOC.htm"
+    )
+  )
+```
+
+```r
+tf_parse(
+    read_results(
+      "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
     )
   )
 ```
@@ -48,5 +56,5 @@ If you find bug, please provide a minimal reproducible example at [github](https
 # Why is it called JumpeR?
 
 1. The name RunneR was already taken on CRAN
-2. I never liked running, but I have always enjoyed the long jump
+2. I never liked running, but have always enjoyed the long jump
 3. Vague memories of [this Third Eye Blind song](https://www.youtube.com/watch?v=gRYZijLZR-Q)
