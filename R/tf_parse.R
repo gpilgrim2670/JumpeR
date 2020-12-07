@@ -75,10 +75,14 @@ tf_parse <-
     #   system.file("extdata", "SMTFA-2019-Full-Results.pdf", package = "JumpeR")
     #
     # file <- read_results(file)
-
-    avoid <- c("[:alpha:]\\: .*")
-    typo <- typo_default
-    replacement <- replacement_default
+    # file <-
+    #   system.file("extdata", "day1-combo.pdf", package = "JumpeR")
+    #
+    # file <- read_results(file)
+    #
+    # avoid <- c("[:alpha:]\\: .*")
+    # typo <- typo_default
+    # replacement <- replacement_default
 
     #### assign row numbers ####
     as_lines_list_2 <- add_row_numbers(text = file)
@@ -93,7 +97,7 @@ tf_parse <-
       "_?[:alpha:]+\\s?\\'?[:alpha:\\-\\'\\.]*\\s?[:alpha:\\-\\'\\.]*\\s?[:alpha:\\-\\'\\.]*,?\\s?[:alpha:\\-\\'\\.]*\\s?[:alpha:]*\\s?[:alpha:]*\\s?[:alpha:]*\\.?,? [:alpha:]+\\s?[:alpha:\\-\\'\\.]*\\s?[:alpha:\\-\\']*\\s?[:alpha:]*\\s?[:alpha:]*\\s?[:alpha:\\.]*"
     Result_String <- "\\d{0,2}\\:?\\-?\\d{1,2}\\.\\d{2}m?"
     Result_Specials_String <-
-      paste0(Result_String, "|^NT$|^NP$|^DQ$|^DNS$|^DNF$|^FOUL$|^NH$|^SCR$|FS")
+      paste0(Result_String, "|^NT$|^NP$|^DQ$|^DNS$|^DNF$|^FOUL$|^NH$|^SCR$|^FS$")
     Wind_String <-
       "\\+\\d\\.\\d|\\-\\d\\.\\d|^NWS$|^NWI$|^\\d\\.\\d$"
     Age_String <- "^SR$|^JR$|^SO$|^FR$|^M?W?[:digit:]{1,3}$"
@@ -683,16 +687,16 @@ tf_parse <-
         dplyr::na_if(10000) %>%
         dplyr::mutate(dplyr::across(
           c(Name, Team), ~ stringr::str_replace_all(., "10000", "--")
-        )) %>% # remove any "10000"s added in erroniuously
+        )) %>% # remove any "10000"s added in erroneously
         ####
-        dplyr::na_if("DNS") %>%
-        dplyr::na_if("DNF") %>%
-        dplyr::na_if("DQ") %>%
-        dplyr::na_if("FOUL") %>%
-        dplyr::na_if("NH") %>%
-        dplyr::na_if("NWI") %>%
-        dplyr::na_if("SCR") %>%
-        dplyr::na_if("FS") %>%
+        # dplyr::na_if("DNS") %>%
+        # dplyr::na_if("DNF") %>%
+        # dplyr::na_if("DQ") %>%
+        # dplyr::na_if("FOUL") %>%
+        # dplyr::na_if("NH") %>%
+        # dplyr::na_if("NWI") %>%
+        # dplyr::na_if("SCR") %>%
+        # dplyr::na_if("FS") %>%
         dplyr::mutate(
           # Place = as.numeric(Place), # from swim_parse for dealing with ties
           # Place = dplyr::case_when(
