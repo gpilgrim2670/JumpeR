@@ -37,11 +37,14 @@ tf_parse(
   )
 ```
 
+To capture jump/throw attempts set `attempts = TRUE`
+
 ```r
 tf_parse(
     read_results(
       "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
-    )
+    ),
+    attempts = TRUE
   )
 ```
 
