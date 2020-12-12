@@ -12,6 +12,7 @@
 #' @importFrom dplyr bind_rows
 #' @importFrom dplyr arrange
 #' @importFrom dplyr across
+#' @importFrom dplyr left_join
 #' @importFrom stringr str_remove
 #' @importFrom stringr str_remove_all
 #' @importFrom stringr str_detect
@@ -22,11 +23,13 @@
 #' @importFrom purrr map
 #' @importFrom purrr map_lgl
 #' @importFrom stats setNames
+#' @importFrom SwimmeR `%!in%`
 #'
 #' @param file a .pdf or .html file (could be a url) where containing track and field results.  Must be formatted in a "normal" fashion - see vignette
 #' @param avoid a list of strings.  Rows in \code{file} containing these strings will not be included. For example "Record:", often used to label records, could be passed to \code{avoid}.  The default is \code{avoid_default}, which contains many strings similar to "Record:".  Users can supply their own lists to \code{avoid}.
 #' @param typo a list of strings that are typos in the original results.  \code{tf_parse} is particularly sensitive to accidental double spaces, so "Central  High School", with two spaces between "Central" and "High" is a problem, which can be fixed.  Pass "Central  High School" to \code{typo}.
 #' @param replacement a list of fixes for the strings in \code{typo}.  Here one could pass "Central High School" (one space between "Central" and "High") to fix the issue described in \code{typo}
+#' @param attempts should tf_parse try to include attempts for jumping/throwing events?  Defaults to \code{FALSE}
 #'
 #' @return a dataframe
 #'
@@ -38,7 +41,8 @@ tf_parse <-
   function(file,
            avoid = avoid_default,
            typo = typo_default,
-           replacement = replacement_default) {
+           replacement = replacement_default,
+           attempts = FALSE) {
     #### default typo and replacement strings ####
     typo_default <- c("typo")
 
@@ -73,13 +77,10 @@ tf_parse <-
     # file <- c(file_1, file_2, file_3, file_4, file_5)
     # file <-
     #   system.file("extdata", "SMTFA-2019-Full-Results.pdf", package = "JumpeR")
-    #
-    # file <- read_results(file)
     # file <-
     #   system.file("extdata", "day1-combo.pdf", package = "JumpeR")
     #
     # file <- read_results(file)
-    #
     # avoid <- c("[:alpha:]\\: .*")
     # typo <- typo_default
     # replacement <- replacement_default
@@ -490,11 +491,17 @@ tf_parse <-
           ) %>%
           dplyr::mutate(
             Finals_Result = dplyr::case_when(
+              stringr::str_detect(V5, Result_Specials_String) & # to deal with results that have both metric and imperial result - prefer metric
+                stringr::str_detect(V5, "m") == TRUE  &
+                stringr::str_detect(V6, Result_Specials_String) == TRUE &
+                stringr::str_detect(V6, "m") == FALSE ~ V5,
+              stringr::str_detect(V5, Result_Specials_String) &
+                stringr::str_detect(V5, "m") == FALSE  &
+                stringr::str_detect(V6, Result_Specials_String) == TRUE &
+                stringr::str_detect(V6, "m") == TRUE ~ V6,
               stringr::str_detect(V5, Result_Specials_String) &
                 stringr::str_detect(V6, Result_Specials_String) == FALSE ~ V5,
-              stringr::str_detect(V6, Result_Specials_String) == TRUE &
-                stringr::str_detect(V7, Result_Specials_String) == FALSE ~ V6,
-
+              stringr::str_detect(V6, Result_Specials_String) == TRUE ~ V6,
               TRUE ~ "NA"
             )
           ) %>%
@@ -576,6 +583,14 @@ tf_parse <-
           ) %>%
           dplyr::mutate(
             Finals_Result = dplyr::case_when(
+              stringr::str_detect(V4, Result_Specials_String) &
+                stringr::str_detect(V4, "m") == TRUE  &
+                stringr::str_detect(V5, Result_Specials_String) == TRUE &
+                stringr::str_detect(V5, "m") == FALSE ~ V4,
+              stringr::str_detect(V4, Result_Specials_String) &
+                stringr::str_detect(V4, "m") == FALSE  &
+                stringr::str_detect(V5, Result_Specials_String) == TRUE &
+                stringr::str_detect(V5, "m") == TRUE ~ V5,
               stringr::str_detect(V3, Result_Specials_String) == TRUE &
                 stringr::str_detect(V4, Result_Specials_String) == FALSE ~ V3,
               stringr::str_detect(V3, Result_Specials_String) == TRUE &
@@ -722,25 +737,34 @@ tf_parse <-
     data <- data %>%
       dplyr::mutate(Name = stringr::str_replace(Name, "Period", "\\."))
 
-    if("Points" %in% names(data) == FALSE)
-    {data$Points <- NA}
-
-    if("Heat" %in% names(data) == FALSE)
-    {data$Heat <- NA}
-
-    if("Notes" %in% names(data) == FALSE)
-    {data$Notes <- NA}
+    # if("Points" %in% names(data) == FALSE)
+    # {data$Points <- NA}
+    #
+    # if("Heat" %in% names(data) == FALSE)
+    # {data$Heat <- NA}
+    #
+    # if("Notes" %in% names(data) == FALSE)
+    # {data$Notes <- NA}
 
     #### add in events based on row number ranges ####
     data  <-
       transform(data, Event = events$Event[findInterval(Row_Numb, events$Event_Row_Min)])
 
-    data <- data %>%
-      dplyr::select(-Row_Numb, -Exhibition, -Points, -Heat, -Notes)
-
-    ### remove empty columns (all values are NA) ###
+    #### remove empty columns (all values are NA) ####
     data <- Filter(function(x)
       ! all(is.na(x)), data)
+
+    #### adding in attempts ####
+    if(attempts ==TRUE){
+      attempts <- attempts_parse(as_lines_list_2)
+
+      data <- dplyr::left_join(data, attempts, by = "Row_Numb")
+    }
+
+    #### clean up uneeded columns ####
+    data <- data %>%
+      # dplyr::select(-Row_Numb, -Exhibition, -Points, -Heat, -Notes)
+    dplyr::select(which(SwimmeR::`%!in%`(names(.), c("Row_Numb", "Exhibition", "Points", "Heat", "Notes"))))
 
     return(data)
 

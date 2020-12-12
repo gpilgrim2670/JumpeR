@@ -8,7 +8,8 @@ tf_parse(
   file,
   avoid = avoid_default,
   typo = typo_default,
-  replacement = replacement_default
+  replacement = replacement_default,
+  attempts = FALSE
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ tf_parse(
 \item{typo}{a list of strings that are typos in the original results.  \code{tf_parse} is particularly sensitive to accidental double spaces, so "Central  High School", with two spaces between "Central" and "High" is a problem, which can be fixed.  Pass "Central  High School" to \code{typo}.}
 
 \item{replacement}{a list of fixes for the strings in \code{typo}.  Here one could pass "Central High School" (one space between "Central" and "High") to fix the issue described in \code{typo}}
+
+\item{attempts}{should tf_parse try to include attempts for jumping/throwing events?  Defaults to \code{FALSE}}
 }
 \value{
 a dataframe
