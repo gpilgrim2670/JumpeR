@@ -80,7 +80,9 @@ tf_parse <-
     # file <-
     #   system.file("extdata", "day1-combo.pdf", package = "JumpeR")
     #
-    # file <- read_results(file)
+    # file <- read_results(event_links[1])
+    #
+    #
     # avoid <- c("[:alpha:]\\: .*")
     # typo <- typo_default
     # replacement <- replacement_default
@@ -106,6 +108,7 @@ tf_parse <-
     #### clean input data ####
     suppressWarnings(
       data_1 <- as_lines_list_2 %>%
+        .[purrr::map_lgl(., ~ !any(stringr::str_detect(., avoid)))] %>% # remove lines contained in avoid
         stringr::str_replace_all("\\*(\\d{1,})", replacement = "\\1") %>%  # removes * placed in front of place number in ties
         .[purrr::map(., length) > 0] %>%
         .[purrr::map(., stringr::str_length) > 50] %>%
@@ -118,7 +121,7 @@ tf_parse <-
           stringr::str_detect(., "Event .*\\d")
         ))] %>% # removes event titles that also include distances, like "Event 1 Short Hurdles 0.762m"
         .[purrr::map_lgl(., stringr::str_detect, "[:alpha:]{2,}")] %>% # must have at least two letters in a row
-        .[purrr::map_lgl(., ~ !any(stringr::str_detect(., avoid)))] %>% # remove lines contained in avoid
+        # .[purrr::map_lgl(., ~ !any(stringr::str_detect(., avoid)))] %>% # remove lines contained in avoid
         stringr::str_remove_all("\n") %>%
         stringr::str_remove_all("\\d{0,2}\\:?\\d{1,2}\\.\\d{3}") %>%
         # trimws() %>%
@@ -325,6 +328,10 @@ tf_parse <-
               stringr::str_detect(V6, Result_Specials_String) == TRUE &
                 stringr::str_detect(V5, Result_Specials_String) == FALSE &
                 stringr::str_detect(V7, Result_Specials_String) == FALSE ~ V6,
+              stringr::str_detect(V6, Result_Specials_String) == TRUE &
+                stringr::str_detect(V5, Result_Specials_String) == TRUE &
+                stringr::str_detect(V5, "m") == TRUE &
+                stringr::str_detect(V6, "-") == TRUE ~ V5,
               TRUE ~ "NA"
             )
           ) %>%
@@ -420,6 +427,10 @@ tf_parse <-
               stringr::str_detect(V6, Result_Specials_String) == TRUE &
                 stringr::str_detect(V5, Result_Specials_String) == FALSE &
                 stringr::str_detect(V7, Result_Specials_String) == FALSE ~ V6,
+              stringr::str_detect(V6, Result_Specials_String) == TRUE &
+                stringr::str_detect(V5, Result_Specials_String) == TRUE &
+                stringr::str_detect(V5, "m") == TRUE &
+                stringr::str_detect(V6, "-") == TRUE ~ V5,
               TRUE ~ "NA"
             )
           ) %>%
