@@ -20,45 +20,57 @@
 #' @seealso \code{event_parse} is a helper function inside \code{\link{tf_parse}}
 
 event_parse <- function(text) {
-
   # text <- as_lines_list_2
 
+  event_string <-
+    "Event \\d{1,}|Women .* Yard|Women .* Meter|Girls .* Yard|Girls .* Meter|Men .* Yard|Men .* Meter|Boys .* Yard|Boys .* Meter|Mixed .* Yard|Mixed .* Meter|Boys.* Long|Girls.* Long|Men.* Long|Women.* Long|Boys.* Pole|Girls.* Pole|Men.* Pole|Women.* Pole|Boys.* Triple|Girls.* Triple|Men.* Triple|Women.* Triple|Boys.* Shot|Girls.* Shot|Men.* Shot|Women.* Shot|Boys.* Javalin|Girls.* Javalin|Men.* Javalin|Women.* Javalin|Boys.* Weight|Girls.* Weight|Men.* Weight|Women.* Weight|Medley|Heptathlon|Pentathlon|Boys.* High|Girls.* High|Men.* High|Women.* High"
+
   events <- text %>%
-    .[purrr::map_lgl(
-      .,
-      stringr::str_detect,
-      "Event \\d{1,}|Women .* Yard|Women .* Meter|Girls .* Yard|Girls .* Meter|Men .* Yard|Men .* Meter|Boys .* Yard|Boys .* Meter|Mixed .* Yard|Mixed .* Meter|Boys.* Long|Girls.* Long|Men.* Long|Women.* Long|Boys.* Pole|Girls.* Pole|Men.* Pole|Women.* Pole|Boys.* Triple|Girls.* Triple|Men.* Triple|Women.* Triple|Boys.* Shot|Girls.* Shot|Men.* Shot|Women.* Shot|Boys.* Javalin|Girls.* Javalin|Men.* Javalin|Women.* Javalin|Boys.* Weight|Girls.* Weight|Men.* Weight|Women.* Weight|Medley|Heptathlon|Pentathlon|Boys.* High|Girls.* High|Men.* High|Women.* High"
-    )]
+    .[purrr::map_lgl(.,
+                     stringr::str_detect,
+                     event_string)]
 
-  events <- stringr::str_replace(events, ".*Event \\d{1,4} ", "")
-  events <- stringr::str_replace(events, "Open  ", "") ## Addition
-  events <-
-    stringr::str_replace(events, "1 M  ", "1 M ") ## Addition
-  events <- stringr::str_replace(events, "([^1])0  ", "\\10 ")
-  events <- stringr::str_replace(events, " Class [:alpha:]", "")
-  events <- events %>% # Addition
-    .[purrr::map_lgl(., stringr::str_detect, "[[:alpha:]]")] %>%
-    stringr::str_replace_all("\\\n", "") %>%
-    stringr::str_replace_all("\\(", "") %>%
-    stringr::str_replace_all("\\)", "") %>%
-    # stringr::str_replace(".*(?=(Wom|Men|Boy|Girl))", "") %>% # new 10/16
-    str_replace_all("\\s{2,}", " ") %>% # in case there are improperly formatted events with to many spaces - 1
-    str_replace(" (\\d{1,}$)", "   \\1") %>% # in case there are improperly formatted events with to many spaces - 2 - moves row numbers back out multiple spaces
-    trimws()
+  if (length(events) > 0) {
+    #if event names are recognized clean them up and determine row ranges
 
-  events <-
-    unlist(purrr::map(events, stringr::str_split, "\\s{2,}"),
-           recursive = FALSE)
+    events <- stringr::str_replace(events, ".*Event \\d{1,4} ", "")
+    events <- stringr::str_replace(events, "Open  ", "") ## Addition
+    events <-
+      stringr::str_replace(events, "1 M  ", "1 M ") ## Addition
+    events <- stringr::str_replace(events, "([^1])0  ", "\\10 ")
+    events <- stringr::str_replace(events, " Class [:alpha:]", "")
+    events <- events %>% # Addition
+      .[purrr::map_lgl(., stringr::str_detect, "[[:alpha:]]")] %>%
+      stringr::str_replace_all("\\\n", "") %>%
+      stringr::str_replace_all("\\(", "") %>%
+      stringr::str_replace_all("\\)", "") %>%
+      # stringr::str_replace(".*(?=(Wom|Men|Boy|Girl))", "") %>% # new 10/16
+      str_replace_all("\\s{2,}", " ") %>% # in case there are improperly formatted events with to many spaces - 1
+      str_replace(" (\\d{1,}$)", "   \\1") %>% # in case there are improperly formatted events with to many spaces - 2 - moves row numbers back out multiple spaces
+      trimws()
 
-  # dataframe for events with names and row number ranges
-  events <- events %>%
-    list_transform() %>%
-    dplyr::mutate(
-      Event = stringr::str_extract(V1, "[[:graph:] ]*"),
-      Event_Row_Min = as.numeric(V2),
-      Event_Row_Max = dplyr::lead(Event_Row_Min, 1L, default = length(text)) - 1,
-      V1 = NULL,
-      V2 = NULL
+    events <-
+      unlist(purrr::map(events, stringr::str_split, "\\s{2,}"),
+             recursive = FALSE)
+
+    # dataframe for events with names and row number ranges
+    events <- events %>%
+      list_transform() %>%
+      dplyr::mutate(
+        Event = stringr::str_extract(V1, "[[:graph:] ]*"),
+        Event_Row_Min = as.numeric(V2),
+        Event_Row_Max = dplyr::lead(Event_Row_Min, 1L, default = length(text)) - 1,
+        V1 = NULL,
+        V2 = NULL
+      )
+  } else{
+    # if no event names are recognized deploy dummy dataframe with event name "unknown" and post warning
+    events <- data.frame(
+      Event = "Unknown",
+      Event_Row_Min = 1,
+      Event_Row_Max = length(text) - 1
     )
+    warning("No event names recognized - defaulting to 'Unknown'")
+  }
   return(events)
 }
