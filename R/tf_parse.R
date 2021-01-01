@@ -80,9 +80,8 @@ tf_parse <-
     # file <-
     #   system.file("extdata", "day1-combo.pdf", package = "JumpeR")
     #
-    # file <- read_results(event_links[1])
-    #
-    #
+    # file <- read_results(event_links[75])
+    # file <- read_results(system.file("extdata", "Results-IVP-Track-Field-Championship-2019-20-v2.pdf", package = "JumpeR"))
     # avoid <- c("[:alpha:]\\: .*")
     # typo <- typo_default
     # replacement <- replacement_default
@@ -112,6 +111,7 @@ tf_parse <-
         stringr::str_replace_all("\\*(\\d{1,})", replacement = "\\1") %>%  # removes * placed in front of place number in ties
         .[purrr::map(., length) > 0] %>%
         .[purrr::map(., stringr::str_length) > 50] %>%
+        .[purrr::map_dbl(., stringr::str_count, "\\)") < 2] %>%  # remove inline splits and team scores as 1) Alfred 2) Ithaca etc.
         .[purrr::map_lgl(., stringr::str_detect, paste0(Result_String, "|DQ|DNS|DNF|FOUL|NH|SCR|FS"))] %>% # must Results_String because all results do
         .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "\\d{3}\\.\\d{2}")))] %>% # closes loophole in Result_String where a number like 100.00 could get through even though it's not a valid result
         .[purrr::map_lgl(., ~ !any(
@@ -316,8 +316,8 @@ tf_parse <-
           ) %>%
           dplyr::mutate(
             Prelims_Result = dplyr::case_when(
-              stringr::str_detect(V6, Result_Specials_String) &
-                stringr::str_detect(V7, Result_Specials_String) ~ V6,
+              stringr::str_detect(V6, Result_Specials_String) == TRUE &
+                stringr::str_detect(V7, Result_Specials_String) == TRUE ~ V6,
               TRUE ~ "NA"
             )
           ) %>%
@@ -393,10 +393,10 @@ tf_parse <-
         df_8 <- data_length_8 %>%
           list_transform() %>%
           dplyr::mutate(Place = V1) %>%
-          dplyr::mutate(
-            Bib_Number = dplyr::case_when(stringr::str_detect(V2, "^\\d{1,6}$") ~ V2,
-                                          TRUE ~ "NA")
-          ) %>%
+          dplyr::mutate(Bib_Number = dplyr::case_when(
+            stringr::str_detect(V2, "^\\d{1,6}$") ~ V2,
+            TRUE ~ "NA"
+          )) %>%
           dplyr::mutate(
             Name = dplyr::case_when(
               stringr::str_detect(V2, Name_String) ~ V2,
@@ -435,8 +435,12 @@ tf_parse <-
             )
           ) %>%
           dplyr::mutate(
-            Wind_Speed = dplyr::case_when(stringr::str_detect(V7, Wind_String) ~ V7,
-                                          TRUE ~ "NA")
+            Wind_Speed = dplyr::case_when(
+              stringr::str_detect(V6, Wind_String) == TRUE &
+                stringr::str_detect(V7, Wind_String) == FALSE  ~ V6,
+              stringr::str_detect(V7, Wind_String) ~ V7,
+              TRUE ~ "NA"
+            )
           ) %>%
           dplyr::mutate(
             Notes = dplyr::case_when(
@@ -490,19 +494,24 @@ tf_parse <-
           ) %>%
           dplyr::mutate(
             Team = dplyr::case_when(
-              stringr::str_detect(V3, Age_String) &
-                stringr::str_detect(V4, "[:alpha:]{2,}") ~ V4,
+              stringr::str_detect(V3, Age_String) == FALSE &
+                # stringr::str_detect(V4, Age_String) == FALSE &
+                stringr::str_detect(V4, Result_Specials_String) == TRUE &
+                stringr::str_detect(V3, "[:alpha:]{2,}") == TRUE ~ V3,
+              stringr::str_detect(V3, Age_String) == TRUE &
+                stringr::str_detect(V4, "[:alpha:]{2,}") == TRUE ~ V4,
                 stringr::str_detect(V3, Name_String) == TRUE &
                 stringr::str_detect(V5, Result_Specials_String) == TRUE &
-                stringr::str_detect(V4, "[:alpha:]{2,}") ~ V4,
-              stringr::str_detect(V4, Age_String) &
-                stringr::str_detect(V5, "[:alpha:]{2,}") ~ V5,
+                stringr::str_detect(V4, "[:alpha:]{2,}") == TRUE ~ V4,
+              stringr::str_detect(V4, Age_String) == TRUE &
+                stringr::str_detect(V5, "[:alpha:]{2,}") == TRUE ~ V5,
               TRUE ~ "NA"
             )
           ) %>%
           dplyr::mutate(
             Finals_Result = dplyr::case_when(
-              stringr::str_detect(V5, Result_Specials_String) & # to deal with results that have both metric and imperial result - prefer metric
+              stringr::str_detect(V4, Result_Specials_String) == TRUE ~ V4,
+              stringr::str_detect(V5, Result_Specials_String) == TRUE & # to deal with results that have both metric and imperial result - prefer metric
                 stringr::str_detect(V5, "m") == TRUE  &
                 stringr::str_detect(V6, Result_Specials_String) == TRUE &
                 stringr::str_detect(V6, "m") == FALSE ~ V5,
@@ -510,15 +519,19 @@ tf_parse <-
                 stringr::str_detect(V5, "m") == FALSE  &
                 stringr::str_detect(V6, Result_Specials_String) == TRUE &
                 stringr::str_detect(V6, "m") == TRUE ~ V6,
-              stringr::str_detect(V5, Result_Specials_String) &
+              stringr::str_detect(V5, Result_Specials_String) == TRUE &
                 stringr::str_detect(V6, Result_Specials_String) == FALSE ~ V5,
               stringr::str_detect(V6, Result_Specials_String) == TRUE ~ V6,
               TRUE ~ "NA"
             )
           ) %>%
           dplyr::mutate(
-            Wind_Speed = dplyr::case_when(stringr::str_detect(V6, Wind_String) ~ V6,
-                                          TRUE ~ "NA")
+            Wind_Speed = dplyr::case_when(
+              stringr::str_detect(V5, Wind_String) == TRUE &
+                stringr::str_detect(V6, Wind_String) == FALSE ~ V5,
+              stringr::str_detect(V6, Wind_String) ~ V6,
+              TRUE ~ "NA"
+            )
           ) %>%
           dplyr::select(
             Place,
@@ -757,9 +770,20 @@ tf_parse <-
     # if("Notes" %in% names(data) == FALSE)
     # {data$Notes <- NA}
 
+    #### added in to work with arrange/distinct calls after adding in events ####
+    if("Prelims_Result" %in% names(data) == FALSE){
+      data$Prelims_Result <- NA
+    }
+
+    if("Wind_Speed" %in% names(data) == FALSE){
+      data$Wind_Speed <- NA
+    }
+
     #### add in events based on row number ranges ####
     data  <-
-      transform(data, Event = events$Event[findInterval(Row_Numb, events$Event_Row_Min)])
+      transform(data, Event = events$Event[findInterval(Row_Numb, events$Event_Row_Min)]) %>%
+      dplyr::arrange(Name, Team, is.na(Wind_Speed), is.na(Prelims_Result)) %>% # new 1/1/21 to deal with results presented by heat and as final on same page
+      dplyr::distinct(Name, Team, Event, Prelims_Result, Finals_Result, .keep_all = TRUE) # new 1/1/21 to deal with results presented by heat and as final on same page
 
     #### remove empty columns (all values are NA) ####
     data <- Filter(function(x)
@@ -775,6 +799,7 @@ tf_parse <-
     #### clean up uneeded columns ####
     data <- data %>%
       # dplyr::select(-Row_Numb, -Exhibition, -Points, -Heat, -Notes)
+    dplyr::arrange(Row_Numb) %>%
     dplyr::select(which(SwimmeR::`%!in%`(names(.), c("Row_Numb", "Exhibition", "Points", "Heat", "Notes"))))
 
     return(data)

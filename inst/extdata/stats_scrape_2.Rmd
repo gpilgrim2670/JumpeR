@@ -1,0 +1,277 @@
+
+```{r}
+library(rvest)
+library(tidyverse)
+library(SwimmeR)
+library(JumpeR)
+```
+
+```{r}
+# First three blocks are setting up the links from the timing company's pages, in this case Delta Timing.
+
+url <- "http://results.deltatiming.com/"
+selector <- "h4 a"
+
+contents <- read_html(url)
+links <- html_attr(html_nodes(contents, selector), "href")
+
+links <- links[!links %>% str_detect("xc|rowing|canoe|usack|icf-cam|wwc|flotrack")]
+school_pages <- links[links %>%
+        str_detect("results.deltatiming")]
+links <- links[!(links %in% school_pages)]
+
+links <- ifelse(str_detect(links, "http"), paste0("", links), paste0("http://results.deltatiming.com", links))
+links <- links[c(-1, -157)]
+```
+
+```{r}
+html_fnx <- function(x, select) { html_session(x) %>%
+    html_nodes(select) %>%
+      html_attr("href")
+    }
+event_links <- map(links[1:298], html_fnx, "td a")
+```
+
+```{r}
+
+event_links <- event_links %>%
+  flatten() %>%
+  map(str_remove, "/tf") 
+event_links <- paste0("http://tfresultsdata.deltatiming.com", event_links, ".htm")
+
+```
+
+
+```{r}
+#remove some high school meets
+
+event_links <- event_links[!event_links %>%
+              str_detect("hs")]
+```
+
+```{r}
+
+# Links and variables for testing
+
+
+url_trial <- "http://tfresultsdata.deltatiming.com/2019-war-eagle-invitational/190419F032.htm"
+event_results_trial <- read_results(url_trial)
+
+sprint1 <- "http://tfresultsdata.deltatiming.com/2019-war-eagle-invitational/190419F015.htm"
+sprint2 <- "http://tfresultsdata.deltatiming.com/2019-horizon-outdoor-championships/190503P004.htm"
+
+sprint1 <- read_results(sprint1)
+sprint2 <- read_results(sprint2)
+
+throw_test <- read_results("http://tfresultsdata.deltatiming.com/2018-georgia-tech-invitational/180420F008.htm")
+throw_valid <- read_results("http://tfresultsdata.deltatiming.com/2018-georgia-tech-invitational/180420F008.htm")
+
+```
+
+```{r}
+#Isolate event name from results. We'll likely eventually just create a list of events and use is.in or something like that, so we're not dependent on the "Event xyz" format.
+
+event_name <- throw_valid %>%
+  str_match("Event \\d{1,}(.*)$") %>%
+  as.data.frame() %>%
+  select(V2) %>%
+  filter(!is.na(V2)) %>%
+  trimws()
+
+event_name
+```
+
+```{r}
+# Helper / component functions 
+
+# Generic cleaning of results - things that should be done / need to be done to all events from all sources
+
+results_cleaner <- function (event_results) {
+
+#remove <- c("\n\\s*", "#\\s*[0-9]*")
+remove <- c("\n\\s*", "#\\s*(?=\\d{1,4})[0-9]*", "\\$", "Q|q", "=")
+ 
+        
+event_results <- event_results %>%
+    str_remove_all(paste0(remove, collapse="|")) %>%
+    tibble() %>%
+    rename("event_results" = ".") %>%
+    filter(!str_detect(event_results, "DNS")) %>%
+    mutate(event_results = trimws(event_results))
+ 
+return(event_results)
+
+}
+
+# Tidy throws and jumps (precursor to parsing out the wind for outdoor horizontal jumps)
+
+horizontal_tidy <- function (event_results) {
+ 
+event_results <- event_results %>%
+    pivot_longer(cols = F1:F6, names_to = "Attempt", values_to = "Distance") %>%
+    mutate(Attempt = as.factor(str_remove(Attempt, "F")))
+
+return(event_results)
+
+}
+
+# Parse wind from jump distance for outdoor horizontal jumps
+
+wind <- function (event_results) {
+
+event_results <- event_results %>%
+    mutate(Distance = str_remove(Distance, "\\)")) %>%
+    separate(Distance, into = c("Distance", "Wind"), sep = "([\\( | \\s | \\+])") %>%
+    mutate(Wind = ifelse(Wind == '', "0.0", Wind))  # obnoxious little necessary workaround because `separate` coerces 0.0 to blank (not NA, blank)
+
+return(event_results)
+
+}
+
+```
+
+```{r}
+
+### NO TESTING IN THIS BLOCK ###
+
+# Still looking for best way to clean-up "team rankings" when they are inserted via "=====" rows or maybe just the word(s) 'team' or 'rankings' or 'score'
+# And how to deal with multiple flights on a results page
+
+throw_jump <- function (event_results) {
+  
+ results <- results_cleaner(event_results)
+   
+ results <- results %>%
+   mutate(ID = row_number()) %>%
+   filter(ID >= (which(str_starts(event_results, "1\\s*[A-Z]")))) %>%
+   mutate(ID = row_number()) %>%
+   mutate(results = (ifelse((ID) %% 2 != 0, event_results[ID + 1], "odd"))) %>%
+   filter((ID) %% 2 != 0) %>%
+   select(-ID) %>%
+   mutate(event_results = str_replace_all(event_results, "[0-9+]", " ")) %>%
+   mutate(event_results = str_replace(event_results, "..\\sm(.*)", "")) %>%
+   mutate(results = str_replace_all(results, "m", "")) %>%
+   separate(results, c("F1", "F2", "F3", "F4", "F5", "F6"),  "\\s{1,}") %>%
+   rename("Athlete" = event_results) %>%
+   mutate(Event = event_name)
+
+ results <- horizontal_tidy(results)
+ 
+ results <- wind(results)
+ 
+  return(results)
+}
+
+throw_df <- throw_jump(throw_valid)
+
+```
+
+```{r}
+
+vault_highjump <- function (event_results) {
+   
+results <- results_cleaner(event_results)   
+   
+results <-  results %>%
+   mutate(event_results = trimws(event_results)) %>%
+   mutate(ID = row_number()) %>%
+   filter(ID >= which(str_starts(event_results, "1\\s*[A-Z]"))) %>%
+   mutate(ID = row_number()) %>%
+   mutate(heights = ifelse(str_starts(event_results, "[0-9]{1,2}\\s*[A-Z]"), event_results[ID + 1], "NA"), 
+          results = ifelse(str_starts(event_results, "[0-9]{1,2}\\s*[A-Z]"), event_results[ID + 2], "NA")) %>%
+   filter(heights != "NA" | results != "NA") %>%
+   select(-ID) %>%
+   mutate(event_results  = str_replace_all(event_results, "[0-9]", " ")) %>%
+   mutate(event_results = str_replace_all(event_results, "..\\sm(.*)", ""))
+
+ heights <- as.data.frame(str_split_fixed(results$heights, "\\s{1,}", 12))
+ marks <- as.data.frame(str_split_fixed(results$results, "\\s{1,}", 12))
+ 
+heights <- set_names(heights, paste0(colnames(heights), "_", "Bar")) 
+marks <- set_names(marks, paste0(colnames(marks), "_", "Outcome")) 
+
+# Tidy up! Because of the unusual arrangement of vertical jumps - fixed bar height progessions, 1-3 outcomes per height, open-ended number of bar heights - tidying is more than an academic exercise here. Anything other than a standard display of results requires the data to be tidy.
+
+results %>%
+   bind_cols(heights, marks) %>%
+   select(-results, -heights) %>%
+   pivot_longer(
+      cols = !event_results,
+      names_to = c("height", ".value"),
+      names_sep = "_"
+   ) %>%
+   filter(Bar != "")
+
+}
+
+vault_df <- vault_highjump(event_results_trial)
+
+```
+
+```{r}
+
+#Sprints and hurdles working block
+
+sprint_sectional <- results_cleaner(sprint1)
+
+sprint_sectional_2 <- sprint_sectional %>%
+   mutate(section = str_extract(event_results, "Section\\s*[0-9]")) %>%
+   mutate(wind = str_extract(event_results, "(\\+|\\-|\\s)[0-9]\\.[0-9]"))  %>% # Section and Wind are given for each section, not per athlete, so we'll first pull them into a column and then two lines down fill in that data for each athlete
+   filter(str_starts(event_results, "[0-9]{1,2}\\s+[A-Z]|Section")) %>%  # Keep only the rows we need
+   fill(section, wind) %>%
+   filter(!str_detect(event_results, "Section")) %>% # No longer need the rows with the Section and Wind info
+   mutate(event_results =  str_replace_all(event_results, "^[0-9]\\s*", " ")) %>%
+   mutate(time = str_extract(event_results, "[0-9].*")) %>%
+   mutate(event_results = str_remove(event_results, "[0-9].*")) %>%
+   rename(Name = event_results) %>%
+   distinct(Name, .keep_all = TRUE)  # This gets rid of the "final" combined rankings at the bottom. We had to wait until this late to do it because we had to wait until their name & school were isolated for the values to be distinct (heaven forbid the same data be presented in the same way at the top and bottom)
+
+
+```
+```{r}
+
+sprint_wide <- results_cleaner(sprint2)
+
+sprint_wide_2 <- sprint_wide %>%
+   mutate(ID = row_number()) %>%
+   filter(ID >= which(str_detect(event_results, "Name|Athlete"))) %>%
+   select(-ID) %>%
+   filter(str_starts(event_results, "[0-9]{1,2}\\s+[A-Z]|Section") | str_detect(event_results, "Name")) %>%
+   mutate(event_results = str_replace(event_results, "Name", "FirstName LastName")) %>%
+   mutate(event_results = str_replace(event_results, "^[0-9]{1,2}\\s*", " "))  %>%
+   mutate(Tiebreak = str_extract(event_results, "[0-9]{1,2}\\.[0-9]{3}")) %>%    # Create a new column for when they need thousandths to determine placing
+   mutate(event_results = str_trim(str_replace(event_results, "([0-9]{1,2}\\.[0-9]{3})", " ")))  %>%   # Remove the "tiebreak" from the original row / cell
+   mutate(event_results = str_replace(event_results, "\\s([0-9])", "@\\1")) %>%     # Insert a separator between the text and the numbers
+   separate(event_results, into = c("Words", "Numbers"), sep = "@")
+ 
+new_cols <- unlist(str_split(sprint_wide_2$Words[1], "\\s+"))    # Separate out the column headings from the original result sheet
+
+numbers <- str_extract_all(sprint_wide_2$Numbers[-1], "[0-9].*")  # Split the block of numbers into individual numbers
+numbers <- str_split(numbers, "\\s+")
+
+cols_to_countback <- length(numbers[[3]])    # The number of numerical values in the results - some will have seed times and some won't, some will have heat # and some won't, etc
+cols_to_add <- tail(new_cols, cols_to_countback)  # How many of the columns we'll need for the number of numerical values
+
+temp_df <- as.data.frame(do.call(rbind, numbers))
+colnames(temp_df) <- cols_to_add
+temp_df   # Create a dataframe of the numerical values, and slap the column headers atop them
+
+sprint_wide_3 <- sprint_wide_2[-1,]   # Remove the first row, which contained what are now the column headers
+sprint_wide_3 %>%
+   bind_cols(temp_df)  %>% 
+   View
+
+
+
+
+
+```
+
+```{r}
+
+```
+
+```{r}
+names
+
+```

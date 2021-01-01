@@ -59,6 +59,8 @@ test_that("tf_parse_standard", {
   # readr::write_rds(df_test, "~/JumpeR/inst/extdata/df_standard.rds")
   # mac
   # readr::write_rds(df_test, "inst/extdata/df_standard.rds")
+  # to compare results
+  # df <- dplyr::anti_join(df_standard, df_test)
 
   # compare standard to test
   expect_equivalent(df_standard,
