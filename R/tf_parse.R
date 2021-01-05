@@ -31,9 +31,9 @@
 #' @param replacement a list of fixes for the strings in \code{typo}.  Here one could pass "Central High School" (one space between "Central" and "High") to fix the issue described in \code{typo}
 #' @param attempts should tf_parse try to include attempts for jumping/throwing events?  Defaults to \code{FALSE}
 #'
-#' @return a dataframe
+#' @return a dataframe of track and field results
 #'
-#' @seealso \code{tf_parse} is meant to be preceeded by \code{\link{read_results}}
+#' @seealso \code{tf_parse} is meant to be preceded by \code{\link{read_results}}
 #'
 #' @export
 
@@ -43,6 +43,7 @@ tf_parse <-
            typo = typo_default,
            replacement = replacement_default,
            attempts = FALSE) {
+
     #### default typo and replacement strings ####
     typo_default <- c("typo")
 
@@ -106,9 +107,20 @@ tf_parse <-
 
     #### clean input data ####
     suppressWarnings(
-      data_1 <- as_lines_list_2 %>%
+      raw_results <- as_lines_list_2 %>%
         .[purrr::map_lgl(., ~ !any(stringr::str_detect(., avoid)))] %>% # remove lines contained in avoid
-        stringr::str_replace_all("\\*(\\d{1,})", replacement = "\\1") %>%  # removes * placed in front of place number in ties
+        stringr::str_replace_all(stats::setNames(replacement, typo)) %>%
+        stringr::str_replace_all("\\*(\\d{1,})", replacement = "\\1")) # removes * placed in front of place number in ties
+
+    if(any(stringr::str_detect(raw_results, "flash")) == TRUE){
+      data <- flash_parse(raw_results)
+
+      return(data)
+    } else {
+
+
+    suppressWarnings(
+      data_1 <- raw_results %>%
         .[purrr::map(., length) > 0] %>%
         .[purrr::map(., stringr::str_length) > 50] %>%
         .[purrr::map_dbl(., stringr::str_count, "\\)") < 2] %>%  # remove inline splits and team scores as 1) Alfred 2) Ithaca etc.
@@ -122,10 +134,10 @@ tf_parse <-
         ))] %>% # removes event titles that also include distances, like "Event 1 Short Hurdles 0.762m"
         .[purrr::map_lgl(., stringr::str_detect, "[:alpha:]{2,}")] %>% # must have at least two letters in a row
         # .[purrr::map_lgl(., ~ !any(stringr::str_detect(., avoid)))] %>% # remove lines contained in avoid
-        stringr::str_remove_all("\n") %>%
+        stringr::str_remove_all("\n\\s*") %>%
         stringr::str_remove_all("\\d{0,2}\\:?\\d{1,2}\\.\\d{3}") %>%
         # trimws() %>%
-        stringr::str_replace_all(stats::setNames(replacement, typo)) %>%
+        # stringr::str_replace_all(stats::setNames(replacement, typo)) %>%
         # remove 'A', 'B' etc. relay designators
         stringr::str_replace_all(" \\'[A-Z]\\' ", "  ") %>% # tf specific  - removes relay A, B etc. designators
         stringr::str_replace_all("  [A-Z]  ", "  ") %>%
@@ -133,8 +145,8 @@ tf_parse <-
         stringr::str_remove_all("(?<=\\.\\d{2})[Q|q](?=\\s)") %>% # tf specific - removes "q" or "Q" sometimes used to designate a qualifying result
         stringr::str_remove_all("(?<=\\s)[J|j](?=\\d)") %>% # tf specific - removes "j" or "J" sometimes used to designate a judged result
         stringr::str_replace_all("-{2,5}", "10000") %>% #8/26
-        stringr::str_replace_all("(\\.\\d{2})\\d+", "\\1 ") %>% # added 8/21 for illinois to deal with points column merging with final times column
-        stringr::str_replace_all("\\d{1,2} (\\d{1,})$", "  \\1 ") %>% # added 8/21 for illinois to deal with points column merging with final times column
+        # stringr::str_replace_all("(\\.\\d{2})\\d+", "\\1 ") %>% # added 8/21 for illinois to deal with points column merging with final times column
+        # stringr::str_replace_all("\\d{1,2} (\\d{1,})$", "  \\1 ") %>% # added 8/21 for illinois to deal with points column merging with final times column
         stringr::str_replace_all("\\*", "_") %>%
         stringr::str_replace_all(" \\+", "  \\+") %>%  # tf speciifc, for windspeed
         stringr::str_replace_all(" \\-", "  \\-") %>%  # tf speciifc, for windspeed
@@ -803,5 +815,5 @@ tf_parse <-
     dplyr::select(which(SwimmeR::`%!in%`(names(.), c("Row_Numb", "Exhibition", "Points", "Heat", "Notes"))))
 
     return(data)
-
+}
   }

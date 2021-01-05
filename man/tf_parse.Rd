@@ -24,13 +24,13 @@ tf_parse(
 \item{attempts}{should tf_parse try to include attempts for jumping/throwing events?  Defaults to \code{FALSE}}
 }
 \value{
-a dataframe
+a dataframe of track and field results
 }
 \description{
 Outputs list of strings to be processed by \code{tf_parse}
 }
 \seealso{
-\code{tf_parse} is meant to be preceeded by \code{\link{read_results}}
+\code{tf_parse} is meant to be preceded by \code{\link{read_results}}
 }
 \author{
 Greg Pilgrim \email{gpilgrim2670@gmail.com}
