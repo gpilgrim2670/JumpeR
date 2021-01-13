@@ -59,8 +59,8 @@ flash_parse <-
     # file <- c(file_1, file_2, file_3, file_4, file_5)
     #
     # raw_results <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/001-1.pdf") %>%
-    # raw_results <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/025-1.pdf") %>%
-    #   add_row_numbers()
+    raw_results <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/026-1.pdf") %>%
+      add_row_numbers()
 
     #### Pulls out event labels from text ####
     events <- event_parse(raw_results) %>%
@@ -133,7 +133,7 @@ flash_parse <-
           stringr::str_replace_all("(?<=\\d) (?=\\d{1,}$)", "  ") %>% # tf specific - split off row_numb
           stringr::str_replace_all(" \\., ", "  Period, ") %>% # for names that only have a period, as in some singapore results
           stringr::str_replace_all("([:alpha])(\\.[:alpha:])", "\\1 \\2") %>%
-          stringr::str_remove_all("X?PA\\$\\$|XXX|XXO| ?XO ?| O |") %>%  # remove attempts
+          stringr::str_remove_all("X?PA\\$\\$|XXX|XXO| XX | ?XO ?|  O  |  X  |") %>%  # remove attempts
           # stringr::str_remove_all("^[A-Z][a-z].{1,}$") %>%
           trimws() %>%
           .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "^[A-Z][a-z].{1,}$")))]  # remove records
