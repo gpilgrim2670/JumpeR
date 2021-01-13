@@ -59,7 +59,7 @@ flash_parse <-
     # file <- c(file_1, file_2, file_3, file_4, file_5)
     #
     # raw_results <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/001-1.pdf") %>%
-    raw_results <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/026-1.pdf") %>%
+    raw_results <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/027-1.pdf") %>%
       add_row_numbers()
 
     #### Pulls out event labels from text ####
@@ -133,7 +133,7 @@ flash_parse <-
           stringr::str_replace_all("(?<=\\d) (?=\\d{1,}$)", "  ") %>% # tf specific - split off row_numb
           stringr::str_replace_all(" \\., ", "  Period, ") %>% # for names that only have a period, as in some singapore results
           stringr::str_replace_all("([:alpha])(\\.[:alpha:])", "\\1 \\2") %>%
-          stringr::str_remove_all("X?PA\\$\\$|XXX|XXO| XX | ?XO ?|  O  |  X  |") %>%  # remove attempts
+          stringr::str_remove_all("X?X?PA\\$\\$|XXX|XXO| XX | ?XO ?| O | X |") %>%  # remove attempts
           # stringr::str_remove_all("^[A-Z][a-z].{1,}$") %>%
           trimws() %>%
           .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "^[A-Z][a-z].{1,}$")))]  # remove records
@@ -198,15 +198,18 @@ flash_parse <-
             ) %>%
             dplyr::mutate(
               Prelims_Result = dplyr::case_when(
-                stringr::str_detect(V5, Result_Specials_String) &
-                  stringr::str_detect(V6, Result_Specials_String) ~ V5,
-                stringr::str_detect(V6, Result_Specials_String) &
-                  stringr::str_detect(V7, Result_Specials_String) ~ V6,
+                stringr::str_detect(V9, Result_Specials_String) == FALSE &
+                stringr::str_detect(V5, Result_Specials_String) == TRUE &
+                  stringr::str_detect(V6, Result_Specials_String) == TRUE ~ V5,
+                stringr::str_detect(V9, Result_Specials_String) == FALSE &
+                stringr::str_detect(V6, Result_Specials_String) == TRUE &
+                  stringr::str_detect(V7, Result_Specials_String) == TRUE ~ V6,
                 TRUE ~ "NA"
               )
             ) %>%
             dplyr::mutate(
               Finals_Result = dplyr::case_when(
+                stringr::str_detect(V9, Result_Specials_String) == TRUE ~ V9,
                 stringr::str_detect(V5, Result_Specials_String) == TRUE &
                   stringr::str_detect(V6, Result_Specials_String) == FALSE ~ V5,
                 stringr::str_detect(V6, Result_Specials_String) == TRUE &
@@ -235,7 +238,8 @@ flash_parse <-
               )
             ) %>%
             dplyr::mutate(
-              Notes = dplyr::case_when(stringr::str_detect(V9, Points) == FALSE ~ V9,
+              Notes = dplyr::case_when(stringr::str_detect(V9, Points) == FALSE &
+                                         stringr::str_detect(V9, Result_Specials_String) == FALSE ~ V9,
                                        TRUE ~ "NA")
             ) %>%
             dplyr::select(
@@ -295,12 +299,14 @@ flash_parse <-
             dplyr::mutate(
               Prelims_Result = dplyr::case_when(
                 stringr::str_detect(V4, Result_Specials_String) == TRUE &
-                  stringr::str_detect(V5, Result_Specials_String) == TRUE ~ V4,
+                  stringr::str_detect(V5, Result_Specials_String) == TRUE &
+                  stringr::str_detect(V8, Result_Specials_String) == FALSE ~ V4,
                 TRUE ~ "NA"
               )
             ) %>%
             dplyr::mutate(
               Finals_Result = dplyr::case_when(
+                stringr::str_detect(V8, Result_Specials_String) ~ V8,
                 stringr::str_detect(V4, Result_Specials_String) &
                   stringr::str_detect(V5, Result_Specials_String) ~ V5,
                 stringr::str_detect(V4, Result_Specials_String) == TRUE &
@@ -396,12 +402,14 @@ flash_parse <-
             dplyr::mutate(
               Prelims_Result = dplyr::case_when(
                 stringr::str_detect(V4, Result_Specials_String) == TRUE &
-                  stringr::str_detect(V5, Result_Specials_String) == TRUE ~ V4,
+                  stringr::str_detect(V5, Result_Specials_String) == TRUE &
+                  stringr::str_detect(V7, Result_Specials_String) == FALSE ~ V4,
                 TRUE ~ "NA"
               )
             ) %>%
             dplyr::mutate(
               Finals_Result = dplyr::case_when(
+                stringr::str_detect(V7, Result_Specials_String) == TRUE ~ V7,
                 stringr::str_detect(V4, Result_Specials_String) &
                   stringr::str_detect(V5, Result_Specials_String) ~ V5,
                 stringr::str_detect(V4, Result_Specials_String) == TRUE &
@@ -502,6 +510,7 @@ flash_parse <-
             ) %>%
             dplyr::mutate(
               Finals_Result = dplyr::case_when(
+                stringr::str_detect(V6, Result_Specials_String) == TRUE ~ V6,
                 stringr::str_detect(V4, Result_Specials_String) == TRUE ~ V4,
                 stringr::str_detect(V5, Result_Specials_String) == TRUE & # to deal with results that have both metric and imperial result - prefer metric
                   stringr::str_detect(V5, "m") == TRUE  &

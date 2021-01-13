@@ -52,7 +52,7 @@ test_that("tf_parse_standard", {
   df_test <- Read_Map(sources)
   df_test <- Parse_Map(df_test)
   df_test <- dplyr::bind_rows(df_test, .id = "source") %>%
-    dplyr::select(-source)
+    dplyr::select(-source, -Notes)
 
   # to regenerate df_standard if df_test is more correct
   # windows

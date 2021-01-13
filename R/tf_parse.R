@@ -808,11 +808,11 @@ tf_parse <-
       data <- dplyr::left_join(data, attempts, by = "Row_Numb")
     }
 
-    #### clean up uneeded columns ####
+    #### remove unneeded columns ####
     data <- data %>%
-      # dplyr::select(-Row_Numb, -Exhibition, -Points, -Heat, -Notes)
     dplyr::arrange(Row_Numb) %>%
-    dplyr::select(which(SwimmeR::`%!in%`(names(.), c("Row_Numb", "Exhibition", "Points", "Heat", "Notes"))))
+    dplyr::select(which(SwimmeR::`%!in%`(names(.), c("Row_Numb", "Exhibition", "Points", "Heat"))))
+    # dplyr::select(which(SwimmeR::`%!in%`(names(.), c("Row_Numb", "Exhibition", "Points", "Heat", "Notes"))))
 
     return(data)
 }
