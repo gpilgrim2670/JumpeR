@@ -59,7 +59,7 @@ flash_parse <-
     # file <- c(file_1, file_2, file_3, file_4, file_5)
     #
     # raw_results <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/001-1.pdf") %>%
-    # raw_results <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/019-1.pdf") %>%
+    # raw_results <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/025-1.pdf") %>%
     #   add_row_numbers()
 
     #### Pulls out event labels from text ####
@@ -101,6 +101,7 @@ flash_parse <-
           # stringr::str_remove_all("\\d{0,2}\\:?\\d{1,2}\\.\\d{3}") %>%
           # trimws() %>%
           # remove 'A', 'B' etc. relay designators
+          stringr::str_replace_all("–", "PA$$ ") %>% # special dash from pole vault in flash results
           stringr::str_replace_all(" \\'[A-Z]\\' ", "  ") %>% # tf specific  - removes relay A, B etc. designators
           stringr::str_replace_all("  [A-Z]  ", "  ") %>%
           stringr::str_replace_all("\\'\\'", "  ") %>%
@@ -130,8 +131,9 @@ flash_parse <-
           stringr::str_replace_all(" (W\\d{1,3}) ", "  \\1  ") %>% # tf specific - gendered ages W
           stringr::str_replace_all("(?<=\\d\\.\\d) (?=\\d{1,2}\\s)", "  ") %>% # tf specific - split off wind and heat number
           stringr::str_replace_all("(?<=\\d) (?=\\d{1,}$)", "  ") %>% # tf specific - split off row_numb
-          stringr::str_replace_all(" \\., ", "  Period, ") %>%
+          stringr::str_replace_all(" \\., ", "  Period, ") %>% # for names that only have a period, as in some singapore results
           stringr::str_replace_all("([:alpha])(\\.[:alpha:])", "\\1 \\2") %>%
+          stringr::str_remove_all("X?PA\\$\\$|XXX|XXO| ?XO ?| O |") %>%  # remove attempts
           # stringr::str_remove_all("^[A-Z][a-z].{1,}$") %>%
           trimws() %>%
           .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "^[A-Z][a-z].{1,}$")))]  # remove records
@@ -187,12 +189,10 @@ flash_parse <-
             ) %>%
             dplyr::mutate(
               Team = dplyr::case_when(
-                stringr::str_detect(V3, Age_String) &
-                  stringr::str_detect(V4, "[:alpha:]{2,}") ~ V4,
-                stringr::str_detect(V4, Age_String) &
-                  stringr::str_detect(V5, "[:alpha:]{2,}") ~ V5,
-                stringr::str_detect(V5, Age_String) &
-                  stringr::str_detect(V6, "[:alpha:]{2,}") ~ V6,
+                stringr::str_detect(V2, Name_String) == TRUE &
+                  stringr::str_detect(V4, Result_Specials_String) == TRUE ~ V3,
+                stringr::str_detect(V2, Name_String) == TRUE &
+                  stringr::str_detect(V4, "PASS|XX") == TRUE ~ V3,
                 TRUE ~ "NA"
               )
             ) %>%
@@ -287,6 +287,8 @@ flash_parse <-
               Team = dplyr::case_when(
                 stringr::str_detect(V2, Name_String) == TRUE &
                   stringr::str_detect(V4, Result_Specials_String) == TRUE ~ V3,
+                stringr::str_detect(V2, Name_String) == TRUE &
+                  stringr::str_detect(V4, "--") == TRUE ~ V3,
                 TRUE ~ "NA"
               )
             ) %>%

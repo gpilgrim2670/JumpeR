@@ -7,7 +7,7 @@
 attempts_parse(text)
 }
 \arguments{
-\item{text}{output of \code{read_results} with tow numbers appended by \code{add_row_numbers}}
+\item{text}{output of \code{read_results} with row numbers appended by \code{add_row_numbers}}
 }
 \value{
 returns a dataframe with split times and row numbers

@@ -16,7 +16,7 @@
 #' @importFrom purrr map_lgl
 #' @importFrom purrr map
 #'
-#' @param text output of \code{read_results} with tow numbers appended by \code{add_row_numbers}
+#' @param text output of \code{read_results} with row numbers appended by \code{add_row_numbers}
 #' @return returns a dataframe with split times and row numbers
 #'
 #' @seealso \code{attempts_parse} runs inside \code{\link{tf_parse}} on the output of \code{\link{read_results}} with row numbers from \code{\link{add_row_numbers}}
