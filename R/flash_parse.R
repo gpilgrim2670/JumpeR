@@ -63,10 +63,9 @@ flash_parse <-
     # numbs_sing <- paste0("0", numbs_sing)
     # numbs_dub <- as.character(seq(10, 40, 1))
     # numbs <- c(numbs_sing, numbs_dub)
-    # numbs_end <- paste0(numbs, "-1.pdf")
+    # numbs_end <- paste0(numbs, "-2.pdf")
     # link_start <- "https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/0"
     # links <- paste0(link_start, numbs_end)
-    # links
     #
     # raw_results <- map(links, purrr::safely(read_results, otherwise = NA))
     # raw_results <- SwimmeR:::discard_errors(raw_results)
@@ -417,15 +416,18 @@ flash_parse <-
             ) %>%
             dplyr::mutate(
               Prelims_Result = dplyr::case_when(
+                stringr::str_detect(V8, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V8, "^\\d\\d?\\.?\\d?$") == FALSE & # for points column in decathalon
                 stringr::str_detect(V4, Result_Specials_String) == TRUE &
-                  stringr::str_detect(V5, Result_Specials_String) == TRUE &
-                  stringr::str_detect(V8, Result_Specials_String) == FALSE ~ V4,
+                  stringr::str_detect(V5, Result_Specials_String) == TRUE ~ V4,
                 TRUE ~ "NA"
               )
             ) %>%
             dplyr::mutate(
               Finals_Result = dplyr::case_when(
                 stringr::str_detect(V8, Result_Specials_String) ~ V8,
+                stringr::str_detect(V8, "^\\d\\d?\\.?\\d?$") == TRUE & # for points column in decathalon
+                  stringr::str_detect(V7, Result_Specials_String) ~ V7, # for points column in decathalon
                 stringr::str_detect(V4, Result_Specials_String) &
                   stringr::str_detect(V5, Result_Specials_String) ~ V5,
                 stringr::str_detect(V4, Result_Specials_String) == TRUE &
@@ -456,7 +458,7 @@ flash_parse <-
             ) %>%
             dplyr::mutate(
               Points = dplyr::case_when(
-                stringr::str_detect(V7, Heat) == TRUE &
+                # stringr::str_detect(V7, Heat) == TRUE &
                   stringr::str_detect(V8, "^\\d\\d?\\.?\\d?$") ~ V8,
                 TRUE ~ "NA"
               )
@@ -563,8 +565,9 @@ flash_parse <-
             ) %>%
             dplyr::mutate(
               Points = dplyr::case_when(
-                stringr::str_detect(V7, Heat) == TRUE &
-                  stringr::str_detect(V8, "^\\d\\d?\\.?\\d?$") ~ V8,
+                # stringr::str_detect(V7, Heat) == TRUE &
+                  stringr::str_detect(V7, "^\\d\\d?\\.?\\d?$") &
+                    stringr:: str_detect(V1, "[:alpha:]") == FALSE ~ V7,
                 TRUE ~ "NA"
               )
             ) %>%
@@ -661,6 +664,13 @@ flash_parse <-
                 TRUE ~ "NA"
               )
             ) %>%
+            dplyr::mutate(
+              Points = dplyr::case_when(
+                  stringr::str_detect(V6, "^\\d\\d?\\.?\\d?$") &
+                    stringr:: str_detect(V1, "[:alpha:]") == FALSE ~ V6, # decathalon points
+                TRUE ~ "NA"
+              )
+            ) %>%
             dplyr::select(
               Place,
               Bib_Number,
@@ -669,6 +679,7 @@ flash_parse <-
               Team,
               Finals_Result,
               Wind_Speed,
+              Points,
               'Row_Numb' = V7
             ) %>%
             dplyr::na_if("NA")
@@ -753,6 +764,13 @@ flash_parse <-
                 stringr::str_detect(V5, Result_Specials_String) == TRUE ~ V5
               )
             ) %>%
+            dplyr::mutate(
+              Points = dplyr::case_when(
+                stringr::str_detect(V5, "^\\d\\d?\\.?\\d?$") &
+                  stringr:: str_detect(V1, "[:alpha:]") == FALSE ~ V5, # decathalon points
+                TRUE ~ "NA"
+              )
+            ) %>%
             dplyr::select(
               Place,
               Bib_Number,
@@ -761,6 +779,7 @@ flash_parse <-
               Team,
               Prelims_Result,
               Finals_Result,
+              Points,
               'Row_Numb' = V6
             ) %>%
             dplyr::na_if("NA")
