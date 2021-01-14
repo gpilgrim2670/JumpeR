@@ -74,7 +74,7 @@ flash_parse <-
     #   add_row_numbers()
 
     # # raw_results <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/001-1.pdf") %>%
-    # raw_results <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/040-1.pdf") %>%
+    # raw_results <- read_results("https://www.flashresults.com/2019_Meets/Indoor/01-18_HokieInvite/005-1.pdf") %>%
     #   add_row_numbers()
 
     #### Pulls out event labels from text ####
@@ -92,6 +92,7 @@ flash_parse <-
     Wind_String <-
       "\\+\\d\\.\\d|\\-\\d\\.\\d|^NWS$|^NWI$|^\\d\\.\\d$"
     Age_String <- "^SR$|^JR$|^SO$|^FR$|^M?W?[:digit:]{1,3}$"
+    Points_String <- "^\\d\\d?\\.?\\d?$"
 
 
     ########### need to deal with Q/q 1/5/2021 ##########
@@ -417,7 +418,7 @@ flash_parse <-
             dplyr::mutate(
               Prelims_Result = dplyr::case_when(
                 stringr::str_detect(V8, Result_Specials_String) == FALSE &
-                  stringr::str_detect(V8, "^\\d\\d?\\.?\\d?$") == FALSE & # for points column in decathalon
+                  stringr::str_detect(V8, Points_String) == FALSE & # for points column in decathalon
                 stringr::str_detect(V4, Result_Specials_String) == TRUE &
                   stringr::str_detect(V5, Result_Specials_String) == TRUE ~ V4,
                 TRUE ~ "NA"
@@ -426,7 +427,7 @@ flash_parse <-
             dplyr::mutate(
               Finals_Result = dplyr::case_when(
                 stringr::str_detect(V8, Result_Specials_String) ~ V8,
-                stringr::str_detect(V8, "^\\d\\d?\\.?\\d?$") == TRUE & # for points column in decathalon
+                stringr::str_detect(V8, Points_String) == TRUE & # for points column in decathalon
                   stringr::str_detect(V7, Result_Specials_String) ~ V7, # for points column in decathalon
                 stringr::str_detect(V4, Result_Specials_String) &
                   stringr::str_detect(V5, Result_Specials_String) ~ V5,
@@ -452,14 +453,14 @@ flash_parse <-
               Heat = dplyr::case_when(
                 stringr::str_detect(V7, Wind_String) == FALSE &
                   stringr::str_detect(V7, "^\\d{1,2}$") == TRUE &
-                  stringr::str_detect(V8, "^\\d\\d?\\.?\\d?$") == TRUE ~ V7,
+                  stringr::str_detect(V8, Points_String) == TRUE ~ V7,
                 TRUE ~ "NA"
               )
             ) %>%
             dplyr::mutate(
               Points = dplyr::case_when(
                 # stringr::str_detect(V7, Heat) == TRUE &
-                  stringr::str_detect(V8, "^\\d\\d?\\.?\\d?$") ~ V8,
+                  stringr::str_detect(V8, Points_String) ~ V8,
                 TRUE ~ "NA"
               )
             ) %>%
@@ -559,14 +560,14 @@ flash_parse <-
               Heat = dplyr::case_when(
                 stringr::str_detect(V7, Wind_String) == FALSE &
                   stringr::str_detect(V7, "^\\d{1,2}$") == TRUE &
-                  stringr::str_detect(V8, "^\\d\\d?\\.?\\d?$") == TRUE ~ V7,
+                  stringr::str_detect(V8, Points_String) == TRUE ~ V7,
                 TRUE ~ "NA"
               )
             ) %>%
             dplyr::mutate(
               Points = dplyr::case_when(
                 # stringr::str_detect(V7, Heat) == TRUE &
-                  stringr::str_detect(V7, "^\\d\\d?\\.?\\d?$") &
+                  stringr::str_detect(V7, Points_String) &
                     stringr:: str_detect(V1, "[:alpha:]") == FALSE ~ V7,
                 TRUE ~ "NA"
               )
@@ -666,7 +667,7 @@ flash_parse <-
             ) %>%
             dplyr::mutate(
               Points = dplyr::case_when(
-                  stringr::str_detect(V6, "^\\d\\d?\\.?\\d?$") &
+                  stringr::str_detect(V6, Points_String) &
                     stringr:: str_detect(V1, "[:alpha:]") == FALSE ~ V6, # decathalon points
                 TRUE ~ "NA"
               )
@@ -766,7 +767,7 @@ flash_parse <-
             ) %>%
             dplyr::mutate(
               Points = dplyr::case_when(
-                stringr::str_detect(V5, "^\\d\\d?\\.?\\d?$") &
+                stringr::str_detect(V5, Points_String) &
                   stringr:: str_detect(V1, "[:alpha:]") == FALSE ~ V5, # decathalon points
                 TRUE ~ "NA"
               )
