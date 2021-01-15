@@ -59,21 +59,21 @@ flash_parse <-
     # file <- c(file_1, file_2, file_3, file_4, file_5)
     #
 
-    # numbs_sing <- seq(1, 9, 1)
-    # numbs_sing <- paste0("0", numbs_sing)
-    # numbs_dub <- as.character(seq(10, 40, 1))
-    # numbs <- c(numbs_sing, numbs_dub)
-    # numbs_end <- paste0(numbs, "-1.pdf")
-    # # link_start <- "https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/0"
-    # # link_start <- "https://www.flashresults.com/2019_Meets/Indoor/01-18_HokieInvite/0"
+    numbs_sing <- seq(1, 9, 1)
+    numbs_sing <- paste0("0", numbs_sing)
+    numbs_dub <- as.character(seq(10, 40, 1))
+    numbs <- c(numbs_sing, numbs_dub)
+    numbs_end <- paste0(numbs, "-1.pdf")
+    # link_start <- "https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/0"
+    link_start <- "https://www.flashresults.com/2019_Meets/Indoor/01-18_HokieInvite/0"
     # link_start <- "https://www.flashresults.com/2019_Meets/Outdoor/06-30_PreClassic/0"
-    # links <- paste0(link_start, numbs_end)
-    #
-    # raw_results <- map(links, purrr::safely(read_results, otherwise = NA))
-    # raw_results <- SwimmeR:::discard_errors(raw_results)
-    #
-    # raw_results <- unlist(raw_results) %>%
-    #   add_row_numbers()
+    links <- paste0(link_start, numbs_end)
+
+    raw_results <- map(links, purrr::safely(read_results, otherwise = NA))
+    raw_results <- SwimmeR:::discard_errors(raw_results)
+
+    raw_results <- unlist(raw_results) %>%
+      add_row_numbers()
 
     # # raw_results <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/001-1.pdf") %>%
     # raw_results <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/06-30_PreClassic/001-1.pdf") %>%
@@ -1069,7 +1069,9 @@ flash_parse <-
             list_transform() %>%
             dplyr::mutate(
               Name = dplyr::case_when(
-                stringr::str_detect(V2, Name_String) == TRUE ~ V2,
+                stringr::str_detect(V2, Name_String) == TRUE &
+                  stringr::str_detect(V3, "[:alpha:]{2,}") == TRUE &
+                  stringr::str_detect(V3, Result_Specials_String) == FALSE ~ V2,
                 TRUE ~ "NA"
               )
             ) %>%
@@ -1079,6 +1081,7 @@ flash_parse <-
               Team = dplyr::case_when(
                 stringr::str_detect(V2, Name_String) == TRUE &
                   stringr::str_detect(V3, Age_String) == FALSE &
+                  # stringr::str_detect(V3, Result_Specials_String) == FALSE &
                   stringr::str_detect(V4, Result_Specials_String) == TRUE ~ V3,
                 stringr::str_detect(V2, Name_String) == TRUE &
                   stringr::str_detect(V4, "\\d") == TRUE &
@@ -1086,7 +1089,8 @@ flash_parse <-
                   stringr::str_detect(V1, "\\d") == FALSE ~ V3,
                 stringr::str_detect(V4, Age_String) == TRUE &
                   stringr::str_detect(V2, Name_String) == TRUE &
-                  stringr::str_detect(V3, "[:alpha:]{2,}") == TRUE ~ V3,
+                  stringr::str_detect(V3, "[:alpha:]{2,}") == TRUE &
+                stringr::str_detect(V3, Result_Specials_String) == FALSE ~ V3,
                 stringr::str_detect(V3, Result_Specials_String) == TRUE ~ V2, # for results with date of birth instead of age
                 TRUE ~ "NA"
               )
@@ -1151,7 +1155,7 @@ flash_parse <-
           ### moved up from below for DQ work 8/20
           dplyr::mutate(DQ = dplyr::case_when(Place == 10000 &
                                                 Exhibition == 0 ~ 1, # added exhibition condition 8/27
-                                              Finals_Result %in% c("FOUL", "DNF") == TRUE ~ 1,
+                                              Finals_Result %in% c("FOUL", "DNF", "NH") == TRUE ~ 1,
                                               TRUE ~ DQ)) %>%
           dplyr::na_if(10000) %>%
           dplyr::mutate(dplyr::across(
