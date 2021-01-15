@@ -63,7 +63,7 @@ flash_parse <-
     # numbs_sing <- paste0("0", numbs_sing)
     # numbs_dub <- as.character(seq(10, 40, 1))
     # numbs <- c(numbs_sing, numbs_dub)
-    # numbs_end <- paste0(numbs, "-1.pdf")
+    # numbs_end <- paste0(numbs, "-2.pdf")
     # # link_start <- "https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/0"
     # link_start <- "https://www.flashresults.com/2019_Meets/Indoor/01-18_HokieInvite/0"
     # links <- paste0(link_start, numbs_end)
@@ -275,9 +275,8 @@ flash_parse <-
               Wind_Speed,
               Points,
               Notes,
-              'Row_Numb' = V12
-            ) %>%
-            dplyr::na_if("NA")
+              "Row_Numb" = V12
+            )
         )
       } else {
         df_12 <- data.frame(Row_Numb = character(),
@@ -378,8 +377,7 @@ flash_parse <-
               Points,
               Notes,
               'Row_Numb' = V11
-            ) %>%
-            dplyr::na_if("NA")
+            )
         )
       } else {
         df_11 <- data.frame(Row_Numb = character(),
@@ -480,8 +478,7 @@ flash_parse <-
               Points,
               Notes,
               'Row_Numb' = V10
-            ) %>%
-            dplyr::na_if("NA")
+            )
         )
 
       } else {
@@ -597,8 +594,7 @@ flash_parse <-
               Points,
               Notes,
               'Row_Numb' = V9
-            ) %>%
-            dplyr::na_if("NA")
+            )
         )
 
       } else {
@@ -708,8 +704,7 @@ flash_parse <-
               Wind_Speed,
               Notes,
               'Row_Numb' = V8
-            ) %>%
-            dplyr::na_if("NA")
+            )
         )
 
       } else {
@@ -790,6 +785,13 @@ flash_parse <-
                 TRUE ~ "NA"
               )
             ) %>%
+            dplyr::mutate(
+              Notes = dplyr::case_when(
+                stringr::str_detect(V5, "\\.\\d{3}") == TRUE ~ V5,
+                stringr::str_detect(V6, "\\.\\d{3}") == TRUE ~ V6,
+                TRUE ~ "NA"
+              )
+            ) %>%
             dplyr::select(
               Place,
               Bib_Number,
@@ -799,9 +801,9 @@ flash_parse <-
               Finals_Result,
               Wind_Speed,
               Points,
+              Notes,
               'Row_Numb' = V7
-            ) %>%
-            dplyr::na_if("NA")
+            )
         )
 
       } else {
@@ -900,8 +902,7 @@ flash_parse <-
               Finals_Result,
               Points,
               'Row_Numb' = V6
-            ) %>%
-            dplyr::na_if("NA")
+            )
         )
 
       } else {
@@ -951,7 +952,6 @@ flash_parse <-
                 TRUE ~ "NA"
               )
             ) %>%
-            dplyr::na_if("NA") %>%
             dplyr::select(
               "Place" = V1,
               Name,
@@ -1005,7 +1005,8 @@ flash_parse <-
             Place = as.character(Place),
             Row_Numb = as.numeric(Row_Numb)
           ) %>%
-          dplyr::filter(Row_Numb >= Min_Row_Numb)
+          dplyr::filter(Row_Numb >= Min_Row_Numb) %>%
+          dplyr::na_if("NA")
       )
 
       #### Address Gendered Ages

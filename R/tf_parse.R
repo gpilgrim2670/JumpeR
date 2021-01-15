@@ -284,8 +284,7 @@ tf_parse <-
             Points,
             Notes,
             'Row_Numb' = V10
-          ) %>%
-          dplyr::na_if("NA")
+          )
       )
 
     } else {
@@ -390,8 +389,7 @@ tf_parse <-
             Points,
             Notes,
             'Row_Numb' = V9
-          ) %>%
-          dplyr::na_if("NA")
+          )
       )
 
     } else {
@@ -471,8 +469,7 @@ tf_parse <-
             Wind_Speed,
             Notes,
             'Row_Numb' = V8
-          ) %>%
-          dplyr::na_if("NA")
+          )
       )
 
     } else {
@@ -554,8 +551,7 @@ tf_parse <-
             Finals_Result,
             Wind_Speed,
             'Row_Numb' = V7
-          ) %>%
-          dplyr::na_if("NA")
+          )
       )
 
     } else {
@@ -646,8 +642,7 @@ tf_parse <-
             Prelims_Result,
             Finals_Result,
             'Row_Numb' = V6
-          ) %>%
-          dplyr::na_if("NA")
+          )
       )
 
     } else {
@@ -689,7 +684,6 @@ tf_parse <-
               TRUE ~ "NA"
             )
           ) %>%
-          dplyr::na_if("NA") %>%
           dplyr::select(
             "Place" = V1,
             Name,
@@ -758,7 +752,8 @@ tf_parse <-
           Place = as.character(Place),
           Row_Numb = as.numeric(Row_Numb)
         ) %>%
-        dplyr::filter(Row_Numb >= Min_Row_Numb)
+        dplyr::filter(Row_Numb >= Min_Row_Numb) %>%
+        dplyr::na_if("NA")
     )
 
     #### Address Gendered Ages
