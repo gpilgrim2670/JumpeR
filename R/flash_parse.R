@@ -63,8 +63,9 @@ flash_parse <-
     # numbs_sing <- paste0("0", numbs_sing)
     # numbs_dub <- as.character(seq(10, 40, 1))
     # numbs <- c(numbs_sing, numbs_dub)
-    # numbs_end <- paste0(numbs, "-2.pdf")
-    # link_start <- "https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/0"
+    # numbs_end <- paste0(numbs, "-1.pdf")
+    # # link_start <- "https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/0"
+    # link_start <- "https://www.flashresults.com/2019_Meets/Indoor/01-18_HokieInvite/0"
     # links <- paste0(link_start, numbs_end)
     #
     # raw_results <- map(links, purrr::safely(read_results, otherwise = NA))
@@ -121,7 +122,7 @@ flash_parse <-
           stringr::str_replace_all(" \\'[A-Z]\\' ", "  ") %>% # tf specific  - removes relay A, B etc. designators
           stringr::str_replace_all("  [A-Z]  ", "  ") %>%
           stringr::str_replace_all("\\'\\'", "  ") %>%
-          stringr::str_remove_all("(?<=\\.\\d{2}) +[Q|q] +(?=\\s)") %>% # tf specific - removes "q" or "Q" sometimes used to designate a qualifying result
+          stringr::str_remove_all("(?<=\\.\\d{2,3})\\]? +[Q|q] ?(?=\\s)") %>% # tf specific - removes "q" or "Q" sometimes used to designate a qualifying result
           stringr::str_remove_all("(?<=\\s)[J|j](?=\\d)") %>% # tf specific - removes "j" or "J" sometimes used to designate a judged result
           stringr::str_replace_all("-{2,5}", "10000") %>% #8/26
           stringr::str_replace_all(" \\[", "   ") %>% #1/5/21 for ties times
@@ -173,6 +174,7 @@ flash_parse <-
       data_length_9 <- data_1[purrr::map(data_1, length) == 9]
       data_length_10 <- data_1[purrr::map(data_1, length) == 10]
       data_length_11 <- data_1[purrr::map(data_1, length) == 11]
+      data_length_12 <- data_1[purrr::map(data_1, length) == 12]
 
       # treatment of DQs
       # suppressWarnings(DQ <-
@@ -180,6 +182,107 @@ flash_parse <-
       # DQ_length_3 <- DQ[purrr::map(DQ, length) == 3]
       # DQ_length_4 <- DQ[purrr::map(DQ, length) == 4]
 
+      #### twelve variables ####
+      if (length(data_length_12) > 0) {
+        suppressWarnings(
+          df_12 <- data_length_12 %>%
+            list_transform() %>%
+            dplyr::mutate(Place = V1) %>%
+            dplyr::mutate(
+              Bib_Number = dplyr::case_when(stringr::str_detect(V2, "^\\d{1,6}$") ~ V2,
+                                            TRUE ~ "NA")
+            ) %>%
+            dplyr::mutate(
+              Name = dplyr::case_when(
+                stringr::str_detect(V2, Name_String) ~ V2,
+                stringr::str_detect(V3, Name_String) ~ V3,
+                TRUE ~ "NA"
+              )
+            ) %>%
+            dplyr::mutate(
+              Age = dplyr::case_when(
+                stringr::str_detect(V3, Age_String) ~ V3,
+                stringr::str_detect(V4, Age_String) ~ V4,
+                stringr::str_detect(V5, Age_String) ~ V5,
+                TRUE ~ "NA"
+              )
+            ) %>%
+            dplyr::mutate(
+              Team = dplyr::case_when(
+                stringr::str_detect(V2, Name_String) == TRUE &
+                  stringr::str_detect(V4, Result_Specials_String) == TRUE ~ V3,
+                stringr::str_detect(V2, Name_String) == TRUE &
+                  stringr::str_detect(V4, "PASS|XX") == TRUE ~ V3,
+                stringr::str_detect(V2, Name_String) == TRUE &
+                  stringr::str_detect(V3, Age_String) == TRUE ~ V4,
+                TRUE ~ "NA"
+              )
+            ) %>%
+            dplyr::mutate(
+              Prelims_Result = dplyr::case_when(
+                stringr::str_detect(V11, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V5, Result_Specials_String) == TRUE &
+                  stringr::str_detect(V6, Result_Specials_String) == TRUE ~ V5,
+                stringr::str_detect(V9, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V6, Result_Specials_String) == TRUE &
+                  stringr::str_detect(V7, Result_Specials_String) == TRUE ~ V6,
+                TRUE ~ "NA"
+              )
+            ) %>%
+            dplyr::mutate(
+              Finals_Result = dplyr::case_when(
+                stringr::str_detect(V11, Result_Specials_String) == TRUE ~ V11,
+                stringr::str_detect(V5, Result_Specials_String) == TRUE &
+                  stringr::str_detect(V6, Result_Specials_String) == FALSE ~ V5,
+                stringr::str_detect(V6, Result_Specials_String) == TRUE &
+                  stringr::str_detect(V5, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V7, Result_Specials_String) == FALSE ~ V6,
+                stringr::str_detect(V6, Result_Specials_String) &
+                  stringr::str_detect(V7, Result_Specials_String) ~ V7,
+                stringr::str_detect(V7, Result_Specials_String) == TRUE &
+                  stringr::str_detect(V6, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V8, Result_Specials_String) == FALSE ~ V7,
+                TRUE ~ "NA"
+              )
+            ) %>%
+            dplyr::mutate(
+              Wind_Speed = dplyr::case_when(stringr::str_detect(V8, Wind_String) ~ V8,
+                                            TRUE ~ "NA")
+            ) %>%
+            dplyr::mutate(
+              Points = dplyr::case_when(
+                stringr::str_detect(V8, Wind_String) == FALSE &
+                  stringr::str_detect(V8, "^\\d\\.?\\d?$") == TRUE &
+                  stringr::str_detect(V9, "\\d{1,2}") == FALSE ~ V8,
+                stringr::str_detect(V8, Wind_String) == TRUE &
+                  stringr::str_detect(V9, "^\\d\\.?\\d?$") == TRUE ~ V9,
+                TRUE ~ "NA"
+              )
+            ) %>%
+            dplyr::mutate(
+              Notes = dplyr::case_when(stringr::str_detect(V9, Points) == FALSE &
+                                         stringr::str_detect(V9, Result_Specials_String) == FALSE ~ V9,
+                                       TRUE ~ "NA")
+            ) %>%
+            dplyr::select(
+              Place,
+              Bib_Number,
+              Name,
+              Age,
+              Team,
+              Prelims_Result,
+              Finals_Result,
+              Wind_Speed,
+              Points,
+              Notes,
+              'Row_Numb' = V12
+            ) %>%
+            dplyr::na_if("NA")
+        )
+      } else {
+        df_12 <- data.frame(Row_Numb = character(),
+                            stringsAsFactors = FALSE)
+      }
 
       #### eleven variables ####
       if (length(data_length_11) > 0) {
@@ -212,6 +315,8 @@ flash_parse <-
                   stringr::str_detect(V4, Result_Specials_String) == TRUE ~ V3,
                 stringr::str_detect(V2, Name_String) == TRUE &
                   stringr::str_detect(V4, "PASS|XX") == TRUE ~ V3,
+                stringr::str_detect(V2, Name_String) == TRUE &
+                  stringr::str_detect(V3, Age_String) == TRUE ~ V4,
                 TRUE ~ "NA"
               )
             ) %>%
@@ -312,6 +417,8 @@ flash_parse <-
                   stringr::str_detect(V4, Result_Specials_String) == TRUE ~ V3,
                 stringr::str_detect(V2, Name_String) == TRUE &
                   stringr::str_detect(V4, "PASS|XX") == TRUE ~ V3,
+                stringr::str_detect(V2, Name_String) == TRUE &
+                  stringr::str_detect(V3, Age_String) == TRUE ~ V4,
                 TRUE ~ "NA"
               )
             ) %>%
@@ -412,6 +519,8 @@ flash_parse <-
                   stringr::str_detect(V4, Result_Specials_String) == TRUE ~ V3,
                 stringr::str_detect(V2, Name_String) == TRUE &
                   stringr::str_detect(V4, "--") == TRUE ~ V3,
+                stringr::str_detect(V2, Name_String) == TRUE &
+                  stringr::str_detect(V3, Age_String) == TRUE ~ V4,
                 TRUE ~ "NA"
               )
             ) %>%
@@ -434,6 +543,9 @@ flash_parse <-
                 stringr::str_detect(V4, Result_Specials_String) == TRUE &
                   stringr::str_detect(V5, Result_Specials_String) == FALSE &
                   stringr::str_detect(V7, Result_Specials_String) == FALSE ~ V4,
+                stringr::str_detect(V5, Result_Specials_String) == TRUE &
+                  stringr::str_detect(V4, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V6, Result_Specials_String) == FALSE ~ V5,
                 TRUE ~ "NA"
               )
             ) %>%
@@ -522,6 +634,8 @@ flash_parse <-
               Team = dplyr::case_when(
                 stringr::str_detect(V2, Name_String) == TRUE &
                   stringr::str_detect(V4, Result_Specials_String) == TRUE ~ V3,
+                stringr::str_detect(V2, Name_String) == TRUE &
+                  stringr::str_detect(V3, Age_String) == TRUE ~ V4,
                 TRUE ~ "NA"
               )
             ) %>%
@@ -536,8 +650,11 @@ flash_parse <-
             dplyr::mutate(
               Finals_Result = dplyr::case_when(
                 stringr::str_detect(V7, Result_Specials_String) == TRUE ~ V7,
-                stringr::str_detect(V4, Result_Specials_String) &
-                  stringr::str_detect(V5, Result_Specials_String) ~ V5,
+                stringr::str_detect(V4, Result_Specials_String) == TRUE &
+                  stringr::str_detect(V5, Result_Specials_String) == TRUE ~ V5,
+                stringr::str_detect(V4, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V6, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V5, Result_Specials_String) == TRUE ~ V5,
                 stringr::str_detect(V4, Result_Specials_String) == TRUE &
                   stringr::str_detect(V5, Result_Specials_String) == FALSE &
                   stringr::str_detect(V7, Result_Specials_String) == FALSE ~ V4,
@@ -577,6 +694,7 @@ flash_parse <-
                 # stringr::str_detect(V8, Points) == FALSE &
                 #   stringr::str_detect(V8, "^\\d\\.?\\d?$") == FALSE ~ V8,
                 stringr::str_detect(V5, "\\.\\d{3}") == TRUE ~ V5,
+                stringr::str_detect(V6, "\\.\\d{3}") == TRUE ~ V6,
                 TRUE ~ "NA"
               )
             ) %>%
@@ -802,6 +920,7 @@ flash_parse <-
                   stringr::str_detect(V4, Result_Specials_String) == TRUE ~ V2,
                 stringr::str_detect(V2, Name_String) == TRUE &
                   stringr::str_detect(V4, "\\d") == TRUE &
+                  stringr::str_detect(V3, Result_Specials_String) == FALSE &
                   stringr::str_detect(V1, "\\d") == FALSE ~ V2,
                 TRUE ~ "NA"
               )
@@ -812,6 +931,7 @@ flash_parse <-
                   stringr::str_detect(V4, Result_Specials_String) == TRUE ~ V3,
                 stringr::str_detect(V2, Name_String) == TRUE &
                   stringr::str_detect(V4, "\\d") == TRUE &
+                  stringr::str_detect(V3, Result_Specials_String) == FALSE &
                   stringr::str_detect(V1, "\\d") == FALSE ~ V3,
                 TRUE ~ V2
               )
@@ -881,22 +1001,7 @@ flash_parse <-
           dplyr::mutate(dplyr::across(
             c(Name, Team), ~ stringr::str_replace_all(., "10000", "--")
           )) %>% # remove any "10000"s added in erroneously
-          ####
-          # dplyr::na_if("DNS") %>%
-          # dplyr::na_if("DNF") %>%
-          # dplyr::na_if("DQ") %>%
-          # dplyr::na_if("FOUL") %>%
-          # dplyr::na_if("NH") %>%
-          # dplyr::na_if("NWI") %>%
-          # dplyr::na_if("SCR") %>%
-          # dplyr::na_if("FS") %>%
           dplyr::mutate(
-            # Place = as.numeric(Place), # from swim_parse for dealing with ties
-            # Place = dplyr::case_when(
-            #   is.na(dplyr::lag(Place)) == TRUE ~ Place,
-            #   dplyr::lag(Place) == Place ~ Place + 0.1,
-            #   dplyr::lag(Place) != Place ~ Place
-            # ),
             Place = as.character(Place),
             Row_Numb = as.numeric(Row_Numb)
           ) %>%
@@ -914,15 +1019,6 @@ flash_parse <-
       #### Address Names with "." renamed to "Period"
       data <- data %>%
         dplyr::mutate(Name = stringr::str_replace(Name, "Period", "\\."))
-
-      # if("Points" %in% names(data) == FALSE)
-      # {data$Points <- NA}
-      #
-      # if("Heat" %in% names(data) == FALSE)
-      # {data$Heat <- NA}
-      #
-      # if("Notes" %in% names(data) == FALSE)
-      # {data$Notes <- NA}
 
       #### added in to work with arrange/distinct calls after adding in events ####
       if("Prelims_Result" %in% names(data) == FALSE){
@@ -943,16 +1039,8 @@ flash_parse <-
       data <- Filter(function(x)
         ! all(is.na(x)), data)
 
-      # #### adding in attempts ####
-      # if(attempts ==TRUE){
-      #   attempts <- attempts_parse(as_lines_list_2)
-      #
-      #   data <- dplyr::left_join(data, attempts, by = "Row_Numb")
-      # }
-
       #### clean up unneeded columns ####
       data <- data %>%
-        # dplyr::select(-Row_Numb, -Exhibition, -Points, -Heat, -Notes)
         dplyr::arrange(Row_Numb) %>%
         dplyr::select(which(SwimmeR::`%!in%`(names(.), c("Row_Numb", "Exhibition", "Points", "Heat"))))
 
