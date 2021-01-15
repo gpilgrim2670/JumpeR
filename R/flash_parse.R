@@ -59,21 +59,21 @@ flash_parse <-
     # file <- c(file_1, file_2, file_3, file_4, file_5)
     #
 
-    numbs_sing <- seq(1, 9, 1)
-    numbs_sing <- paste0("0", numbs_sing)
-    numbs_dub <- as.character(seq(10, 40, 1))
-    numbs <- c(numbs_sing, numbs_dub)
-    numbs_end <- paste0(numbs, "-1.pdf")
-    # link_start <- "https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/0"
-    link_start <- "https://www.flashresults.com/2019_Meets/Indoor/01-18_HokieInvite/0"
+    # numbs_sing <- seq(1, 9, 1)
+    # numbs_sing <- paste0("0", numbs_sing)
+    # numbs_dub <- as.character(seq(10, 40, 1))
+    # numbs <- c(numbs_sing, numbs_dub)
+    # numbs_end <- paste0(numbs, "-1.pdf")
+    # # link_start <- "https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/0"
+    # # link_start <- "https://www.flashresults.com/2019_Meets/Indoor/01-18_HokieInvite/0"
     # link_start <- "https://www.flashresults.com/2019_Meets/Outdoor/06-30_PreClassic/0"
-    links <- paste0(link_start, numbs_end)
-
-    raw_results <- map(links, purrr::safely(read_results, otherwise = NA))
-    raw_results <- SwimmeR:::discard_errors(raw_results)
-
-    raw_results <- unlist(raw_results) %>%
-      add_row_numbers()
+    # links <- paste0(link_start, numbs_end)
+    #
+    # raw_results <- map(links, purrr::safely(read_results, otherwise = NA))
+    # raw_results <- SwimmeR:::discard_errors(raw_results)
+    #
+    # raw_results <- unlist(raw_results) %>%
+    #   add_row_numbers()
 
     # # raw_results <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/001-1.pdf") %>%
     # raw_results <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/06-30_PreClassic/001-1.pdf") %>%
