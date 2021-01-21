@@ -112,7 +112,7 @@ tf_parse <-
         stringr::str_replace_all(stats::setNames(replacement, typo)) %>%
         stringr::str_replace_all("\\*(\\d{1,})", replacement = "\\1")) # removes * placed in front of place number in ties
 
-    if(any(stringr::str_detect(raw_results, "flash")) == TRUE){
+    if(any(stringr::str_detect(raw_results, "CONDITIONS")) == TRUE){
       data <- flash_parse(raw_results)
 
       return(data)
