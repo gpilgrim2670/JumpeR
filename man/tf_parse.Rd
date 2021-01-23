@@ -9,7 +9,8 @@ tf_parse(
   avoid = avoid_default,
   typo = typo_default,
   replacement = replacement_default,
-  attempts = FALSE
+  attempts = FALSE,
+  attempts_results = FALSE
 )
 }
 \arguments{
@@ -21,7 +22,9 @@ tf_parse(
 
 \item{replacement}{a list of fixes for the strings in \code{typo}.  Here one could pass "Central High School" (one space between "Central" and "High") to fix the issue described in \code{typo}}
 
-\item{attempts}{should tf_parse try to include attempts for jumping/throwing events?  Defaults to \code{FALSE}}
+\item{attempts}{should tf_parse try to include attempts for jumping/throwing events?  Please note this will add a significant number of columns to the resulting dataframe.  Defaults to \code{FALSE}.}
+
+\item{attempts_results}{should tf_parse try to include attempts results (i.e. "PASS", "X", "O") for high jump and pole value events?  Please note this will add a significant number of columns to the resulting dataframe.  Defaults to \code{FALSE}}
 }
 \value{
 a dataframe of track and field results

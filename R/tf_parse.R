@@ -29,7 +29,8 @@
 #' @param avoid a list of strings.  Rows in \code{file} containing these strings will not be included. For example "Record:", often used to label records, could be passed to \code{avoid}.  The default is \code{avoid_default}, which contains many strings similar to "Record:".  Users can supply their own lists to \code{avoid}.
 #' @param typo a list of strings that are typos in the original results.  \code{tf_parse} is particularly sensitive to accidental double spaces, so "Central  High School", with two spaces between "Central" and "High" is a problem, which can be fixed.  Pass "Central  High School" to \code{typo}.
 #' @param replacement a list of fixes for the strings in \code{typo}.  Here one could pass "Central High School" (one space between "Central" and "High") to fix the issue described in \code{typo}
-#' @param attempts should tf_parse try to include attempts for jumping/throwing events?  Defaults to \code{FALSE}
+#' @param attempts should tf_parse try to include attempts for jumping/throwing events?  Please note this will add a significant number of columns to the resulting dataframe.  Defaults to \code{FALSE}.
+#' @param attempts_results should tf_parse try to include attempts results (i.e. "PASS", "X", "O") for high jump and pole value events?  Please note this will add a significant number of columns to the resulting dataframe.  Defaults to \code{FALSE}
 #'
 #' @return a dataframe of track and field results
 #'
@@ -42,7 +43,11 @@ tf_parse <-
            avoid = avoid_default,
            typo = typo_default,
            replacement = replacement_default,
-           attempts = FALSE) {
+           attempts = FALSE,
+           attempts_results = FALSE) {
+
+    # file <- "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
+    # file <- read_results(file)
 
     #### default typo and replacement strings ####
     typo_default <- c("typo")
@@ -112,7 +117,7 @@ tf_parse <-
         stringr::str_replace_all(stats::setNames(replacement, typo)) %>%
         stringr::str_replace_all("\\*(\\d{1,})", replacement = "\\1")) # removes * placed in front of place number in ties
 
-    if(any(stringr::str_detect(raw_results, "CONDITIONS")) == TRUE){
+    if(any(stringr::str_detect(raw_results, "flash")) == TRUE){
       data <- flash_parse(raw_results)
 
       return(data)
@@ -790,22 +795,44 @@ tf_parse <-
     data  <-
       transform(data, Event = events$Event[findInterval(Row_Numb, events$Event_Row_Min)]) %>%
       dplyr::arrange(Name, Team, is.na(Wind_Speed), is.na(Prelims_Result)) %>% # new 1/1/21 to deal with results presented by heat and as final on same page
-      dplyr::distinct(Name, Team, Event, Prelims_Result, Finals_Result, .keep_all = TRUE) # new 1/1/21 to deal with results presented by heat and as final on same page
+      dplyr::distinct(Name, Team, Event, Prelims_Result, Finals_Result, .keep_all = TRUE) %>%  # new 1/1/21 to deal with results presented by heat and as final on same page
+      dplyr::arrange(Row_Numb)
 
     #### remove empty columns (all values are NA) ####
     data <- Filter(function(x)
       ! all(is.na(x)), data)
 
+
     #### adding in attempts ####
-    if(attempts ==TRUE){
+    if(attempts == TRUE){
       attempts <- attempts_parse(as_lines_list_2)
 
-      data <- dplyr::left_join(data, attempts, by = "Row_Numb")
+      attempts <-
+        transform(attempts, Row_Numb_Adjusted = data$Row_Numb[findInterval(Row_Numb, data$Row_Numb)]) %>%
+        dplyr::select(-Row_Numb)
+
+      data <- dplyr::left_join(data, attempts, by = c("Row_Numb" = "Row_Numb_Adjusted"))
+    }
+
+    #### adding in attempts ####
+    if(attempts_results == TRUE){
+      attempts_results <- attempts_results_parse(as_lines_list_2)
+
+      attempts_results <-
+        transform(attempts_results, Row_Numb_Adjusted = data$Row_Numb[findInterval(Row_Numb, data$Row_Numb)]) %>%
+        dplyr::select(-Row_Numb)
+
+      data <- dplyr::left_join(data, attempts_results, by = c("Row_Numb" = "Row_Numb_Adjusted"))
+    }
+
+    #### ordering columns after adding attempts ####
+    if (all(attempts_results == TRUE & attempts_results == TRUE)) {
+      data <- data %>%
+        dplyr::select(colnames(.)[strngr::str_detect(names(.), "^Attempt", negate = TRUE)], sort(colnames(.)[str_detect(names(.), "^Attempt")]))
     }
 
     #### remove unneeded columns ####
     data <- data %>%
-    dplyr::arrange(Row_Numb) %>%
     dplyr::select(which(SwimmeR::`%!in%`(names(.), c("Row_Numb", "Exhibition", "Points", "Heat"))))
     # dplyr::select(which(SwimmeR::`%!in%`(names(.), c("Row_Numb", "Exhibition", "Points", "Heat", "Notes"))))
 

@@ -63,8 +63,28 @@ attempts_parse <- function(text) {
     data_length_8 <- data_1[purrr::map(data_1, length) == 8]
     data_length_9 <- data_1[purrr::map(data_1, length) == 9]
     data_length_10 <- data_1[purrr::map(data_1, length) == 10]
+    data_length_11 <- data_1[purrr::map(data_1, length) == 10]
+    data_length_12 <- data_1[purrr::map(data_1, length) == 10]
 
     #### transform all lists to dataframes ####
+    if (length(data_length_12) > 0) {
+      df_12 <- data_length_12 %>%
+        list_transform() %>%
+        dplyr::rename("Row_Numb" = V12)
+    } else {
+      df_12 <- data.frame(Row_Numb = character(),
+                          stringsAsFactors = FALSE)
+    }
+
+    if (length(data_length_11) > 0) {
+      df_10 <- data_length_11 %>%
+        list_transform() %>%
+        dplyr::rename("Row_Numb" = V11)
+    } else {
+      df_11 <- data.frame(Row_Numb = character(),
+                          stringsAsFactors = FALSE)
+    }
+
     if (length(data_length_10) > 0) {
       df_10 <- data_length_10 %>%
         list_transform() %>%
@@ -149,7 +169,7 @@ attempts_parse <- function(text) {
     #### bind up results ####
     # results are bound with named column "Row_Numb" retained
     data <-
-      dplyr::bind_rows(df_10, df_9, df_8, df_7, df_6, df_5, df_4, df_3, df_2) %>%
+      dplyr::bind_rows(df_12, df_11, df_10, df_9, df_8, df_7, df_6, df_5, df_4, df_3, df_2) %>%
       dplyr::mutate(Row_Numb = as.numeric(Row_Numb) - 1) # make row number of split match row number of performance
 
     #### rename columns V1, V2 etc. at Attempt_1, Attempt_2 etc. ####
@@ -158,7 +178,10 @@ attempts_parse <- function(text) {
       paste("Attempt", seq(1, length(names(data)) - 1), sep = "_")
 
     data <- data %>%
-      dplyr::rename_at(dplyr::vars(dplyr::all_of(old_names)), ~ new_names)
+      dplyr::rename_at(dplyr::vars(dplyr::all_of(old_names)), ~ new_names) %>%
+      dplyr::arrange(Row_Numb)
+
+    return(data)
 
 }
 
