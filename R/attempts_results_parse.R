@@ -78,7 +78,7 @@ attempts_results_parse <- function(text) {
   }
 
   if (length(data_length_11) > 0) {
-    df_10 <- data_length_11 %>%
+    df_11 <- data_length_11 %>%
       list_transform() %>%
       dplyr::rename("Row_Numb" = V11)
   } else {
