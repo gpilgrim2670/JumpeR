@@ -63,8 +63,8 @@ attempts_parse <- function(text) {
     data_length_8 <- data_1[purrr::map(data_1, length) == 8]
     data_length_9 <- data_1[purrr::map(data_1, length) == 9]
     data_length_10 <- data_1[purrr::map(data_1, length) == 10]
-    data_length_11 <- data_1[purrr::map(data_1, length) == 10]
-    data_length_12 <- data_1[purrr::map(data_1, length) == 10]
+    data_length_11 <- data_1[purrr::map(data_1, length) == 11]
+    data_length_12 <- data_1[purrr::map(data_1, length) == 12]
 
     #### transform all lists to dataframes ####
     if (length(data_length_12) > 0) {
@@ -77,7 +77,7 @@ attempts_parse <- function(text) {
     }
 
     if (length(data_length_11) > 0) {
-      df_10 <- data_length_11 %>%
+      df_11 <- data_length_11 %>%
         list_transform() %>%
         dplyr::rename("Row_Numb" = V11)
     } else {
