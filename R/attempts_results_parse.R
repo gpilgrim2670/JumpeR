@@ -32,12 +32,11 @@ attempts_results_parse <- function(text) {
 
   #### Actual Function ####
   ### collect row numbers from rows containing attempts ###
-  ### define strings ###
 
-  attempt_results_string <- " P | PPP | O | X | XO | XXO | XXX " # for metric and imperial units
+  ### define strings ###
+  attempt_results_string <- " P | PPP | O | X | XO | XXO | XX | XXX " # for metric and imperial units
 
   #### pull out rows containing attempts ####
-
   suppressWarnings(
     data_1 <- text %>%
       .[purrr::map_lgl(., stringr::str_detect, attempt_results_string)] %>%
@@ -54,6 +53,8 @@ attempts_results_parse <- function(text) {
     unlist(purrr::map(data_1, stringr::str_split, "\\s{2,}"),
            recursive = FALSE)
 
+  # theoretically there can be any number of attempts, as long as
+  # one athlete keeps clearing heights
   data_length_2 <- data_1[purrr::map(data_1, length) == 2]
   data_length_3 <- data_1[purrr::map(data_1, length) == 3]
   data_length_4 <- data_1[purrr::map(data_1, length) == 4]
