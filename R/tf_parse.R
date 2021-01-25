@@ -828,7 +828,7 @@ tf_parse <-
     #### ordering columns after adding attempts ####
     if (all(attempts_results == TRUE & attempts_results == TRUE)) {
       data <- data %>%
-        dplyr::select(colnames(.)[strngr::str_detect(names(.), "^Attempt", negate = TRUE)], sort(colnames(.)[str_detect(names(.), "^Attempt")]))
+        dplyr::select(colnames(.)[stringr::str_detect(names(.), "^Attempt", negate = TRUE)], sort(colnames(.)[stringr::str_detect(names(.), "^Attempt")]))
     }
 
     #### remove unneeded columns ####
