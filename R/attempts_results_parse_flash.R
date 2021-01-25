@@ -9,6 +9,7 @@
 #' @importFrom dplyr rename
 #' @importFrom dplyr mutate
 #' @importFrom dplyr vars
+#' @importFrom dplyr bind_cols
 #' @importFrom stringr str_replace_all
 #' @importFrom stringr str_extract_all
 #' @importFrom stringr str_split
@@ -21,41 +22,38 @@
 #'
 #' @seealso \code{attempts_results_parse} runs inside \code{\link{tf_parse}} on the output of \code{\link{read_results}} with row numbers from \code{\link{add_row_numbers}}
 
-attempts_results_parse <- function(text) {
+attempts_results_parse_flash <- function(text) {
 
   #### Testing ####
   # file <- "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
   # file <-
   #    system.file("extdata", "Results-IVP-Track-Field-Championship-2019-20-v2.pdf", package = "JumpeR")
+  file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/014-1.pdf"
+  file <- read_results(file)
+  text <- add_row_numbers(file)
 
-  # file <- read_results(file)
-  # text <- add_row_numbers(file)
+  ### define strings ###
+  attempt_results_string_flash <- " P | PPP | O | X | XO | XXO | XX | XXX | \\-{3} " # for metric and imperial units
 
   #### Actual Function ####
   ### collect row numbers from rows containing attempts ###
-
-  ### define strings ###
-  attempt_results_string <- " P | PPP | O | X | XO | XXO | XX | XXX " # for metric and imperial units
+  row_numbs <- text %>%
+    .[purrr::map_lgl(., stringr::str_detect, attempt_results_string_flash)] %>%
+    str_extract("\\d{1,}$")
 
   #### pull out rows containing attempts ####
   suppressWarnings(
     data_1 <- text %>%
-      .[purrr::map_lgl(., stringr::str_detect, attempt_results_string)] %>%
-      .[purrr::map_lgl(., ~ stringr::str_detect(., "^\n\\s*\\d+\\s|^\n\\s*--", negate = TRUE))] %>% # removes rows that start with a place, to remove main results
-      .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "[:lower:]{2,}")))] %>% # removes rows that have two lower case letters in a row
-      .[purrr::map_lgl(., ~ !any(stringr::str_detect(., ":")))] %>% # helps with removing records like "NYS: 1.45m"
-      stringr::str_replace_all("\\(\\+?\\-?\\d{1,3}\\.\\d{1,3}\\)", "  ") %>%  # remove anything in parenthesis, replace with spaces
-      stringr::str_replace_all(" ", "  ") %>% # put multiple spaces between attempts
-      trimws()
+      .[purrr::map_lgl(., stringr::str_detect, attempt_results_string_flash)] %>%
+          stringr::str_extract_all(attempt_results_string_flash)
   )
 
   #### break out by length ####
-  data_1 <-
-    unlist(purrr::map(data_1, stringr::str_split, "\\s{2,}"),
-           recursive = FALSE)
+
 
   # theoretically there can be any number of attempts, as long as
   # one athlete keeps clearing heights
+  data_length_1 <- data_1[purrr::map(data_1, length) == 1]
   data_length_2 <- data_1[purrr::map(data_1, length) == 2]
   data_length_3 <- data_1[purrr::map(data_1, length) == 3]
   data_length_4 <- data_1[purrr::map(data_1, length) == 4]
@@ -71,108 +69,110 @@ attempts_results_parse <- function(text) {
   #### transform all lists to dataframes ####
   if (length(data_length_12) > 0) {
     df_12 <- data_length_12 %>%
-      list_transform() %>%
-      dplyr::rename("Row_Numb" = V12)
-  } else {
-    df_12 <- data.frame(Row_Numb = character(),
+      list_transform()
+  }  else {
+    df_12 <- data.frame(V1 = character(),
                         stringsAsFactors = FALSE)
   }
 
   if (length(data_length_11) > 0) {
     df_11 <- data_length_11 %>%
-      list_transform() %>%
-      dplyr::rename("Row_Numb" = V11)
-  } else {
-    df_11 <- data.frame(Row_Numb = character(),
-                        stringsAsFactors = FALSE)
+      list_transform()
+  }  else {
+    df_11 <- data.frame(V1 = character(),
+                       stringsAsFactors = FALSE)
   }
 
   if (length(data_length_10) > 0) {
     df_10 <- data_length_10 %>%
-      list_transform() %>%
-      dplyr::rename("Row_Numb" = V10)
-  } else {
-    df_10 <- data.frame(Row_Numb = character(),
+      list_transform()
+  }  else {
+    df_10 <- data.frame(V1 = character(),
                         stringsAsFactors = FALSE)
   }
 
   if (length(data_length_9) > 0) {
     df_9 <- data_length_9 %>%
-      list_transform() %>%
-      dplyr::rename("Row_Numb" = V9)
-  } else {
-    df_9 <- data.frame(Row_Numb = character(),
-                       stringsAsFactors = FALSE)
+      list_transform()
+  }  else {
+    df_9 <- data.frame(V1 = character(),
+                        stringsAsFactors = FALSE)
   }
 
   if (length(data_length_8) > 0) {
     df_8 <- data_length_8 %>%
-      list_transform() %>%
-      dplyr::rename("Row_Numb" = V8)
-  } else {
-    df_8 <- data.frame(Row_Numb = character(),
-                       stringsAsFactors = FALSE)
+      list_transform()
+  }  else {
+    df_8 <- data.frame(V1 = character(),
+                        stringsAsFactors = FALSE)
   }
 
   if (length(data_length_7) > 0) {
     df_7 <- data_length_7 %>%
-      list_transform() %>%
-      dplyr::rename("Row_Numb" = V7)
-  } else {
-    df_7 <- data.frame(Row_Numb = character(),
-                       stringsAsFactors = FALSE)
+      list_transform()
+  }  else {
+    df_7 <- data.frame(V1 = character(),
+                        stringsAsFactors = FALSE)
   }
 
   if (length(data_length_6) > 0) {
     df_6 <- data_length_6 %>%
-      list_transform() %>%
-      dplyr::rename("Row_Numb" = V6)
-  } else {
-    df_6 <- data.frame(Row_Numb = character(),
-                       stringsAsFactors = FALSE)
+      list_transform()
+  }  else {
+    df_6 <- data.frame(V1 = character(),
+                        stringsAsFactors = FALSE)
   }
 
   if (length(data_length_5) > 0) {
     df_5 <- data_length_5 %>%
-      list_transform() %>%
-      dplyr::rename("Row_Numb" = V5)
-  } else {
-    df_5 <- data.frame(Row_Numb = character(),
-                       stringsAsFactors = FALSE)
+      list_transform()
+  }  else {
+    df_5 <- data.frame(V1 = character(),
+                        stringsAsFactors = FALSE)
   }
 
   if (length(data_length_4) > 0) {
     df_4 <- data_length_4 %>%
-      list_transform() %>%
-      dplyr::rename("Row_Numb" = V4)
-  } else {
-    df_4 <- data.frame(Row_Numb = character(),
-                       stringsAsFactors = FALSE)
+      list_transform()
+  }  else {
+    df_4 <- data.frame(V1 = character(),
+                        stringsAsFactors = FALSE)
   }
 
   if (length(data_length_3) > 0) {
     df_3 <- data_length_3 %>%
-      list_transform() %>%
-      dplyr::rename("Row_Numb" = V3)
-  } else {
-    df_3 <- data.frame(Row_Numb = character(),
-                       stringsAsFactors = FALSE)
+      list_transform
+  }  else {
+    df_3 <- data.frame(V1 = character(),
+                        stringsAsFactors = FALSE)
   }
 
   if (length(data_length_2) > 0) {
     df_2 <- data_length_2 %>%
-      list_transform() %>%
-      dplyr::rename("Row_Numb" = V2)
-  } else {
-    df_2 <- data.frame(Row_Numb = character(),
-                       stringsAsFactors = FALSE)
+      list_transform()
+  }  else {
+    df_2 <- data.frame(V1 = character(),
+                        stringsAsFactors = FALSE)
+  }
+
+  if (length(data_length_1) > 0) {
+    df_1 <- data_length_1 %>%
+      list_transform()
+  }  else {
+    df_1 <- data.frame(V1 = character(),
+                        stringsAsFactors = FALSE)
   }
 
   #### bind up results ####
   # results are bound with named column "Row_Numb" retained
   data <-
-    dplyr::bind_rows(df_12, df_11, df_10, df_9, df_8, df_7, df_6, df_5, df_4, df_3, df_2) %>%
-    dplyr::mutate(Row_Numb = as.numeric(Row_Numb) - 1) # make row number of split match row number of performance
+    dplyr::bind_rows(df_12, df_11, df_10, df_9, df_8, df_7, df_6, df_5, df_4, df_3, df_2, df_1) %>%
+    dplyr::bind_cols(row_numbs)
+
+  names(data)[ncol(data)] <- "Row_Numb" # to rename last column since we don't know how many columns there will be
+
+  data <- data %>%
+    dplyr::mutate(Row_Numb = as.numeric(Row_Numb)) # make row number of split match row number of performance
 
   #### rename columns V1, V2 etc. at Attempt_1, Attempt_2 etc. ####
   old_names <- names(data)[grep("^V", names(data))]
