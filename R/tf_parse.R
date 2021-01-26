@@ -47,6 +47,7 @@ tf_parse <-
            attempts_results = FALSE) {
 
     # file <- "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
+    # file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/014-1.pdf"
     # file <- read_results(file)
 
     #### default typo and replacement strings ####
@@ -88,41 +89,46 @@ tf_parse <-
     #
     # file <- read_results(event_links[75])
     # file <- read_results(system.file("extdata", "Results-IVP-Track-Field-Championship-2019-20-v2.pdf", package = "JumpeR"))
+    # file <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/036-1.pdf")
     # avoid <- c("[:alpha:]\\: .*")
-    # typo <- typo_default
-    # replacement <- replacement_default
+    # typo <- "typo"
+    # replacement <- "typo"
 
     #### assign row numbers ####
     as_lines_list_2 <- add_row_numbers(text = file)
-
-    #### Pulls out event labels from text ####
-    events <- event_parse(as_lines_list_2) %>%
-      dplyr::mutate(Event = stringr::str_remove(Event, " Women$| Men$"))
-
-
-    #### set up strings ####
-    Name_String <-
-      "_?[:alpha:]+\\s?\\'?[:alpha:\\-\\'\\.]*\\s?[:alpha:\\-\\'\\.]*\\s?[:alpha:\\-\\'\\.]*,?\\s?[:alpha:\\-\\'\\.]*\\s?[:alpha:]*\\s?[:alpha:]*\\s?[:alpha:]*\\.?,? [:alpha:]+\\s?[:alpha:\\-\\'\\.]*\\s?[:alpha:\\-\\']*\\s?[:alpha:]*\\s?[:alpha:]*\\s?[:alpha:\\.]*"
-    Result_String <- "\\d{0,2}\\:?\\-?\\d{1,2}\\.\\d{2}m?"
-    Result_Specials_String <-
-      paste0(Result_String, "|^NT$|^NP$|^DQ$|^DNS$|^DNF$|^FOUL$|^NH$|^SCR$|^FS$")
-    Wind_String <-
-      "\\+\\d\\.\\d|\\-\\d\\.\\d|^NWS$|^NWI$|^\\d\\.\\d$"
-    Age_String <- "^SR$|^JR$|^SO$|^FR$|^M?W?[:digit:]{1,3}$"
 
     #### clean input data ####
     suppressWarnings(
       raw_results <- as_lines_list_2 %>%
         .[purrr::map_lgl(., ~ !any(stringr::str_detect(., avoid)))] %>% # remove lines contained in avoid
         stringr::str_replace_all(stats::setNames(replacement, typo)) %>%
-        stringr::str_replace_all("\\*(\\d{1,})", replacement = "\\1")) # removes * placed in front of place number in ties
+        stringr::str_replace_all("\\*(\\d{1,})", replacement = "\\1") # removes * placed in front of place number in ties
+      ) # removes * placed in front of place number in ties
 
-    if(any(stringr::str_detect(raw_results, "flash")) == TRUE){
-      data <- flash_parse(raw_results)
+
+    #### Flash results or Hy-Tek ####
+    # Flash
+    if(any(stringr::str_detect(raw_results[1:5], "CONDITIONS")) == TRUE){
+      data <- flash_parse(flash_file = raw_results, flash_attempts = attempts, flash_attempts_results = attempts_results)
 
       return(data)
-    } else {
 
+    } else { # Hy-Tek
+
+      #### Pulls out event labels from text ####
+      events <- event_parse(as_lines_list_2) %>%
+        dplyr::mutate(Event = stringr::str_remove(Event, " Women$| Men$"))
+
+
+      #### set up strings ####
+      Name_String <-
+        "_?[:alpha:]+\\s?\\'?[:alpha:\\-\\'\\.]*\\s?[:alpha:\\-\\'\\.]*\\s?[:alpha:\\-\\'\\.]*,?\\s?[:alpha:\\-\\'\\.]*\\s?[:alpha:]*\\s?[:alpha:]*\\s?[:alpha:]*\\.?,? [:alpha:]+\\s?[:alpha:\\-\\'\\.]*\\s?[:alpha:\\-\\']*\\s?[:alpha:]*\\s?[:alpha:]*\\s?[:alpha:\\.]*"
+      Result_String <- "\\d{0,2}\\:?\\-?\\d{1,2}\\.\\d{2}m?"
+      Result_Specials_String <-
+        paste0(Result_String, "|^NT$|^NP$|^DQ$|^DNS$|^DNF$|^FOUL$|^NH$|^SCR$|^FS$")
+      Wind_String <-
+        "\\+\\d\\.\\d|\\-\\d\\.\\d|^NWS$|^NWI$|^\\d\\.\\d$"
+      Age_String <- "^SR$|^JR$|^SO$|^FR$|^M?W?[:digit:]{1,3}$"
 
     suppressWarnings(
       data_1 <- raw_results %>%
@@ -814,7 +820,7 @@ tf_parse <-
       data <- dplyr::left_join(data, attempts, by = c("Row_Numb" = "Row_Numb_Adjusted"))
     }
 
-    #### adding in attempts ####
+    #### adding in attempts results ####
     if(attempts_results == TRUE){
       attempts_results <- attempts_results_parse(as_lines_list_2)
 

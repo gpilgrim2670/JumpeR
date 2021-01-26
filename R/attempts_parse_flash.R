@@ -23,7 +23,6 @@
 #' @seealso \code{attempts_parse_flash} runs inside \code{\link{flash_parse}} on the output of \code{\link{read_results}} with row numbers from \code{\link{add_row_numbers}}
 
 attempts_parse_flash <- function(text) {
-
   #### Testing ####
   # file <- "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
   # file <-
@@ -32,11 +31,14 @@ attempts_parse_flash <- function(text) {
   # file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/036-1.pdf"
   # file <- read_results(file)
   # text <- add_row_numbers(file)
+  # text <- raw_results
+
 
   #### Actual Function ####
   ### define strings ###
 
-  attempt_string_flash <- "\\d{1,2}\\.\\d{2} |\\d{1,3}\\-\\d{2}\\.?\\d{2}?|  X  |  \\–  " # special dash character
+  attempt_string_flash <-
+    "\\d{1,2}\\.\\d{2} |\\d{1,3}\\-\\d{2}\\.?\\d{2}?|  X  |  \\–  " # special dash character
 
   #### collect row numbers from rows containing attempts ####
   row_numbs <- text %>%
@@ -46,32 +48,40 @@ attempts_parse_flash <- function(text) {
   #### pull out rows containing attempts ####
 
   suppressWarnings(
-    data <- text %>%
+    data_attempts <- text %>%
       .[purrr::map_lgl(., stringr::str_detect, attempt_string_flash)] %>%
       stringr::str_extract_all(attempt_string_flash, simplify = TRUE) %>%
-      trimws() %>%
-      as_data_frame()
-
+      trimws()
   )
 
   #### reattach row numbers ####
+  data_attempts <- cbind(row_numbs, data_attempts) %>%
+    as.data.frame() %>%
+    dplyr::na_if("") %>%
+    dplyr::rename(V1 = row_numbs) # for list_sort, needs V1 to be row numbers, but named V1
 
-  data <- data %>%
-    bind_cols(row_numbs)
+  #### reattach row numbers ####
 
-  names(data)[ncol(data)] <- "Row_Numb" # to rename last column since we don't know how many columns there will be
-
-
+  data_attempts <- data_attempts %>%
+    lines_sort(min_row = min(as.numeric(row_numbs))) %>%
+    dplyr::mutate(Row_Numb = as.numeric(Row_Numb))
 
   #### rename columns V1, V2 etc. at Attempt_1, Attempt_2 etc. ####
-  old_names <- names(data)[grep("^V", names(data))]
+  old_names <-
+    names(data_attempts)[grep("^V", names(data_attempts))]
   new_names <-
-    paste("Attempt", seq(1, length(names(data)) - 1), sep = "_")
+    paste("Attempt", seq(1, length(names(data_attempts)) - 1), sep = "_")
 
-  data <- data %>%
+  data_attempts <- data_attempts %>%
     dplyr::rename_at(dplyr::vars(dplyr::all_of(old_names)), ~ new_names)
 
-  return(data)
+  if (sum(suppressWarnings(str_detect(text, "\\d\\.\\d{2}m"))) >= 1) {
+    # keeps running times like 10.34 from getting into attempts
+    return(data_attempts_results)
+  } else {
+    data_attempts <- data.frame(Row_Numb = character(),
+                                stringsAsFactors = FALSE)
+    return(data_attempts)
+  }
 
 }
-

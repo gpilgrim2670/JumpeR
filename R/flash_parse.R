@@ -25,8 +25,9 @@
 #' @importFrom stats setNames
 #' @importFrom SwimmeR `%!in%`
 #'
-#' @param file a .pdf or .html file (could be a url) where containing track and field results.  Must be formatted in a "normal" fashion - see vignette
-#' @param attempts should tf_parse try to include attempts for jumping/throwing events?  Defaults to \code{FALSE}
+#' @param flash_file a .pdf or .html file (could be a url) where containing track and field results.  Must be formatted in a "normal" fashion - see vignette
+#' @param flash_attempts should tf_parse try to include attempts for jumping/throwing events?  Defaults to \code{FALSE}
+#' @param flash_attempts_results should tf_parse try to include outcomes for attempts for vertical jumping events?  Defaults to \code{FALSE}
 #'
 #' @return a dataframe of track and field results
 #'
@@ -35,8 +36,9 @@
 #' @export
 
 flash_parse <-
-  function(file = raw_results,
-           attempts = FALSE) {
+  function(flash_file,
+           flash_attempts = attempts,
+           flash_attempts_results = attempts_results) {
 
 
     #### testing setup ####
@@ -78,9 +80,14 @@ flash_parse <-
     # # raw_results <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/001-1.pdf") %>%
     # raw_results <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/06-30_PreClassic/001-1.pdf") %>%
     #   add_row_numbers()
+    # file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/014-1.pdf" # pole vault, attempt heights as single line above results
+    # file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/036-1.pdf" # triple jump, attempts in line
+    # flash_file <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/021-1.pdf") %>%
+    #   add_row_numbers()
+
 
     #### Pulls out event labels from text ####
-    events <- event_parse(raw_results) %>%
+    events <- event_parse(flash_file) %>%
       dplyr::mutate(Event = stringr::str_remove(Event, " Women$| Men$"))
 
 
@@ -102,7 +109,7 @@ flash_parse <-
 
     #### clean input data ####
       suppressWarnings(
-        data_1 <- raw_results %>%
+        data_1 <- flash_file %>%
           .[purrr::map(., length) > 0] %>%
           .[purrr::map(., stringr::str_length) > 50] %>%
           .[purrr::map_dbl(., stringr::str_count, "\\)") < 2] %>%  # remove inline splits and team scores as 1) Alfred 2) Ithaca etc.
@@ -1146,7 +1153,7 @@ flash_parse <-
 
       Min_Row_Numb <- min(events$Event_Row_Min)
       suppressWarnings(
-        data <-
+        flash_data <-
           dplyr::bind_rows(df_13, df_12, df_11, df_10, df_9, df_8, df_7, df_6, df_5, df_4) %>%
           dplyr::mutate(Row_Numb = as.numeric(Row_Numb)) %>%
           dplyr::arrange(Row_Numb) %>%
@@ -1175,7 +1182,7 @@ flash_parse <-
       )
 
       #### Address Gendered Ages
-      data <- data %>%
+      flash_data <- flash_data %>%
         dplyr::mutate(Gender = stringr::str_extract(Age, "^M|^W")) %>%
         dplyr::mutate(Age = dplyr::case_when(
           is.na(Gender) == FALSE ~ stringr::str_remove(Age, Gender),
@@ -1183,32 +1190,90 @@ flash_parse <-
         ))
 
       #### Address Names with "." renamed to "Period"
-      data <- data %>%
+      flash_data <- flash_data %>%
         dplyr::mutate(Name = stringr::str_replace(Name, "Period", "\\."))
 
       #### added in to work with arrange/distinct calls after adding in events ####
-      # if ("Prelims_Result" %in% names(data) == FALSE) {
-      #   data$Prelims_Result <- NA
+      # if ("Prelims_Result" %in% names(flash_data) == FALSE) {
+      #   flash_data$Prelims_Result <- NA
       # }
       #
-      # if ("Wind_Speed" %in% names(data) == FALSE) {
-      #   data$Wind_Speed <- NA
+      # if ("Wind_Speed" %in% names(flash_data) == FALSE) {
+      #   flash_data$Wind_Speed <- NA
       # }
 
       #### add in events based on row number ranges ####
-      data  <-
-        transform(data, Event = events$Event[findInterval(Row_Numb, events$Event_Row_Min)]) %>%
+      flash_data  <-
+        transform(flash_data, Event = events$Event[findInterval(Row_Numb, events$Event_Row_Min)]) %>%
         dplyr::arrange(Name, Team, is.na(Wind_Speed), is.na(Prelims_Result)) %>% # new 1/1/21 to deal with results presented by heat and as final on same page
-        dplyr::distinct(Name, Team, Event, Prelims_Result, Finals_Result, .keep_all = TRUE) # new 1/1/21 to deal with results presented by heat and as final on same page
+        dplyr::distinct(Name, Team, Event, Prelims_Result, Finals_Result, .keep_all = TRUE) %>%  # new 1/1/21 to deal with results presented by heat and as final on same page
+        dplyr::arrange(Row_Numb)
+
+      #### adding in attempts ####
+      if (flash_attempts == TRUE) {
+        attempts <- attempts_parse_flash(flash_file)
+
+        # attempts <- attempts %>%
+        #   # transform(attempts, Row_Numb_Adjusted = flash_data$Row_Numb[findInterval(Row_Numb, flash_data$Row_Numb)]) %>%
+        #   dplyr::select(-Row_Numb)
+
+        if (nrow(attempts) > 1) {
+          if (min(attempts$Row_Numb) < min(flash_data$Row_Numb)) {
+            flash_data <-
+              cbind(flash_data, attempts %>% dplyr::select(-Row_Numb))
+
+          } else {
+            attempts <-
+              transform(attempts, Row_Numb_Adjusted = flash_data$Row_Numb[findInterval(Row_Numb, flash_data$Row_Numb)]) %>%
+              dplyr::select(-Row_Numb)
+
+            flash_data <-
+              dplyr::left_join(flash_data,
+                               attempts,
+                               by = c("Row_Numb" = "Row_Numb_Adjusted"))
+          }
+
+        }
+      }
+
+      #### adding in attempts results ####
+      if (flash_attempts_results == TRUE) {
+        suppressMessages(attempts_results <- attempts_results_parse_flash(flash_file))
+
+        if (nrow(attempts_results) > 1) {
+          attempts_results <-
+            transform(attempts_results, Row_Numb_Adjusted = flash_data$Row_Numb[findInterval(Row_Numb, flash_data$Row_Numb)]) %>%
+            dplyr::select(-Row_Numb)
+
+          flash_data <-
+            dplyr::left_join(flash_data,
+                             attempts_results,
+                             by = c("Row_Numb" = "Row_Numb_Adjusted"))
+
+        }
+      }
+
+      #### ordering columns after adding attempts ####
+      if (all(flash_attempts_results == TRUE & flash_attempts_results == TRUE)) {
+        flash_data <- flash_data %>%
+          dplyr::select(colnames(.)[stringr::str_detect(names(.), "^Attempt", negate = TRUE)], sort(colnames(.)[stringr::str_detect(names(.), "^Attempt")]))
+
+        # c(str_extract_all(names(df), "\\d{1,}_", simplify = TRUE)) %>%
+        #   max(as.numeric(str_extract_all(., "\\d{1,}")), na.rm = TRUE) %>%
+        #   str_remove("_")
+
+        }
+
+
 
       #### remove empty columns (all values are NA) ####
-      data <- Filter(function(x)
-        ! all(is.na(x)), data)
+      flash_data <- Filter(function(x)
+        ! all(is.na(x)), flash_data)
 
       #### clean up unneeded columns ####
-      data <- data %>%
+      flash_data <- flash_data %>%
         dplyr::arrange(Row_Numb) %>%
         dplyr::select(which(SwimmeR::`%!in%`(names(.), c("Row_Numb", "Exhibition", "Points", "Heat"))))
 
-      return(data)
+      return(flash_data)
   }

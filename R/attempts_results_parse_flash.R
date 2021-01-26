@@ -23,17 +23,17 @@
 #' @seealso \code{attempts_results_parse} runs inside \code{\link{tf_parse}} on the output of \code{\link{read_results}} with row numbers from \code{\link{add_row_numbers}}
 
 attempts_results_parse_flash <- function(text) {
-
   #### Testing ####
   # file <- "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
   # file <-
   #    system.file("extdata", "Results-IVP-Track-Field-Championship-2019-20-v2.pdf", package = "JumpeR")
-  file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/014-1.pdf"
-  file <- read_results(file)
-  text <- add_row_numbers(file)
+  # file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/014-1.pdf"
+  # file <- read_results(file)
+  # text <- add_row_numbers(file)
 
   ### define strings ###
-  attempt_results_string_flash <- " P | PPP | O | X | XO | XXO | XX | XXX | \\-{3} " # for metric and imperial units
+  attempt_results_string_flash <-
+    " P | PPP | O | X | XO | XXO | XX | XXX | \\-{3} " # for metric and imperial units
 
   #### Actual Function ####
   ### collect row numbers from rows containing attempts ###
@@ -42,11 +42,9 @@ attempts_results_parse_flash <- function(text) {
     str_extract("\\d{1,}$")
 
   #### pull out rows containing attempts ####
-  suppressWarnings(
-    data_1 <- text %>%
-      .[purrr::map_lgl(., stringr::str_detect, attempt_results_string_flash)] %>%
-          stringr::str_extract_all(attempt_results_string_flash)
-  )
+  suppressWarnings(data_1 <- text %>%
+                     .[purrr::map_lgl(., stringr::str_detect, attempt_results_string_flash)] %>%
+                     stringr::str_extract_all(attempt_results_string_flash))
 
   #### break out by length ####
 
@@ -80,7 +78,7 @@ attempts_results_parse_flash <- function(text) {
       list_transform()
   }  else {
     df_11 <- data.frame(V1 = character(),
-                       stringsAsFactors = FALSE)
+                        stringsAsFactors = FALSE)
   }
 
   if (length(data_length_10) > 0) {
@@ -96,7 +94,7 @@ attempts_results_parse_flash <- function(text) {
       list_transform()
   }  else {
     df_9 <- data.frame(V1 = character(),
-                        stringsAsFactors = FALSE)
+                       stringsAsFactors = FALSE)
   }
 
   if (length(data_length_8) > 0) {
@@ -104,7 +102,7 @@ attempts_results_parse_flash <- function(text) {
       list_transform()
   }  else {
     df_8 <- data.frame(V1 = character(),
-                        stringsAsFactors = FALSE)
+                       stringsAsFactors = FALSE)
   }
 
   if (length(data_length_7) > 0) {
@@ -112,7 +110,7 @@ attempts_results_parse_flash <- function(text) {
       list_transform()
   }  else {
     df_7 <- data.frame(V1 = character(),
-                        stringsAsFactors = FALSE)
+                       stringsAsFactors = FALSE)
   }
 
   if (length(data_length_6) > 0) {
@@ -120,7 +118,7 @@ attempts_results_parse_flash <- function(text) {
       list_transform()
   }  else {
     df_6 <- data.frame(V1 = character(),
-                        stringsAsFactors = FALSE)
+                       stringsAsFactors = FALSE)
   }
 
   if (length(data_length_5) > 0) {
@@ -128,7 +126,7 @@ attempts_results_parse_flash <- function(text) {
       list_transform()
   }  else {
     df_5 <- data.frame(V1 = character(),
-                        stringsAsFactors = FALSE)
+                       stringsAsFactors = FALSE)
   }
 
   if (length(data_length_4) > 0) {
@@ -136,7 +134,7 @@ attempts_results_parse_flash <- function(text) {
       list_transform()
   }  else {
     df_4 <- data.frame(V1 = character(),
-                        stringsAsFactors = FALSE)
+                       stringsAsFactors = FALSE)
   }
 
   if (length(data_length_3) > 0) {
@@ -144,7 +142,7 @@ attempts_results_parse_flash <- function(text) {
       list_transform
   }  else {
     df_3 <- data.frame(V1 = character(),
-                        stringsAsFactors = FALSE)
+                       stringsAsFactors = FALSE)
   }
 
   if (length(data_length_2) > 0) {
@@ -152,7 +150,7 @@ attempts_results_parse_flash <- function(text) {
       list_transform()
   }  else {
     df_2 <- data.frame(V1 = character(),
-                        stringsAsFactors = FALSE)
+                       stringsAsFactors = FALSE)
   }
 
   if (length(data_length_1) > 0) {
@@ -160,30 +158,48 @@ attempts_results_parse_flash <- function(text) {
       list_transform()
   }  else {
     df_1 <- data.frame(V1 = character(),
-                        stringsAsFactors = FALSE)
+                       stringsAsFactors = FALSE)
   }
 
   #### bind up results ####
   # results are bound with named column "Row_Numb" retained
-  data <-
-    dplyr::bind_rows(df_12, df_11, df_10, df_9, df_8, df_7, df_6, df_5, df_4, df_3, df_2, df_1) %>%
+  data_attempts_results <-
+    dplyr::bind_rows(df_12,
+                     df_11,
+                     df_10,
+                     df_9,
+                     df_8,
+                     df_7,
+                     df_6,
+                     df_5,
+                     df_4,
+                     df_3,
+                     df_2,
+                     df_1) %>%
     dplyr::bind_cols(row_numbs)
 
-  names(data)[ncol(data)] <- "Row_Numb" # to rename last column since we don't know how many columns there will be
+  names(data_attempts_results)[ncol(data_attempts_results)] <-
+    "Row_Numb" # to rename last column since we don't know how many columns there will be
 
-  data <- data %>%
+  data_attempts_results <- data_attempts_results %>%
     dplyr::mutate(Row_Numb = as.numeric(Row_Numb)) # make row number of split match row number of performance
 
   #### rename columns V1, V2 etc. at Attempt_1, Attempt_2 etc. ####
-  old_names <- names(data)[grep("^V", names(data))]
+  old_names <- names(data_attempts_results)[grep("^V", names(data_attempts_results))]
   new_names <-
-    paste("Attempt", seq(1, length(names(data)) - 1), "Result", sep = "_")
+    paste("Attempt", seq(1, length(names(data_attempts_results)) - 1), "Result", sep = "_")
 
-  data <- data %>%
+  data_attempts_results <- data_attempts_results %>%
     dplyr::rename_at(dplyr::vars(dplyr::all_of(old_names)), ~ new_names) %>%
-    dplyr::arrange(Row_Numb)
+    dplyr::arrange(Row_Numb) %>%
+    dplyr::mutate(dplyr::across(new_names, stringr::str_trim))
 
-  return(data)
+  if (sum(suppressWarnings(str_detect(data_attempts_results, "O"))) >= 1) { # some results, like long jump will have X for faults, but not O for pass - these are not the kind of results we want for attempts_results, rather they will be caputred as attempts
+    return(data_attempts_results)
+  } else {
+    data_attempts_results <- data.frame(Row_Numb = character(),
+                       stringsAsFactors = FALSE)
+    return(data_attempts_results)
+  }
 
 }
-
