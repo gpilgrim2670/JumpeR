@@ -1274,5 +1274,18 @@ flash_parse <-
         dplyr::arrange(Row_Numb) %>%
         dplyr::select(which(SwimmeR::`%!in%`(names(.), c("Row_Numb", "Exhibition", "Points", "Heat"))))
 
+      # removes unneeded Attempt_X columns (i.e. those that don't have an associated Attempt_Result)
+      if(any(str_detect("Attempt_\\d{1,}_Result", names(flash_data))) == TRUE){
+      results_numbs <- stringr::str_extract(names(flash_data), "\\d{1,}_")[is.na(stringr::str_extract(names(flash_data), "\\d{1,}_")) == FALSE]
+      results_numbs <- as.numeric(stringr::str_remove(results_numbs, "_"))
+
+      attempts_numbs <- stringr::str_extract(names(flash_data), "Attempt_\\d{1,}$")[is.na(stringr::str_extract(names(flash_data), "Attempt_\\d{1,}$")) == FALSE]
+      attempts_numbs <- max(as.numeric(stringr::str_remove(attempts_numbs, "Attempt_")))
+      cols_to_remove <- paste0("Attempt_", seq(max(results_numbs, na.rm = TRUE) + 1, max(attempts_numbs, na.rm = TRUE), 1))
+
+      flash_data <- flash_data %>%
+        dplyr::select(-cols_to_remove)
+      }
+
       return(flash_data)
   }
