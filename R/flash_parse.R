@@ -81,9 +81,9 @@ flash_parse <-
     #   add_row_numbers()
     # file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/014-1.pdf" # pole vault, attempt heights as single line above results
     # file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/036-1.pdf" # triple jump, attempts in line
-    # flash_file <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/021-1.pdf") %>%
+    # flash_file <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/05-03_ArkansasTwilight/031-1.pdf") %>%
     #   add_row_numbers()
-    # flash_file <- raw_results[26] %>%
+    # flash_file <- raw_results[11] %>%
     #   unlist() %>%
     #   add_row_numbers()
 
@@ -1165,6 +1165,9 @@ flash_parse <-
                                               Finals_Result %in% c("FOUL", "DNF", "NH", "DQ") == TRUE ~ 1,
                                               TRUE ~ DQ)) %>%
           dplyr::na_if(10000) %>%
+          { # Notes column might or might not exist
+            if("Name" %!in% names(.)) dplyr::mutate(., Name = "NA") else . # relay entries don't have a team column
+          } %>%
           dplyr::mutate(dplyr::across(
             c(Name, Team), ~ stringr::str_replace_all(., "10000", "--")
           )) %>% # remove any "10000"s added in erroneously
@@ -1183,15 +1186,19 @@ flash_parse <-
           dplyr::na_if("NA")
       )
 
-      #### Address Gendered Ages
+      #### Address Gendered Ages - not sure if needed for flash results ####
+      if("Age" %in% names(flash_data)){
       flash_data <- flash_data %>%
         dplyr::mutate(Gender = stringr::str_extract(Age, "^M|^W")) %>%
         dplyr::mutate(Age = dplyr::case_when(
           is.na(Gender) == FALSE ~ stringr::str_remove(Age, Gender),
           TRUE ~ Age
         ))
+      }
 
-      #### Address Names with "." renamed to "Period"
+
+
+      #### Address Names with "." renamed to "Period" - not sure if needed for flash results ####
       flash_data <- flash_data %>%
         dplyr::mutate(Name = stringr::str_replace(Name, "Period", "\\."))
 
@@ -1210,6 +1217,26 @@ flash_parse <-
         dplyr::arrange(Name, Team, is.na(Wind_Speed), is.na(Prelims_Result)) %>% # new 1/1/21 to deal with results presented by heat and as final on same page
         dplyr::distinct(Name, Team, Event, Prelims_Result, Finals_Result, .keep_all = TRUE) %>%  # new 1/1/21 to deal with results presented by heat and as final on same page
         dplyr::arrange(Row_Numb)
+
+      #### Address Blank Teams for non-relay events ####
+      if (all(("Team" %in% names(flash_data)) &
+              ("Name" %in% names(flash_data)))) {
+        flash_data <- flash_data %>%
+          dplyr::mutate(
+            Name = dplyr::case_when(
+              is.na(Name) == TRUE &
+                is.na(Team) == FALSE &
+                stringr::str_detect(Event, "Relay|relay|MR|Unknown") == FALSE ~ Team,
+              TRUE ~ Name
+            )
+          ) %>%
+          dplyr::mutate(Team = dplyr::case_when(
+            Name == Team &
+              stringr::str_detect(Event, "Relay|relay|MR|Unknown") == FALSE ~ "NA",
+            TRUE ~ Team
+          )) %>%
+          dplyr::na_if("NA")
+      }
 
       #### adding in attempts ####
       if (flash_attempts == TRUE) {
@@ -1241,7 +1268,7 @@ flash_parse <-
 
       #### adding in attempts results ####
       if (flash_attempts_results == TRUE) {
-        suppressMessages(attempts_results <- attempts_results_parse_flash(flash_file))
+        attempts_results <- attempts_results_parse_flash(flash_file)
 
         if (nrow(attempts_results) > 1) {
           attempts_results <-
@@ -1264,28 +1291,36 @@ flash_parse <-
       }
 
 
-
-      #### remove empty columns (all values are NA) ####
-      flash_data <- Filter(function(x)
-        ! all(is.na(x)), flash_data)
-
       #### clean up unneeded columns ####
       flash_data <- flash_data %>%
         dplyr::arrange(Row_Numb) %>%
         dplyr::select(which(SwimmeR::`%!in%`(names(.), c("Row_Numb", "Exhibition", "Points", "Heat"))))
 
       # removes unneeded Attempt_X columns (i.e. those that don't have an associated Attempt_Result)
-      if(any(str_detect("Attempt_\\d{1,}_Result", names(flash_data))) == TRUE){
-      results_numbs <- stringr::str_extract(names(flash_data), "\\d{1,}_")[is.na(stringr::str_extract(names(flash_data), "\\d{1,}_")) == FALSE]
-      results_numbs <- as.numeric(stringr::str_remove(results_numbs, "_"))
+      if (any(str_detect("Attempt_\\d{1,}_Result", names(flash_data))) == TRUE) {
+        results_numbs <-
+          stringr::str_extract(names(flash_data), "\\d{1,}_")[is.na(stringr::str_extract(names(flash_data), "\\d{1,}_")) == FALSE]
+        results_numbs <-
+          as.numeric(stringr::str_remove(results_numbs, "_"))
 
-      attempts_numbs <- stringr::str_extract(names(flash_data), "Attempt_\\d{1,}$")[is.na(stringr::str_extract(names(flash_data), "Attempt_\\d{1,}$")) == FALSE]
-      attempts_numbs <- max(as.numeric(stringr::str_remove(attempts_numbs, "Attempt_")))
-      cols_to_remove <- paste0("Attempt_", seq(max(results_numbs, na.rm = TRUE) + 1, max(attempts_numbs, na.rm = TRUE), 1))
+        attempts_numbs <-
+          stringr::str_extract(names(flash_data), "Attempt_\\d{1,}$")[is.na(stringr::str_extract(names(flash_data), "Attempt_\\d{1,}$")) == FALSE]
+        attempts_numbs <-
+          max(as.numeric(stringr::str_remove(attempts_numbs, "Attempt_")))
+        cols_to_remove <-
+          paste0("Attempt_", seq(
+            max(results_numbs, na.rm = TRUE) + 1,
+            max(attempts_numbs, na.rm = TRUE),
+            1
+          ))
 
-      flash_data <- flash_data %>%
-        dplyr::select(-cols_to_remove)
+        flash_data <- flash_data %>%
+          dplyr::select(-cols_to_remove)
       }
+
+      #### remove empty columns (all values are NA) ####
+      flash_data <- Filter(function(x)
+        ! all(is.na(x)), flash_data)
 
       return(flash_data)
   }

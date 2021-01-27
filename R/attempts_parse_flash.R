@@ -45,7 +45,8 @@ attempts_parse_flash <- function(text) {
   text <- text %>%
     stringr::str_remove_all("\n\\s*") %>%
     .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "^[A-Z][a-km-z].{1,}$")))] %>%   # remove records, don't want to exclude rows beginning with "Pl "
-    .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "(?<=[\\–]) +X ")))] # remove special case where in vertical jumps someone passes a round then fails leaving "XX-  X" and that X gets picked up like it would for a horizontal event
+    .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "(?<=[\\–]) +X ")))] %>%  # remove special case where in vertical jumps someone passes a round then fails leaving "XX-  X" and that X gets picked up like it would for a horizontal event
+    .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "(?<=O) +X ")))] # remove special case where in vertical jumps someone passes a round then makes one attempt and passes leaving "O  X" and that X gets picked up like it would for a horizontal event
 
   #### collect row numbers from rows containing attempts ####
   row_numbs <- text %>%
