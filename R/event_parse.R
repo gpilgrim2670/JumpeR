@@ -21,13 +21,14 @@
 
 event_parse <- function(text) {
   # text <- as_lines_list_2
+  # text <- raw_results[31] %>%
+  #   unlist() %>%
+  #   add_row_numbers()
 
-  # event_string <-
-  #   "Event \\d{1,}|Women .* Yard|Women .* Meter|Girls .* Yard|Girls .* Meter|Men .* Yard|Men .* Meter|Boys .* Yard|Boys .* Meter|Mixed .* Yard|Mixed .* Meter|Boys.* Long|Girls.* Long|Men.* Long|Women.* Long|Boys.* Pole|Girls.* Pole|Men.* Pole|Women.* Pole|Boys.* Triple|Girls.* Triple|Men.* Triple|Women.* Triple|Boys.* Shot|Girls.* Shot|Men.* Shot|Women.* Shot|Boys.* Javalin|Girls.* Javalin|Men.* Javalin|Women.* Javalin|Boys.* Weight|Girls.* Weight|Men.* Weight|Women.* Weight|Medley|Heptathlon|Pentathlon|Boys.* High|Girls.* High|Men.* High|Women.* High"
-
+  #### Build event names ####
   genders <- c("Women", 'Girls', "Men", "Boys", "Mixed")
   space1 <- " .*"
-  events_parts <- c("Yard", "Meter", "Y", "M", "Long", "High", "Triple", "Pole", "Pentathlon", "Decathlon", "Heptathlon", "Shot", "Javalin", "Weight", "Hammer", "Medley")
+  events_parts <- c("Yard", "Meter", "Y", "M", "Long", "High", "Triple", "Pole", "Pentathlon", "Decathlon", "Heptathlon", "Shot Put", "Javelin", "Weight", "Hammer", "Discus", "Medley")
 
   event_string <-
     as.vector(outer(genders, events_parts, paste, sep = space1)) %>%
@@ -35,6 +36,7 @@ event_parse <- function(text) {
     paste(collapse = "|") %>%
     paste0("|Event \\d{1,}")
 
+  #### Pull out event names ####
   events <- text %>%
     .[purrr::map_lgl(.,
                      stringr::str_detect,

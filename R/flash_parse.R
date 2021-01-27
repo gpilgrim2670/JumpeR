@@ -60,7 +60,6 @@ flash_parse <-
     #
     # file <- c(file_1, file_2, file_3, file_4, file_5)
     #
-
     # numbs_sing <- seq(1, 9, 1)
     # numbs_sing <- paste0("0", numbs_sing)
     # numbs_dub <- as.character(seq(10, 40, 1))
@@ -84,7 +83,11 @@ flash_parse <-
     # file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/036-1.pdf" # triple jump, attempts in line
     # flash_file <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/021-1.pdf") %>%
     #   add_row_numbers()
+    # flash_file <- raw_results[26] %>%
+    #   unlist() %>%
+    #   add_row_numbers()
 
+    #### Begin actual function ####
 
     #### Pulls out event labels from text ####
     events <- event_parse(flash_file) %>%
@@ -103,9 +106,6 @@ flash_parse <-
     Points_String <- "^\\d\\d?\\.?\\d?$"
     Date_String <- paste(paste0("^\\d{1,2}-", month.abb, "-\\d{4}$"), collapse = "|")
     Age_String <- paste0("^SR$|^JR$|^SO$|^FR$|^M?W?[:digit:]{1,3}$|", Date_String)
-
-
-    ########### need to deal with Q/q 1/5/2021 ##########
 
     #### clean input data ####
       suppressWarnings(
@@ -164,7 +164,7 @@ flash_parse <-
           stringr::str_replace_all("(?<=\\d) (?=\\d{1,}$)", "  ") %>% # tf specific - split off row_numb
           stringr::str_replace_all(" \\., ", "  Period, ") %>% # for names that only have a period, as in some singapore results
           stringr::str_replace_all("([:alpha])(\\.[:alpha:])", "\\1 \\2") %>%
-          stringr::str_remove_all("X?X?PA\\$\\$|XXX|XXO| XX | ?XO ?| O | X |") %>%  # remove attempts
+          stringr::str_remove_all("X?X?PA\\$\\$|XXX|XXO| XX | ?XO ?| O | X | XR ") %>%  # remove attempts
           # stringr::str_remove_all("^[A-Z][a-z].{1,}$") %>%
           trimws() %>%
           .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "^[A-Z][a-z].{1,}$")))]  # remove records
@@ -1162,7 +1162,7 @@ flash_parse <-
           ### moved up from below for DQ work 8/20
           dplyr::mutate(DQ = dplyr::case_when(Place == 10000 &
                                                 Exhibition == 0 ~ 1, # added exhibition condition 8/27
-                                              Finals_Result %in% c("FOUL", "DNF", "NH") == TRUE ~ 1,
+                                              Finals_Result %in% c("FOUL", "DNF", "NH", "DQ") == TRUE ~ 1,
                                               TRUE ~ DQ)) %>%
           dplyr::na_if(10000) %>%
           dplyr::mutate(dplyr::across(
@@ -1176,8 +1176,10 @@ flash_parse <-
           #### clean up notes, move over reaction times ####
           # dplyr::mutate(Reaction_Time = dplyr::case_when(stringr::str_detect(Notes, "^0\\.\\d{3}$") == TRUE ~ Notes,
           #                                                TRUE ~ "NA")) %>%
-          dplyr::mutate(Notes = dplyr::case_when(stringr::str_detect(Notes, "^0\\.\\d{3}$") == TRUE ~ "NA",
-                                                 TRUE ~ Notes)) %>%
+        { # Notes column might or might not exist
+          if("Notes" %in% names(.)) dplyr::mutate(., Notes = dplyr::case_when(stringr::str_detect(Notes, "^0\\.\\d{3}$") == TRUE ~ "NA",
+                                                                           TRUE ~ Notes)) else .
+        } %>%
           dplyr::na_if("NA")
       )
 
@@ -1194,13 +1196,13 @@ flash_parse <-
         dplyr::mutate(Name = stringr::str_replace(Name, "Period", "\\."))
 
       #### added in to work with arrange/distinct calls after adding in events ####
-      # if ("Prelims_Result" %in% names(flash_data) == FALSE) {
-      #   flash_data$Prelims_Result <- NA
-      # }
-      #
-      # if ("Wind_Speed" %in% names(flash_data) == FALSE) {
-      #   flash_data$Wind_Speed <- NA
-      # }
+      if ("Prelims_Result" %in% names(flash_data) == FALSE) {
+        flash_data$Prelims_Result <- NA
+      }
+
+      if ("Wind_Speed" %in% names(flash_data) == FALSE) {
+        flash_data$Wind_Speed <- NA
+      }
 
       #### add in events based on row number ranges ####
       flash_data  <-
@@ -1217,10 +1219,11 @@ flash_parse <-
         #   # transform(attempts, Row_Numb_Adjusted = flash_data$Row_Numb[findInterval(Row_Numb, flash_data$Row_Numb)]) %>%
         #   dplyr::select(-Row_Numb)
 
-        if (nrow(attempts) > 1) {
+        if (all(nrow(attempts) <  2 & nrow(attempts) >  0)) {
           if (min(attempts$Row_Numb) < min(flash_data$Row_Numb)) {
             flash_data <-
               cbind(flash_data, attempts %>% dplyr::select(-Row_Numb))
+          }
 
           } else {
             attempts <-
@@ -1233,7 +1236,7 @@ flash_parse <-
                                by = c("Row_Numb" = "Row_Numb_Adjusted"))
           }
 
-        }
+
       }
 
       #### adding in attempts results ####
@@ -1254,15 +1257,11 @@ flash_parse <-
       }
 
       #### ordering columns after adding attempts ####
-      if (all(flash_attempts_results == TRUE & flash_attempts_results == TRUE)) {
+      if (all(flash_attempts_results == TRUE &
+              flash_attempts_results == TRUE)) {
         flash_data <- flash_data %>%
           dplyr::select(colnames(.)[stringr::str_detect(names(.), "^Attempt", negate = TRUE)], sort(colnames(.)[stringr::str_detect(names(.), "^Attempt")]))
-
-        # c(str_extract_all(names(df), "\\d{1,}_", simplify = TRUE)) %>%
-        #   max(as.numeric(str_extract_all(., "\\d{1,}")), na.rm = TRUE) %>%
-        #   str_remove("_")
-
-        }
+      }
 
 
 

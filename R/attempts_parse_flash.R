@@ -32,13 +32,20 @@ attempts_parse_flash <- function(text) {
   # file <- read_results(file)
   # text <- add_row_numbers(file)
   # text <- raw_results
-
+#
+#
+  # text <- flash_file
 
   #### Actual Function ####
   ### define strings ###
 
   attempt_string_flash <-
     "\\d{1,2}\\.\\d{2} |\\d{1,3}\\-\\d{2}\\.?\\d{2}?|  X  |  \\–  " # special dash character
+
+  text <- text %>%
+    stringr::str_remove_all("\n\\s*") %>%
+    .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "^[A-Z][a-km-z].{1,}$")))] %>%   # remove records, don't want to exclude rows beginning with "Pl "
+    .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "(?<=[\\–]) +X ")))] # remove special case where in vertical jumps someone passes a round then fails leaving "XX-  X" and that X gets picked up like it would for a horizontal event
 
   #### collect row numbers from rows containing attempts ####
   row_numbs <- text %>%
@@ -77,7 +84,7 @@ attempts_parse_flash <- function(text) {
 
   if (sum(suppressWarnings(str_detect(text, "\\d\\.\\d{2}m"))) >= 1) {
     # keeps running times like 10.34 from getting into attempts
-    return(data_attempts_results)
+    return(data_attempts)
   } else {
     data_attempts <- data.frame(Row_Numb = character(),
                                 stringsAsFactors = FALSE)
