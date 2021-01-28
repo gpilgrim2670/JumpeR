@@ -81,7 +81,7 @@ flash_parse <-
     #   add_row_numbers()
     # file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/014-1.pdf" # pole vault, attempt heights as single line above results
     # file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/036-1.pdf" # triple jump, attempts in line
-    # flash_file <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/05-03_ArkansasTwilight/031-1.pdf") %>%
+    # flash_file <- read_results("https://www.flashresults.com/2017_Meets/Outdoor/06-22_USATF/06-22-17_USATF_Full_Results.htm") %>%
     #   add_row_numbers()
     # flash_file <- raw_results[11] %>%
     #   unlist() %>%

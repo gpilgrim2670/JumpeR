@@ -89,7 +89,7 @@ tf_parse <-
     #
     # file <- read_results(event_links[75])
     # file <- read_results(system.file("extdata", "Results-IVP-Track-Field-Championship-2019-20-v2.pdf", package = "JumpeR"))
-    # file <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/036-1.pdf")
+    # file <- read_results("https://www.flashresults.com/2017_Meets/Outdoor/06-22_USATF/06-22-17_USATF_Full_Results.htm")
     # avoid <- c("[:alpha:]\\: .*")
     # typo <- "typo"
     # replacement <- "typo"
@@ -153,7 +153,7 @@ tf_parse <-
         stringr::str_replace_all(" \\'[A-Z]\\' ", "  ") %>% # tf specific  - removes relay A, B etc. designators
         stringr::str_replace_all("  [A-Z]  ", "  ") %>%
         stringr::str_replace_all("\\'\\'", "  ") %>%
-        stringr::str_remove_all("(?<=\\.\\d{2})[Q|R|q](?=\\s)") %>% # tf specific - removes "q" or "Q" sometimes used to designate a qualifying result, also 'R'
+        stringr::str_remove_all("(?<=\\.\\d{2})[Q|R|M|\\$|q](?=\\s)") %>% # tf specific - removes "q" or "Q" sometimes used to designate a qualifying result, also 'R', "M" "$"
         stringr::str_remove_all("(?<=\\s)[J|j](?=\\d)") %>% # tf specific - removes "j" or "J" sometimes used to designate a judged result
         stringr::str_replace_all("-{2,5}", "10000") %>% #8/26
         # stringr::str_replace_all("(\\.\\d{2})\\d+", "\\1 ") %>% # added 8/21 for illinois to deal with points column merging with final times column
@@ -177,7 +177,8 @@ tf_parse <-
         stringr::str_replace_all(" (W\\d{1,3}) ", "  \\1  ") %>% # tf specific - gendered ages W
         stringr::str_replace_all("(?<=\\d\\.\\d) (?=\\d{1,2}\\s)", "  ") %>% # tf specific - split off wind and heat number
         stringr::str_replace_all("(?<=\\d) (?=\\d{1,}$)", "  ") %>% # tf specific - split off row_numb
-        stringr::str_replace_all(" \\., ", "  Period, ") %>%
+        stringr::str_replace_all("(?<=\\dm)[:upper:](?=\\s)", "  ") %>% # tf specific - sometimes an M for Meet record is added to a distance 1.23m as 1.23mM
+        stringr::str_replace_all(" \\., ", "  Period, ") %>% # for people with no first/last name, like Indian runners in some Singapore results
         stringr::str_replace_all("([:alpha])(\\.[:alpha:])", "\\1 \\2") %>%
         trimws()
     )
@@ -438,12 +439,17 @@ tf_parse <-
                 stringr::str_detect(V4, "[:alpha:]{2,}") ~ V4,
               stringr::str_detect(V4, Age_String) &
                 stringr::str_detect(V5, "[:alpha:]{2,}") ~ V5,
+              stringr::str_detect(V2, Name_String) == TRUE &
+                stringr::str_detect(V3, Age_String) == FALSE &
+                stringr::str_detect(V3, "[:alpha:]{2,}") == TRUE ~ V3,
               TRUE ~ "NA"
             )
           ) %>%
           dplyr::mutate(
             Finals_Result = dplyr::case_when(
-              stringr::str_detect(V5, Result_Specials_String) &
+              stringr::str_detect(V4, Result_Specials_String) == TRUE &
+                stringr::str_detect(V5, Result_Specials_String) == FALSE ~ V4,
+              stringr::str_detect(V5, Result_Specials_String) == TRUE &
                 stringr::str_detect(V6, Result_Specials_String) == FALSE ~ V5,
               stringr::str_detect(V6, Result_Specials_String) == TRUE &
                 stringr::str_detect(V5, Result_Specials_String) == FALSE &
@@ -457,9 +463,11 @@ tf_parse <-
           ) %>%
           dplyr::mutate(
             Wind_Speed = dplyr::case_when(
+              stringr::str_detect(V5, Wind_String) == TRUE &
+                stringr::str_detect(V6, Wind_String) == FALSE  ~ V5,
               stringr::str_detect(V6, Wind_String) == TRUE &
                 stringr::str_detect(V7, Wind_String) == FALSE  ~ V6,
-              stringr::str_detect(V7, Wind_String) ~ V7,
+              stringr::str_detect(V7, Wind_String) == TRUE ~ V7,
               TRUE ~ "NA"
             )
           ) %>%
