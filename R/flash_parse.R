@@ -1240,26 +1240,26 @@ flash_parse <-
 
       #### adding in attempts ####
       if (flash_attempts == TRUE) {
-        attempts <- attempts_parse_flash(flash_file)
+        attempts_data <- attempts_parse_flash(flash_file)
 
         # attempts <- attempts %>%
         #   # transform(attempts, Row_Numb_Adjusted = flash_data$Row_Numb[findInterval(Row_Numb, flash_data$Row_Numb)]) %>%
         #   dplyr::select(-Row_Numb)
 
-        if (all(nrow(attempts) <  2 & nrow(attempts) >  0)) {
-          if (min(attempts$Row_Numb) < min(flash_data$Row_Numb)) {
+        if (all(nrow(attempts_data) <  2 & nrow(attempts_data) >  0)) {
+          if (min(attempts_data$Row_Numb) < min(flash_data$Row_Numb)) {
             flash_data <-
-              cbind(flash_data, attempts %>% dplyr::select(-Row_Numb))
+              cbind(flash_data, attempts_data %>% dplyr::select(-Row_Numb))
           }
 
           } else {
-            attempts <-
-              transform(attempts, Row_Numb_Adjusted = flash_data$Row_Numb[findInterval(Row_Numb, flash_data$Row_Numb)]) %>%
+            attempts_data <-
+              transform(attempts_data, Row_Numb_Adjusted = flash_data$Row_Numb[findInterval(Row_Numb, flash_data$Row_Numb)]) %>%
               dplyr::select(-Row_Numb)
 
             flash_data <-
               dplyr::left_join(flash_data,
-                               attempts,
+                               attempts_data,
                                by = c("Row_Numb" = "Row_Numb_Adjusted"))
           }
 
@@ -1268,23 +1268,23 @@ flash_parse <-
 
       #### adding in attempts results ####
       if (flash_attempts_results == TRUE) {
-        attempts_results <- attempts_results_parse_flash(flash_file)
+        attempts_results_data <- attempts_results_parse_flash(flash_file)
 
-        if (nrow(attempts_results) > 1) {
-          attempts_results <-
-            transform(attempts_results, Row_Numb_Adjusted = flash_data$Row_Numb[findInterval(Row_Numb, flash_data$Row_Numb)]) %>%
+        if (nrow(attempts_results_data) > 1) {
+          attempts_results_data <-
+            transform(attempts_results_data, Row_Numb_Adjusted = flash_data$Row_Numb[findInterval(Row_Numb, flash_data$Row_Numb)]) %>%
             dplyr::select(-Row_Numb)
 
           flash_data <-
             dplyr::left_join(flash_data,
-                             attempts_results,
+                             attempts_results_data,
                              by = c("Row_Numb" = "Row_Numb_Adjusted"))
 
         }
       }
 
       #### ordering columns after adding attempts ####
-      if (all(flash_attempts_results == TRUE &
+      if (all(flash_attempts == TRUE &
               flash_attempts_results == TRUE)) {
         flash_data <- flash_data %>%
           dplyr::select(colnames(.)[stringr::str_detect(names(.), "^Attempt", negate = TRUE)], sort(colnames(.)[stringr::str_detect(names(.), "^Attempt")]))

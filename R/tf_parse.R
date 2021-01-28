@@ -153,7 +153,7 @@ tf_parse <-
         stringr::str_replace_all(" \\'[A-Z]\\' ", "  ") %>% # tf specific  - removes relay A, B etc. designators
         stringr::str_replace_all("  [A-Z]  ", "  ") %>%
         stringr::str_replace_all("\\'\\'", "  ") %>%
-        stringr::str_remove_all("(?<=\\.\\d{2})[Q|q](?=\\s)") %>% # tf specific - removes "q" or "Q" sometimes used to designate a qualifying result
+        stringr::str_remove_all("(?<=\\.\\d{2})[Q|R|q](?=\\s)") %>% # tf specific - removes "q" or "Q" sometimes used to designate a qualifying result, also 'R'
         stringr::str_remove_all("(?<=\\s)[J|j](?=\\d)") %>% # tf specific - removes "j" or "J" sometimes used to designate a judged result
         stringr::str_replace_all("-{2,5}", "10000") %>% #8/26
         # stringr::str_replace_all("(\\.\\d{2})\\d+", "\\1 ") %>% # added 8/21 for illinois to deal with points column merging with final times column
@@ -741,6 +741,9 @@ tf_parse <-
                                               Exhibition == 0 ~ 1, # added exhibition condition 8/27
                                             TRUE ~ DQ)) %>%
         dplyr::na_if(10000) %>%
+        { # Notes column might or might not exist
+          if("Name" %!in% names(.)) dplyr::mutate(., Name = "NA") else . # relay entries don't have a team column
+        } %>%
         dplyr::mutate(dplyr::across(
           c(Name, Team), ~ stringr::str_replace_all(., "10000", "--")
         )) %>% # remove any "10000"s added in erroneously
@@ -768,16 +771,20 @@ tf_parse <-
     )
 
     #### Address Gendered Ages
+    if("Age" %in% names(data)){
     data <- data %>%
       dplyr::mutate(Gender = stringr::str_extract(Age, "^M|^W")) %>%
       dplyr::mutate(Age = dplyr::case_when(
         is.na(Gender) == FALSE ~ stringr::str_remove(Age, Gender),
         TRUE ~ Age
       ))
+    }
 
     #### Address Names with "." renamed to "Period"
+    if("Name" %in% names(data)){
     data <- data %>%
       dplyr::mutate(Name = stringr::str_replace(Name, "Period", "\\."))
+    }
 
     # if("Points" %in% names(data) == FALSE)
     # {data$Points <- NA}
@@ -811,28 +818,28 @@ tf_parse <-
 
     #### adding in attempts ####
     if(attempts == TRUE){
-      attempts <- attempts_parse(as_lines_list_2)
+      attempts_data <- attempts_parse(as_lines_list_2)
 
-      attempts <-
-        transform(attempts, Row_Numb_Adjusted = data$Row_Numb[findInterval(Row_Numb, data$Row_Numb)]) %>%
+      attempts_data <-
+        transform(attempts_data, Row_Numb_Adjusted = data$Row_Numb[findInterval(Row_Numb, data$Row_Numb)]) %>%
         dplyr::select(-Row_Numb)
 
-      data <- dplyr::left_join(data, attempts, by = c("Row_Numb" = "Row_Numb_Adjusted"))
+      data <- dplyr::left_join(data, attempts_data, by = c("Row_Numb" = "Row_Numb_Adjusted"))
     }
 
     #### adding in attempts results ####
     if(attempts_results == TRUE){
-      attempts_results <- attempts_results_parse(as_lines_list_2)
+      attempts_results_data <- attempts_results_parse(as_lines_list_2)
 
-      attempts_results <-
-        transform(attempts_results, Row_Numb_Adjusted = data$Row_Numb[findInterval(Row_Numb, data$Row_Numb)]) %>%
+      attempts_results_data <-
+        transform(attempts_results_data, Row_Numb_Adjusted = data$Row_Numb[findInterval(Row_Numb, data$Row_Numb)]) %>%
         dplyr::select(-Row_Numb)
 
-      data <- dplyr::left_join(data, attempts_results, by = c("Row_Numb" = "Row_Numb_Adjusted"))
+      data <- dplyr::left_join(data, attempts_results_data, by = c("Row_Numb" = "Row_Numb_Adjusted"))
     }
 
     #### ordering columns after adding attempts ####
-    if (all(attempts_results == TRUE & attempts_results == TRUE)) {
+    if (all(attempts == TRUE & attempts_results == TRUE)) {
       data <- data %>%
         dplyr::select(colnames(.)[stringr::str_detect(names(.), "^Attempt", negate = TRUE)], sort(colnames(.)[stringr::str_detect(names(.), "^Attempt")]))
     }
