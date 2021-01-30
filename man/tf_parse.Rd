@@ -9,6 +9,7 @@ tf_parse(
   avoid = avoid_default,
   typo = typo_default,
   replacement = replacement_default,
+  relay_athletes = FALSE,
   attempts = FALSE,
   attempts_results = FALSE
 )
@@ -21,6 +22,8 @@ tf_parse(
 \item{typo}{a list of strings that are typos in the original results.  \code{tf_parse} is particularly sensitive to accidental double spaces, so "Central  High School", with two spaces between "Central" and "High" is a problem, which can be fixed.  Pass "Central  High School" to \code{typo}.}
 
 \item{replacement}{a list of fixes for the strings in \code{typo}.  Here one could pass "Central High School" (one space between "Central" and "High") to fix the issue described in \code{typo}}
+
+\item{relay_athletes}{should tf_parse try to include the names of relay athletes for relay events?  Names will be listed in new columns "Relay-Athlete_1", "Relay_Athlete_2" etc.  Defaults to \code{FALSE}.}
 
 \item{attempts}{should tf_parse try to include attempts for jumping/throwing events?  Please note this will add a significant number of columns to the resulting dataframe.  Defaults to \code{FALSE}.}
 

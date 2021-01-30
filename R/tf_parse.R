@@ -29,6 +29,7 @@
 #' @param avoid a list of strings.  Rows in \code{file} containing these strings will not be included. For example "Record:", often used to label records, could be passed to \code{avoid}.  The default is \code{avoid_default}, which contains many strings similar to "Record:".  Users can supply their own lists to \code{avoid}.
 #' @param typo a list of strings that are typos in the original results.  \code{tf_parse} is particularly sensitive to accidental double spaces, so "Central  High School", with two spaces between "Central" and "High" is a problem, which can be fixed.  Pass "Central  High School" to \code{typo}.
 #' @param replacement a list of fixes for the strings in \code{typo}.  Here one could pass "Central High School" (one space between "Central" and "High") to fix the issue described in \code{typo}
+#' @param relay_athletes should tf_parse try to include the names of relay athletes for relay events?  Names will be listed in new columns "Relay-Athlete_1", "Relay_Athlete_2" etc.  Defaults to \code{FALSE}.
 #' @param attempts should tf_parse try to include attempts for jumping/throwing events?  Please note this will add a significant number of columns to the resulting dataframe.  Defaults to \code{FALSE}.
 #' @param attempts_results should tf_parse try to include attempts results (i.e. "PASS", "X", "O") for high jump and pole value events?  Please note this will add a significant number of columns to the resulting dataframe.  Defaults to \code{FALSE}
 #'
@@ -43,10 +44,11 @@ tf_parse <-
            avoid = avoid_default,
            typo = typo_default,
            replacement = replacement_default,
+           relay_athletes = FALSE,
            attempts = FALSE,
            attempts_results = FALSE) {
 
-    # file <- "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
+    # file <- read_results("http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm")
     # file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/014-1.pdf"
     # file <- read_results(file)
 
@@ -60,8 +62,7 @@ tf_parse <-
     }
 
     #### strings that if a line begins with one of them the line is ignored ####
-    avoid_default <-
-      c("Record\\:",
+    avoid_default <- c("Record\\:",
         "[:alpha:]\\: .*")
 
     #### testing setup ####
@@ -73,7 +74,7 @@ tf_parse <-
     # file_3 <- system.file("extdata", "underdistance-2020-result.pdf", package = "JumpeR")
     #
     # file_4 <- "http://results.yentiming.com/2020/Indoor/2-29-20-MOC.htm"
-    # file <- "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
+    # file <- read_results("http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm")
     #
     # file_1 <- read_results(file_1)
     # file_2 <- read_results(file_2)
@@ -89,10 +90,14 @@ tf_parse <-
     #
     # file <- read_results(event_links[75])
     # file <- read_results(system.file("extdata", "Results-IVP-Track-Field-Championship-2019-20-v2.pdf", package = "JumpeR"))
-    # file <- read_results("https://www.flashresults.com/2017_Meets/Outdoor/06-22_USATF/06-22-17_USATF_Full_Results.htm")
+    # file <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/05-09_SEC/029-1.pdf")
     # avoid <- c("[:alpha:]\\: .*")
     # typo <- "typo"
     # replacement <- "typo"
+    # relay_athletes <- TRUE
+    # avoid <- avoid_default
+    # typo <- typo_default
+    # replacement <- replacement_default
 
     #### assign row numbers ####
     as_lines_list_2 <- add_row_numbers(text = file)
@@ -105,10 +110,14 @@ tf_parse <-
         stringr::str_replace_all("\\*(\\d{1,})", replacement = "\\1") # removes * placed in front of place number in ties
       ) # removes * placed in front of place number in ties
 
+    if(all((length(raw_results) < 2) &
+           stringr::str_detect(raw_results, "^http"))) {
+      stop("Please pass links to read_results prior to calling tf_parse")
+    }
 
     #### Flash results or Hy-Tek ####
     # Flash
-    if(any(stringr::str_detect(raw_results[1:5], "CONDITIONS")) == TRUE){
+    if(any(stringr::str_detect(raw_results[1:5], "CONDITIONS"), na.rm = TRUE) == TRUE){
       data <- flash_parse(flash_file = raw_results, flash_attempts = attempts, flash_attempts_results = attempts_results)
 
       return(data)
@@ -745,9 +754,14 @@ tf_parse <-
         dplyr::mutate(Exhibition = 0) %>%
         dplyr::mutate(DQ = 0) %>%
         ### moved up from below for DQ work 8/20
-        dplyr::mutate(DQ = dplyr::case_when(Place == 10000 &
-                                              Exhibition == 0 ~ 1, # added exhibition condition 8/27
-                                            TRUE ~ DQ)) %>%
+        dplyr::mutate(
+          DQ = dplyr::case_when(
+            Place == 10000 &
+              Exhibition == 0  & # added exhibition condition 8/27
+              stringr::str_detect(Finals_Result, "DNS") == FALSE ~ 1, # DNS is not charged as an event, is not a DQ
+            TRUE ~ DQ
+          )
+        ) %>%
         dplyr::na_if(10000) %>%
         { # Notes column might or might not exist
           if("Name" %!in% names(.)) dplyr::mutate(., Name = "NA") else . # relay entries don't have a team column
@@ -819,31 +833,38 @@ tf_parse <-
       dplyr::distinct(Name, Team, Event, Prelims_Result, Finals_Result, .keep_all = TRUE) %>%  # new 1/1/21 to deal with results presented by heat and as final on same page
       dplyr::arrange(Row_Numb)
 
-    #### remove empty columns (all values are NA) ####
-    data <- Filter(function(x)
-      ! all(is.na(x)), data)
+    #### adding relay athletes in ####
+    if (relay_athletes == TRUE) {
+      relay_athletes_df <- collect_relay_athletes(as_lines_list_2)
 
+      relay_athletes_df <-
+        transform(relay_athletes_df, Row_Numb_Adjusted = data$Row_Numb[findInterval(Row_Numb, data$Row_Numb)]) %>%
+        dplyr::select(-Row_Numb)
+
+      data <- data %>%
+        dplyr::left_join(relay_athletes_df, c("Row_Numb" = "Row_Numb_Adjusted"))
+    }
 
     #### adding in attempts ####
     if(attempts == TRUE){
-      attempts_data <- attempts_parse(as_lines_list_2)
+      attempts_df <- attempts_parse(as_lines_list_2)
 
-      attempts_data <-
-        transform(attempts_data, Row_Numb_Adjusted = data$Row_Numb[findInterval(Row_Numb, data$Row_Numb)]) %>%
+      attempts_df <-
+        transform(attempts_df, Row_Numb_Adjusted = data$Row_Numb[findInterval(Row_Numb, data$Row_Numb)]) %>%
         dplyr::select(-Row_Numb)
 
-      data <- dplyr::left_join(data, attempts_data, by = c("Row_Numb" = "Row_Numb_Adjusted"))
+      data <- dplyr::left_join(data, attempts_df, by = c("Row_Numb" = "Row_Numb_Adjusted"))
     }
 
     #### adding in attempts results ####
     if(attempts_results == TRUE){
-      attempts_results_data <- attempts_results_parse(as_lines_list_2)
+      attempts_results_df <- attempts_results_parse(as_lines_list_2)
 
-      attempts_results_data <-
-        transform(attempts_results_data, Row_Numb_Adjusted = data$Row_Numb[findInterval(Row_Numb, data$Row_Numb)]) %>%
+      attempts_results_df <-
+        transform(attempts_results_df, Row_Numb_Adjusted = data$Row_Numb[findInterval(Row_Numb, data$Row_Numb)]) %>%
         dplyr::select(-Row_Numb)
 
-      data <- dplyr::left_join(data, attempts_results_data, by = c("Row_Numb" = "Row_Numb_Adjusted"))
+      data <- dplyr::left_join(data, attempts_results_df, by = c("Row_Numb" = "Row_Numb_Adjusted"))
     }
 
     #### ordering columns after adding attempts ####
@@ -851,6 +872,10 @@ tf_parse <-
       data <- data %>%
         dplyr::select(colnames(.)[stringr::str_detect(names(.), "^Attempt", negate = TRUE)], sort(colnames(.)[stringr::str_detect(names(.), "^Attempt")]))
     }
+
+    #### remove empty columns (all values are NA) ####
+    data <- Filter(function(x)
+      ! all(is.na(x)), data)
 
     #### remove unneeded columns ####
     data <- data %>%

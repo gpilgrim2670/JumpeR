@@ -81,7 +81,7 @@ flash_parse <-
     #   add_row_numbers()
     # file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/014-1.pdf" # pole vault, attempt heights as single line above results
     # file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/036-1.pdf" # triple jump, attempts in line
-    # flash_file <- read_results("https://www.flashresults.com/2017_Meets/Outdoor/06-22_USATF/06-22-17_USATF_Full_Results.htm") %>%
+    # flash_file <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/05-09_SEC/029-1.pdf") %>%
     #   add_row_numbers()
     # flash_file <- raw_results[11] %>%
     #   unlist() %>%
@@ -1161,7 +1161,7 @@ flash_parse <-
           dplyr::mutate(DQ = 0) %>%
           ### moved up from below for DQ work 8/20
           dplyr::mutate(DQ = dplyr::case_when(Place == 10000 &
-                                                Exhibition == 0 ~ 1, # added exhibition condition 8/27
+                                              Exhibition == 0 ~ 1, # added exhibition condition 8/27
                                               Finals_Result %in% c("FOUL", "DNF", "NH", "DQ") == TRUE ~ 1,
                                               TRUE ~ DQ)) %>%
           dplyr::na_if(10000) %>%
@@ -1195,8 +1195,6 @@ flash_parse <-
           TRUE ~ Age
         ))
       }
-
-
 
       #### Address Names with "." renamed to "Period" - not sure if needed for flash results ####
       flash_data <- flash_data %>%
@@ -1262,8 +1260,6 @@ flash_parse <-
                                attempts_data,
                                by = c("Row_Numb" = "Row_Numb_Adjusted"))
           }
-
-
       }
 
       #### adding in attempts results ####

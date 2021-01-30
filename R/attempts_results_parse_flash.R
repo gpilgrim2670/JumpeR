@@ -82,7 +82,7 @@ attempts_results_parse_flash <- function(text) {
       list_transform() %>%
       dplyr::rename(Row_Numb = V13)
   }  else {
-    df_12 <- data.frame(Row_Numb = character(),
+    df_13 <- data.frame(Row_Numb = character(),
                         stringsAsFactors = FALSE)
   }
 
