@@ -1,7 +1,7 @@
 test_that("tf_parse_standard", {
 
   # import standard
-  df_standard <- results <- readRDS(system.file("extdata", "df_standard.rds", package = "JumpeR"))
+  df_standard <- readRDS(system.file("extdata", "df_standard.rds", package = "JumpeR"))
 
   # import test files
   file_1 <-

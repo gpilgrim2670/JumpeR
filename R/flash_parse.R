@@ -81,7 +81,7 @@ flash_parse <-
     #   add_row_numbers()
     # file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/014-1.pdf" # pole vault, attempt heights as single line above results
     # file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/036-1.pdf" # triple jump, attempts in line
-    # flash_file <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/05-09_SEC/029-1.pdf") %>%
+    # flash_file <- read_results("https://www.flashresults.com/2018_Meets/Outdoor/05-05_A10/015-1.pdf") %>%
     #   add_row_numbers()
     # flash_file <- raw_results[11] %>%
     #   unlist() %>%
@@ -92,7 +92,6 @@ flash_parse <-
     #### Pulls out event labels from text ####
     events <- event_parse(flash_file) %>%
       dplyr::mutate(Event = stringr::str_remove(Event, " Women$| Men$"))
-
 
     #### set up strings ####
     Name_String <-
@@ -201,10 +200,8 @@ flash_parse <-
           df_13 <- data_length_13 %>%
             list_transform() %>%
             dplyr::mutate(Place = V1) %>%
-            dplyr::mutate(
-              Bib_Number = dplyr::case_when(stringr::str_detect(V2, "^\\d{1,6}$") == TRUE ~ V2,
-                                            TRUE ~ "NA")
-            ) %>%
+            dplyr::mutate(Bib_Number = dplyr::case_when(stringr::str_detect(V2, "^\\d{1,6}$") == TRUE ~ V2,
+                                                        TRUE ~ "NA")) %>%
             dplyr::mutate(
               Name = dplyr::case_when(
                 stringr::str_detect(V2, Name_String) == TRUE ~ V2,
@@ -230,19 +227,28 @@ flash_parse <-
                   stringr::str_detect(V3, Age_String) == TRUE ~ V4,
                 stringr::str_detect(V4, Age_String) == TRUE &
                   stringr::str_detect(V2, Name_String) == TRUE &
-                  stringr::str_detect(V3, "[:alpha:]{2,}") == TRUE ~ V3, # for results with date of birth instead of age
+                  stringr::str_detect(V3, "[:alpha:]{2,}") == TRUE ~ V3,
+                # for results with date of birth instead of age
                 TRUE ~ "NA"
               )
             ) %>%
             dplyr::mutate(
               Prelims_Result = dplyr::case_when(
-                stringr::str_detect(V11, Result_Specials_String) == FALSE &
-                  stringr::str_detect(V12, Result_Specials_String) == FALSE &
-                  stringr::str_detect(V5, Result_Specials_String) == TRUE &
-                  stringr::str_detect(V6, Result_Specials_String) == TRUE ~ V5,
-                stringr::str_detect(V9, Result_Specials_String) == FALSE &
+                stringr::str_detect(V12, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V11, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V10, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V9, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V8, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V7, Result_Specials_String) == FALSE &
                   stringr::str_detect(V6, Result_Specials_String) == TRUE &
-                  stringr::str_detect(V7, Result_Specials_String) == TRUE ~ V6,
+                  stringr::str_detect(V5, Result_Specials_String) == TRUE ~ V5,
+                stringr::str_detect(V12, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V11, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V10, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V9, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V8, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V7, Result_Specials_String) == TRUE &
+                  stringr::str_detect(V6, Result_Specials_String) == TRUE ~ V6,
                 TRUE ~ "NA"
               )
             ) %>%
@@ -265,8 +271,16 @@ flash_parse <-
               )
             ) %>%
             dplyr::mutate(
-              Wind_Speed = dplyr::case_when(stringr::str_detect(V8, Wind_String) == TRUE ~ V8,
-                                            TRUE ~ "NA")
+              Wind_Speed = dplyr::case_when(
+                stringr::str_detect(V5, Wind_String) == TRUE ~ V5,
+                stringr::str_detect(V5, Wind_String) == FALSE &
+                  stringr::str_detect(V6, Wind_String) == TRUE ~ V6,
+                stringr::str_detect(V6, Wind_String) == FALSE &
+                  stringr::str_detect(V7, Wind_String) == TRUE ~ V7,
+                stringr::str_detect(V7, Wind_String) == FALSE &
+                  stringr::str_detect(V8, Wind_String) == TRUE ~ V8,
+                TRUE ~ "NA"
+              )
             ) %>%
             dplyr::mutate(
               Points = dplyr::case_when(
@@ -279,9 +293,11 @@ flash_parse <-
               )
             ) %>%
             dplyr::mutate(
-              Notes = dplyr::case_when(stringr::str_detect(V9, Points) == FALSE &
-                                         stringr::str_detect(V9, Result_Specials_String) == FALSE ~ V9,
-                                       TRUE ~ "NA")
+              Notes = dplyr::case_when(
+                stringr::str_detect(V9, Points) == FALSE &
+                  stringr::str_detect(V9, Result_Specials_String) == FALSE ~ V9,
+                TRUE ~ "NA"
+              )
             ) %>%
             dplyr::select(
               Place,
@@ -345,9 +361,15 @@ flash_parse <-
               Prelims_Result = dplyr::case_when(
                 stringr::str_detect(V11, Result_Specials_String) == FALSE &
                   stringr::str_detect(V10, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V9, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V8, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V7, Result_Specials_String) == FALSE &
                   stringr::str_detect(V5, Result_Specials_String) == TRUE &
                   stringr::str_detect(V6, Result_Specials_String) == TRUE ~ V5,
-                stringr::str_detect(V9, Result_Specials_String) == FALSE &
+                stringr::str_detect(V11, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V10, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V9, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V8, Result_Specials_String) == FALSE &
                   stringr::str_detect(V6, Result_Specials_String) == TRUE &
                   stringr::str_detect(V7, Result_Specials_String) == TRUE ~ V6,
                 TRUE ~ "NA"
@@ -372,8 +394,16 @@ flash_parse <-
               )
             ) %>%
             dplyr::mutate(
-              Wind_Speed = dplyr::case_when(stringr::str_detect(V8, Wind_String) == TRUE ~ V8,
-                                            TRUE ~ "NA")
+              Wind_Speed = dplyr::case_when(
+                stringr::str_detect(V5, Wind_String) == TRUE ~ V5,
+                stringr::str_detect(V5, Wind_String) == FALSE &
+                  stringr::str_detect(V6, Wind_String) == TRUE ~ V6,
+                stringr::str_detect(V6, Wind_String) == FALSE &
+                  stringr::str_detect(V7, Wind_String) == TRUE ~ V7,
+                stringr::str_detect(V7, Wind_String) == FALSE &
+                  stringr::str_detect(V8, Wind_String) == TRUE ~ V8,
+                TRUE ~ "NA"
+              )
             ) %>%
             dplyr::mutate(
               Points = dplyr::case_when(
@@ -454,9 +484,13 @@ flash_parse <-
               Prelims_Result = dplyr::case_when(
                 stringr::str_detect(V10, Result_Specials_String) == FALSE &
                   stringr::str_detect(V9, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V8, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V7, Result_Specials_String) == FALSE &
                   stringr::str_detect(V5, Result_Specials_String) == TRUE &
                   stringr::str_detect(V6, Result_Specials_String) == TRUE ~ V5,
-                stringr::str_detect(V9, Result_Specials_String) == FALSE &
+                stringr::str_detect(V10, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V9, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V8, Result_Specials_String) == FALSE &
                   stringr::str_detect(V6, Result_Specials_String) == TRUE &
                   stringr::str_detect(V7, Result_Specials_String) == TRUE ~ V6,
                 TRUE ~ "NA"
@@ -481,8 +515,16 @@ flash_parse <-
               )
             ) %>%
             dplyr::mutate(
-              Wind_Speed = dplyr::case_when(stringr::str_detect(V8, Wind_String) == TRUE ~ V8,
-                                            TRUE ~ "NA")
+              Wind_Speed = dplyr::case_when(
+                stringr::str_detect(V5, Wind_String) == TRUE ~ V5,
+                stringr::str_detect(V5, Wind_String) == FALSE &
+                  stringr::str_detect(V6, Wind_String) == TRUE ~ V6,
+                stringr::str_detect(V6, Wind_String) == FALSE &
+                  stringr::str_detect(V7, Wind_String) == TRUE ~ V7,
+                stringr::str_detect(V7, Wind_String) == FALSE &
+                  stringr::str_detect(V8, Wind_String) == TRUE ~ V8,
+                TRUE ~ "NA"
+              )
             ) %>%
             dplyr::mutate(
               Points = dplyr::case_when(
@@ -563,9 +605,12 @@ flash_parse <-
               Prelims_Result = dplyr::case_when(
                 stringr::str_detect(V9, Result_Specials_String) == FALSE &
                   stringr::str_detect(V8, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V7, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V6, Result_Specials_String) == FALSE &
                 stringr::str_detect(V5, Result_Specials_String) == TRUE &
                   stringr::str_detect(V6, Result_Specials_String) == TRUE ~ V5,
                 stringr::str_detect(V9, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V8, Result_Specials_String) == FALSE &
                 stringr::str_detect(V6, Result_Specials_String) == TRUE &
                   stringr::str_detect(V7, Result_Specials_String) == TRUE ~ V6,
                 TRUE ~ "NA"
@@ -681,6 +726,7 @@ flash_parse <-
               Prelims_Result = dplyr::case_when(
                 stringr::str_detect(V8, Result_Specials_String) == FALSE &
                   stringr::str_detect(V7, Result_Specials_String) == FALSE &
+                  stringr::str_detect(V6, Result_Specials_String) == FALSE &
                   stringr::str_detect(V8, Points_String) == FALSE & # for points column in decathalon
                 stringr::str_detect(V4, Result_Specials_String) == TRUE &
                   stringr::str_detect(V5, Result_Specials_String) == TRUE ~ V4,
@@ -1245,7 +1291,20 @@ flash_parse <-
             TRUE ~ Team
           )) %>%
           dplyr::na_if("NA")
+
+        flash_data <- flash_data %>% # to remove team scores that can be captured if they are \\d\\.\\d\\d (like in the case of times)
+          filter(is.na(Team) == FALSE | all(
+            is.na(Team) == TRUE &
+              str_detect(Event, "Jump|jump|Pole|pole|Shot|shot|Javelin|javelin|Hammer|hammer|Discus|discus|Unknown") == TRUE &
+              str_detect(Finals_Result, "DNS|DNF|FOUL|DQ|NH|\\dm|\\d\\-\\d{2}") == FALSE
+          ) |
+            all(
+              is.na(Team) == TRUE &
+                str_detect(Event, "Jump|jump|Pole|pole|Shot|shot|Javelin|javelin|Hammer|hammer|Discus|discus|Unknown") == FALSE &
+                str_detect(Finals_Result, "DNS|DNF|FOUL|DQ|NH|^[8-9]\\.\\d\\d$|^1[8-9]\\.\\d\\d$|^[2-9]\\d\\.\\d\\d$|^\\d?\\d\\:\\d\\d\\.\\d\\d$") == FALSE
+            ))
       }
+
 
       #### adding in attempts ####
       if (flash_attempts == TRUE) {
@@ -1262,6 +1321,10 @@ flash_parse <-
           }
 
           } else {
+            if(nrow(attempts_data) > nrow(flash_data)){
+              attempts_data <- attempts_data[1:nrow(flash_data),] # removes issue with team scores added to bottom of results being caught up as attempts
+            }
+
             attempts_data <-
               transform(attempts_data, Row_Numb_Adjusted = flash_data$Row_Numb[findInterval(Row_Numb, flash_data$Row_Numb)]) %>%
               dplyr::select(-Row_Numb)
