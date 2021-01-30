@@ -13,6 +13,7 @@
 #' @importFrom dplyr arrange
 #' @importFrom dplyr across
 #' @importFrom dplyr left_join
+#' @importFrom dplyr all_of
 #' @importFrom stringr str_remove
 #' @importFrom stringr str_remove_all
 #' @importFrom stringr str_detect
@@ -20,6 +21,8 @@
 #' @importFrom stringr str_length
 #' @importFrom stringr str_replace_all
 #' @importFrom stringr str_replace
+#' @importFrom stringr str_subset
+#' @importFrom stringr str_remove
 #' @importFrom purrr map
 #' @importFrom purrr map_lgl
 #' @importFrom stats setNames
@@ -143,7 +146,7 @@ tf_parse <-
       data_1 <- raw_results %>%
         .[purrr::map(., length) > 0] %>%
         .[purrr::map(., stringr::str_length) > 50] %>%
-        .[purrr::map_dbl(., stringr::str_count, "\\)") < 2] %>%  # remove inline splits and team scores as 1) Alfred 2) Ithaca etc.
+        .[purrr::map_dbl(., stringr::str_count, "\\d\\)") < 2] %>%  # remove inline splits and team scores as 1) Alfred 2) Ithaca etc.
         .[purrr::map_lgl(., stringr::str_detect, paste0(Result_String, "|DQ|DNS|DNF|FOUL|NH|SCR|FS"))] %>% # must Results_String because all results do
         .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "\\d{3}\\.\\d{2}")))] %>% # closes loophole in Result_String where a number like 100.00 could get through even though it's not a valid result
         .[purrr::map_lgl(., ~ !any(
@@ -871,6 +874,11 @@ tf_parse <-
     if (all(attempts == TRUE & attempts_results == TRUE)) {
       data <- data %>%
         dplyr::select(colnames(.)[stringr::str_detect(names(.), "^Attempt", negate = TRUE)], sort(colnames(.)[stringr::str_detect(names(.), "^Attempt")]))
+    }
+
+    # removes unneeded Attempt_X columns (i.e. those that don't have an associated Attempt_Result)
+    if (any(stringr::str_detect(names(data), "Attempt_\\d{1,}_Result")) == TRUE) {
+      data <- remove_unneeded_attempts(data)
     }
 
     #### remove empty columns (all values are NA) ####

@@ -30,16 +30,16 @@ attempts_results_parse_flash <- function(text) {
   # file <- "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
   # file <-
   #    system.file("extdata", "Results-IVP-Track-Field-Championship-2019-20-v2.pdf", package = "JumpeR")
-  # file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/014-1.pdf"
+  # file <- "https://www.flashresults.com/2018_Meets/Outdoor/04-20_VirginiaChallenge/034-1.pdf"
   # file <- read_results(file)
-  # text <- add_row_numbers(file)\
+  # text <- add_row_numbers(file)
   # text <- flash_file
 
   #### Actual Function ####
 
   #### define strings ####
   attempt_results_string_flash <-
-    " P  | ?PPP ?| O | X | XO | ?XXO ?| XX | ?XX\\- | ?XX\\– | ?X\\-{2} | ?X\\–{2} | ?XXX | XR | ?\\-{3} | ?\\–{3} " # for metric and imperial units, also has special dashes
+    " P  | ?PPP ?| O | X | XO ?| ?XXO ?| XX | ?XX\\- | ?XX\\– | ?X\\-{2} | ?X\\–{2} | ?XXX | XR | ?\\-{3} | ?\\–{3} " # for metric and imperial units, also has special dashes
 
   #### Clean up incoming text ####
   text <- text %>%
@@ -53,6 +53,7 @@ attempts_results_parse_flash <- function(text) {
 
   #### pull out rows containing attempts ####
   suppressWarnings(data_1 <- text %>%
+                     stringr::str_replace_all(" ", "  ") %>% # if results are close together "XO XO" to "XO   XO"
                      .[purrr::map_lgl(., stringr::str_detect, attempt_results_string_flash)] %>%
                      stringr::str_extract_all(paste0(
                        attempt_results_string_flash, "|\\d{1,}$"

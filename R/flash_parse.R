@@ -13,6 +13,7 @@
 #' @importFrom dplyr arrange
 #' @importFrom dplyr across
 #' @importFrom dplyr left_join
+#' @importFrom dplyr all_of
 #' @importFrom stringr str_remove
 #' @importFrom stringr str_remove_all
 #' @importFrom stringr str_detect
@@ -20,6 +21,8 @@
 #' @importFrom stringr str_length
 #' @importFrom stringr str_replace_all
 #' @importFrom stringr str_replace
+#' @importFrom stringr str_subset
+#' @importFrom stringr str_remove
 #' @importFrom purrr map
 #' @importFrom purrr map_lgl
 #' @importFrom stats setNames
@@ -81,7 +84,7 @@ flash_parse <-
     #   add_row_numbers()
     # file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/014-1.pdf" # pole vault, attempt heights as single line above results
     # file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/036-1.pdf" # triple jump, attempts in line
-    # flash_file <- read_results("https://www.flashresults.com/2018_Meets/Outdoor/05-05_A10/015-1.pdf") %>%
+    # flash_file <- read_results("https://www.flashresults.com/2018_Meets/Outdoor/04-20_VirginiaChallenge/034-1.pdf") %>%
     #   add_row_numbers()
     # flash_file <- raw_results[11] %>%
     #   unlist() %>%
@@ -111,7 +114,7 @@ flash_parse <-
         data_1 <- flash_file %>%
           .[purrr::map(., length) > 0] %>%
           .[purrr::map(., stringr::str_length) > 50] %>%
-          .[purrr::map_dbl(., stringr::str_count, "\\)") < 2] %>%  # remove inline splits and team scores as 1) Alfred 2) Ithaca etc.
+          .[purrr::map_dbl(., stringr::str_count, "\\d\\)") < 2] %>%  # remove inline splits and team scores as 1) Alfred 2) Ithaca etc.
           .[purrr::map_lgl(., stringr::str_detect, paste0(Result_String_Spaces, "|DQ|DNS|DNF|FOUL|NH|SCR|FS"))] %>% # must Results_String because all results do
           .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "\\d{3}\\.\\d{2}")))] %>% # closes loophole in Result_String where a number like 100.00 could get through even though it's not a valid result
           .[purrr::map_lgl(., ~ !any(
@@ -135,8 +138,8 @@ flash_parse <-
           stringr::str_replace_all("-{2,5}", "10000") %>% #8/26
           stringr::str_replace_all(" \\[", "   ") %>% #1/5/21 for ties times
           stringr::str_replace_all("\\] ", "   ") %>% #1/5/21 for ties times
-          stringr::str_replace_all(" \\(", "   ") %>% #1/5/21 for ties times
-          stringr::str_replace_all("\\) ", "   ") %>% #1/5/21 for ties times
+          stringr::str_replace_all(" \\((?=\\d)", "   ") %>% #1/5/21 for ties times
+          stringr::str_replace_all("(?<=\\d)\\) ", "   ") %>% #1/5/21 for ties times
           stringr::str_replace_all("\\*", "_") %>%
           stringr::str_replace_all(" \\+", "  \\+") %>%  # tf speciifc, for windspeed
           stringr::str_replace_all(" \\-", "  \\-") %>%  # tf speciifc, for windspeed
@@ -1367,25 +1370,8 @@ flash_parse <-
         dplyr::select(which(SwimmeR::`%!in%`(names(.), c("Row_Numb", "Exhibition", "Points", "Heat"))))
 
       # removes unneeded Attempt_X columns (i.e. those that don't have an associated Attempt_Result)
-      if (any(str_detect("Attempt_\\d{1,}_Result", names(flash_data))) == TRUE) {
-        results_numbs <-
-          stringr::str_extract(names(flash_data), "\\d{1,}_")[is.na(stringr::str_extract(names(flash_data), "\\d{1,}_")) == FALSE]
-        results_numbs <-
-          as.numeric(stringr::str_remove(results_numbs, "_"))
-
-        attempts_numbs <-
-          stringr::str_extract(names(flash_data), "Attempt_\\d{1,}$")[is.na(stringr::str_extract(names(flash_data), "Attempt_\\d{1,}$")) == FALSE]
-        attempts_numbs <-
-          max(as.numeric(stringr::str_remove(attempts_numbs, "Attempt_")))
-        cols_to_remove <-
-          paste0("Attempt_", seq(
-            max(results_numbs, na.rm = TRUE) + 1,
-            max(attempts_numbs, na.rm = TRUE),
-            1
-          ))
-
-        flash_data <- flash_data %>%
-          dplyr::select(-cols_to_remove)
+      if (any(stringr::str_detect(names(flash_data), "Attempt_\\d{1,}_Result")) == TRUE) {
+        flash_data <- remove_unneeded_attempts(flash_data)
       }
 
       #### remove empty columns (all values are NA) ####
