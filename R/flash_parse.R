@@ -167,7 +167,7 @@ flash_parse <-
           stringr::str_remove_all("X?X?PA\\$\\$|XXX|XXO| XX | ?XO ?| O | X | XR ") %>%  # remove attempts
           # stringr::str_remove_all("^[A-Z][a-z].{1,}$") %>%
           trimws() %>%
-          .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "^[A-Z][a-z].{1,}$")))]  # remove records
+          .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "^[A-Z][a-z].{1,}|^[:upper:]{3}.*Meet")))]  # remove records
       )
 
       #### splits data into variables by splitting at multiple (>= 2) spaces ####
@@ -590,8 +590,16 @@ flash_parse <-
               )
             ) %>%
             dplyr::mutate(
-              Wind_Speed = dplyr::case_when(stringr::str_detect(V8, Wind_String) == TRUE ~ V8,
-                                            TRUE ~ "NA")
+              Wind_Speed = dplyr::case_when(
+                stringr::str_detect(V5, Wind_String) == TRUE ~ V5,
+                stringr::str_detect(V5, Wind_String) == FALSE &
+                  stringr::str_detect(V6, Wind_String) == TRUE ~ V6,
+                stringr::str_detect(V6, Wind_String) == FALSE &
+                  stringr::str_detect(V7, Wind_String) == TRUE ~ V7,
+                stringr::str_detect(V7, Wind_String) == FALSE &
+                  stringr::str_detect(V8, Wind_String) == TRUE ~ V8,
+                TRUE ~ "NA"
+              )
             ) %>%
             dplyr::mutate(
               Points = dplyr::case_when(
@@ -604,9 +612,12 @@ flash_parse <-
               )
             ) %>%
             dplyr::mutate(
-              Notes = dplyr::case_when(stringr::str_detect(V9, Points) == FALSE &
-                                         stringr::str_detect(V9, Result_Specials_String) == FALSE ~ V9,
-                                       TRUE ~ "NA")
+              Notes = dplyr::case_when(
+                stringr::str_detect(V6, "\\.\\d{3}") == TRUE ~ V6,
+                stringr::str_detect(V9, Points) == FALSE &
+                  stringr::str_detect(V9, Result_Specials_String) == FALSE ~ V9,
+                TRUE ~ "NA"
+              )
             ) %>%
             dplyr::select(
               Place,
