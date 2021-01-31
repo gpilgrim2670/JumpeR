@@ -141,6 +141,7 @@ tf_parse <-
       Wind_String <-
         "\\+\\d\\.\\d|\\-\\d\\.\\d|^NWS$|^NWI$|^\\d\\.\\d$"
       Age_String <- "^SR$|^JR$|^SO$|^FR$|^M?W?[:digit:]{1,3}$"
+      Tiebreaker_String <- "\\d\\.\\d{3}$"
 
     suppressWarnings(
       data_1 <- raw_results %>%
@@ -293,7 +294,7 @@ tf_parse <-
             )
           ) %>%
           dplyr::mutate(
-            Notes = dplyr::case_when(stringr::str_detect(V9, Points) == FALSE ~ V9,
+            Tiebreaker = dplyr::case_when(stringr::str_detect(V9, Tiebreaker_String) == TRUE ~ V9,
                                      TRUE ~ "NA")
           ) %>%
           dplyr::select(
@@ -306,7 +307,7 @@ tf_parse <-
             Finals_Result,
             Wind_Speed,
             Points,
-            Notes,
+            Tiebreaker,
             'Row_Numb' = V10
           )
       )
@@ -394,9 +395,8 @@ tf_parse <-
             )
           ) %>%
           dplyr::mutate(
-            Notes = dplyr::case_when(
-              stringr::str_detect(V8, Points) == FALSE &
-                stringr::str_detect(V8, "^\\d\\.?\\d?$") == FALSE ~ V8,
+            Tiebreaker = dplyr::case_when(
+              stringr::str_detect(V8, Tiebreaker_String) == TRUE ~ V8,
               TRUE ~ "NA"
             )
           ) %>%
@@ -411,7 +411,7 @@ tf_parse <-
             Wind_Speed,
             Heat,
             Points,
-            Notes,
+            Tiebreaker,
             'Row_Numb' = V9
           )
       )
@@ -484,9 +484,8 @@ tf_parse <-
             )
           ) %>%
           dplyr::mutate(
-            Notes = dplyr::case_when(
-              stringr::str_detect(V7, Wind_String) == FALSE &
-                stringr::str_detect(V7, "^\\d\\.?\\d?$") == FALSE ~ V7,
+            Tiebreaker = dplyr::case_when(
+              stringr::str_detect(V7, Tiebreaker_String) == TRUE ~ V7,
               TRUE ~ "NA"
             )
           ) %>%
@@ -498,7 +497,7 @@ tf_parse <-
             Team,
             Finals_Result,
             Wind_Speed,
-            Notes,
+            Tiebreaker,
             'Row_Numb' = V8
           )
       )
@@ -766,7 +765,7 @@ tf_parse <-
           )
         ) %>%
         dplyr::na_if(10000) %>%
-        { # Notes column might or might not exist
+        { # Names column might or might not exist
           if("Name" %!in% names(.)) dplyr::mutate(., Name = "NA") else . # relay entries don't have a team column
         } %>%
         dplyr::mutate(dplyr::across(
@@ -817,8 +816,8 @@ tf_parse <-
     # if("Heat" %in% names(data) == FALSE)
     # {data$Heat <- NA}
     #
-    # if("Notes" %in% names(data) == FALSE)
-    # {data$Notes <- NA}
+    # if("Tiebreaker" %in% names(data) == FALSE)
+    # {data$Tiebreaker <- NA}
 
     #### added in to work with arrange/distinct calls after adding in events ####
     if("Prelims_Result" %in% names(data) == FALSE){
@@ -888,7 +887,7 @@ tf_parse <-
     #### remove unneeded columns ####
     data <- data %>%
     dplyr::select(which(SwimmeR::`%!in%`(names(.), c("Row_Numb", "Exhibition", "Points", "Heat"))))
-    # dplyr::select(which(SwimmeR::`%!in%`(names(.), c("Row_Numb", "Exhibition", "Points", "Heat", "Notes"))))
+    # dplyr::select(which(SwimmeR::`%!in%`(names(.), c("Row_Numb", "Exhibition", "Points", "Heat", "Tiebreaker"))))
 
     return(data)
 }

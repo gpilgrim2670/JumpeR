@@ -108,6 +108,7 @@ flash_parse <-
     Points_String <- "^\\d\\d?\\.?\\d?$"
     Date_String <- paste(paste0("^\\d{1,2}-", month.abb, "-\\d{4}$"), collapse = "|")
     Age_String <- paste0("^SR$|^JR$|^SO$|^FR$|^M?W?[:digit:]{1,3}$|", Date_String)
+    Tiebreaker_String <- "\\d\\.\\d{3}$"
 
     #### clean input data ####
       suppressWarnings(
@@ -298,11 +299,11 @@ flash_parse <-
               )
             ) %>%
             dplyr::mutate(
-              Notes = dplyr::case_when(
+              Tiebreaker = dplyr::case_when(
                 stringr::str_detect(V9, Points) == FALSE &
                   stringr::str_detect(V9, Result_Specials_String) == FALSE ~ V9,
-                stringr::str_detect(V6, "\\.\\d{3}") == TRUE ~ V6,
-                stringr::str_detect(V5, "\\.\\d{3}") == TRUE ~ V5,
+                stringr::str_detect(V6, Tiebreaker_String) == TRUE ~ V6,
+                stringr::str_detect(V5, Tiebreaker_String) == TRUE ~ V5,
                 TRUE ~ "NA"
               )
             ) %>%
@@ -316,7 +317,7 @@ flash_parse <-
               Finals_Result,
               Wind_Speed,
               Points,
-              Notes,
+              Tiebreaker,
               "Row_Numb" = V13
             )
         )
@@ -423,10 +424,10 @@ flash_parse <-
               )
             ) %>%
             dplyr::mutate(
-              Notes = dplyr::case_when(stringr::str_detect(V9, Points) == FALSE &
+              Tiebreaker = dplyr::case_when(stringr::str_detect(V9, Points) == FALSE &
                                          stringr::str_detect(V9, Result_Specials_String) == FALSE ~ V9,
-                                       stringr::str_detect(V6, "\\.\\d{3}") == TRUE ~ V6,
-                                       stringr::str_detect(V5, "\\.\\d{3}") == TRUE ~ V5,
+                                       stringr::str_detect(V6, Tiebreaker_String) == TRUE ~ V6,
+                                       stringr::str_detect(V5, Tiebreaker_String) == TRUE ~ V5,
                                        TRUE ~ "NA")
             ) %>%
             dplyr::select(
@@ -439,7 +440,7 @@ flash_parse <-
               Finals_Result,
               Wind_Speed,
               Points,
-              Notes,
+              Tiebreaker,
               "Row_Numb" = V12
             )
         )
@@ -546,10 +547,10 @@ flash_parse <-
               )
             ) %>%
             dplyr::mutate(
-              Notes = dplyr::case_when(stringr::str_detect(V9, Points) == FALSE &
+              Tiebreaker = dplyr::case_when(stringr::str_detect(V9, Points) == FALSE &
                                          stringr::str_detect(V9, Result_Specials_String) == FALSE ~ V9,
-                                       stringr::str_detect(V6, "\\.\\d{3}") == TRUE ~ V6,
-                                       stringr::str_detect(V5, "\\.\\d{3}") == TRUE ~ V5,
+                                       stringr::str_detect(V6, Tiebreaker_String) == TRUE ~ V6,
+                                       stringr::str_detect(V5, Tiebreaker_String) == TRUE ~ V5,
                                        TRUE ~ "NA")
             ) %>%
             dplyr::select(
@@ -562,7 +563,7 @@ flash_parse <-
               Finals_Result,
               Wind_Speed,
               Points,
-              Notes,
+              Tiebreaker,
               'Row_Numb' = V11
             )
         )
@@ -668,8 +669,8 @@ flash_parse <-
               )
             ) %>%
             dplyr::mutate(
-              Notes = dplyr::case_when(
-                stringr::str_detect(V6, "\\.\\d{3}") == TRUE ~ V6,
+              Tiebreaker = dplyr::case_when(
+                stringr::str_detect(V6, Tiebreaker_String) == TRUE ~ V6,
                 stringr::str_detect(V9, Points) == FALSE &
                   stringr::str_detect(V9, Result_Specials_String) == FALSE ~ V9,
                 TRUE ~ "NA"
@@ -685,7 +686,7 @@ flash_parse <-
               Finals_Result,
               Wind_Speed,
               Points,
-              Notes,
+              Tiebreaker,
               'Row_Numb' = V10
             )
         )
@@ -789,9 +790,9 @@ flash_parse <-
               )
             ) %>%
             dplyr::mutate(
-              Notes = dplyr::case_when(
-                stringr::str_detect(V5, "\\.\\d{3}") == TRUE ~ V5,
-                stringr::str_detect(V6, "\\.\\d{3}") == TRUE ~ V6,
+              Tiebreaker = dplyr::case_when(
+                stringr::str_detect(V5, Tiebreaker_String) == TRUE ~ V5,
+                stringr::str_detect(V6, Tiebreaker_String) == TRUE ~ V6,
                 TRUE ~ "NA"
               )
             ) %>%
@@ -806,7 +807,7 @@ flash_parse <-
               Wind_Speed,
               Heat,
               Points,
-              Notes,
+              Tiebreaker,
               'Row_Numb' = V9
             )
         )
@@ -902,9 +903,9 @@ flash_parse <-
               )
             ) %>%
             dplyr::mutate(
-              Notes = dplyr::case_when(
-                stringr::str_detect(V5, "\\.\\d{3}") == TRUE ~ V5,
-                stringr::str_detect(V6, "\\.\\d{3}") == TRUE ~ V6,
+              Tiebreaker = dplyr::case_when(
+                stringr::str_detect(V5, Tiebreaker_String) == TRUE ~ V5,
+                stringr::str_detect(V6, Tiebreaker_String) == TRUE ~ V6,
                 TRUE ~ "NA"
               )
             ) %>%
@@ -916,7 +917,7 @@ flash_parse <-
               Team,
               Finals_Result,
               Wind_Speed,
-              Notes,
+              Tiebreaker,
               'Row_Numb' = V8
             )
         )
@@ -1002,9 +1003,9 @@ flash_parse <-
               )
             ) %>%
             dplyr::mutate(
-              Notes = dplyr::case_when(
-                stringr::str_detect(V5, "\\.\\d{3}") == TRUE ~ V5,
-                stringr::str_detect(V6, "\\.\\d{3}") == TRUE ~ V6,
+              Tiebreaker = dplyr::case_when(
+                stringr::str_detect(V5, Tiebreaker_String) == TRUE ~ V5,
+                stringr::str_detect(V6, Tiebreaker_String) == TRUE ~ V6,
                 TRUE ~ "NA"
               )
             ) %>%
@@ -1017,7 +1018,7 @@ flash_parse <-
               Finals_Result,
               Wind_Speed,
               Points,
-              Notes,
+              Tiebreaker,
               'Row_Numb' = V7
             )
         )
@@ -1113,9 +1114,9 @@ flash_parse <-
               )
             ) %>%
             dplyr::mutate(
-              Notes = dplyr::case_when(
-                stringr::str_detect(V4, "\\.\\d{3}") == TRUE ~ V4,
-                stringr::str_detect(V5, "\\.\\d{3}") == TRUE ~ V5,
+              Tiebreaker = dplyr::case_when(
+                stringr::str_detect(V4, Tiebreaker_String) == TRUE ~ V4,
+                stringr::str_detect(V5, Tiebreaker_String) == TRUE ~ V5,
                 TRUE ~ "NA"
               )
             ) %>%
@@ -1128,7 +1129,7 @@ flash_parse <-
               Prelims_Result,
               Finals_Result,
               Points,
-              Notes,
+              Tiebreaker,
               'Row_Numb' = V6
             )
         )
@@ -1234,7 +1235,7 @@ flash_parse <-
                                               Finals_Result %in% c("FOUL", "DNF", "NH", "DQ") == TRUE ~ 1,
                                               TRUE ~ DQ)) %>%
           dplyr::na_if(10000) %>%
-          { # Notes column might or might not exist
+          { # Name column might or might not exist
             if("Name" %!in% names(.)) dplyr::mutate(., Name = "NA") else . # relay entries don't have a team column
           } %>%
           dplyr::mutate(dplyr::across(
@@ -1245,12 +1246,12 @@ flash_parse <-
             Row_Numb = as.numeric(Row_Numb)
           ) %>%
           dplyr::filter(Row_Numb >= Min_Row_Numb) %>%
-          #### clean up notes, move over reaction times ####
-          # dplyr::mutate(Reaction_Time = dplyr::case_when(stringr::str_detect(Notes, "^0\\.\\d{3}$") == TRUE ~ Notes,
+          #### clean up Tiebreaker, move over reaction times ####
+          # dplyr::mutate(Reaction_Time = dplyr::case_when(stringr::str_detect(Tiebreaker, "^0\\.\\d{3}$") == TRUE ~ Tiebreaker,
           #                                                TRUE ~ "NA")) %>%
-        { # Notes column might or might not exist
-          if("Notes" %in% names(.)) dplyr::mutate(., Notes = dplyr::case_when(stringr::str_detect(Notes, "^0\\.\\d{3}$") == TRUE ~ "NA",
-                                                                           TRUE ~ Notes)) else .
+        { # Tiebreaker column might or might not exist
+          if("Tiebreaker" %in% names(.)) dplyr::mutate(., Tiebreaker = dplyr::case_when(stringr::str_detect(Tiebreaker, "^0\\.\\d{3}$") == TRUE ~ "NA",
+                                                                           TRUE ~ Tiebreaker)) else .
         } %>%
           dplyr::na_if("NA")
       )
