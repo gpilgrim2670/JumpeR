@@ -9,15 +9,70 @@ Please wait for an upcoming CRAN release to acquire a stable version.
 
 # Usage
 
-Version 0.0.1 of `JumpeR` reads track and field results into `R`, similar to what the `SwimmeR` package does for swimming results.
+Version 0.1.0 of `JumpeR` reads track and field results into `R`, similar to what the `SwimmeR` package does for swimming results.
+
+## Supported Formats
+
+`JumpeR` currently supports reading in *single column* Hy-tek/Active.com style results in either .html or .pdf format.  `JumpeR` also supports Flash Results style results in .pdf format (but not html).
+
+### Hy-tek/Active.com Results
+[These](http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm) are Hy-tek results in html format, from the 2019 Greg Page relays at Cornell University.  This particular file contains the entire meet.
+
+![Will work](inst/extdata/HyTek_Cornell_60m_html.png)
+
+It can be imported into `R` using `JumpeR`:
+```r
+tf_parse(
+    read_results(
+      "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
+    )
+  )
+```
+![Imported with JumpeR](inst/extdata/HyTek_Cornell_60m_html_Import.png)
+
+[This](https://www.singaporeathletics.org.sg/download/28818/) is a Hy-tek .pdf results file, from the Singapore Masters Track and Field Assoication 2019 Championship,  This particular file contains the entire meet.
+
+![Will work](inst/extdata/HyTek_SMTFA_longjump_html.png)
+
+Once saved (it's included in `JumpeR` as an example) it can be imported into `R` using `JumpeR`:
+```r
+tf_parse(
+    read_results(
+      system.file("extdata", "SMTFA-2019-Full-Results.pdf", package = "JumpeR")
+    ),
+    attempts = TRUE
+  )
+```
+![Imported with JumpeR](inst/extdata/HyTek_SMTFA_longjump_html_Import.png)
+
+### Flash Results
+
+[This](https://www.flashresults.com/2019_Meets/Outdoor/06-05_NCAAOTF-Austin/001-1.pdf) is a Flash Results .pdf result, from the prelims of the 2019 NCAA Mens 100m Championships.
+
+![Will work](inst/extdata/Flash_Results_NCAA_100m.png)
+
+It can be imported into `R` using `JumpeR`:
+```r
+tf_parse(
+    read_results(
+      "https://www.flashresults.com/2019_Meets/Outdoor/06-05_NCAAOTF-Austin/001-1.pdf"
+    )
+  )
+```
+![Imported with JumpeR](inst/extdata/Flash_Results_NCAA_100m_Import.png)
+
+Flash Results also post .html version of results like [these](https://www.flashresults.com/2019_Meets/Outdoor/06-05_NCAAOTF-Austin/001-1_compiled.htm), which are currently *NOT* supported.
+
+![Will not work](inst/extdata/Flash_Results_NCAA_100m_html.png)
 
 ## Importing Results
 
 `JumpeR` reads track and field results into `R` and outputs tidy dataframes.  `JumpeR` uses `read_results` to read in either a PDF or HTML file (like a url) and the `tf_parse` (for track and field) function to convert the read file to a tidy dataframe.  
-
+### read_results
 `read_results` has two arguments, `file`, which is the file path to read in, and `node`, required only for HTML files, this is a CSS selector node where the results reside.  `node` defaults to `"pre"`, which has been correct in every instance tested thus far.
 
-`tf_parse` has three arguments as of version 0.0.1.
+### tf_parse
+`tf_parse` has six arguments as of version 0.1.0.
 
 `file` is the output of `read_results` and is required.
 

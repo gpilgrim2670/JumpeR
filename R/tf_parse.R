@@ -93,7 +93,7 @@ tf_parse <-
     #
     # file <- read_results(event_links[75])
     # file <- read_results(system.file("extdata", "Results-IVP-Track-Field-Championship-2019-20-v2.pdf", package = "JumpeR"))
-    # file <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/05-09_SEC/029-1.pdf")
+    # file <- read_results("http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm")
     # avoid <- c("[:alpha:]\\: .*")
     # typo <- "typo"
     # replacement <- "typo"
@@ -158,7 +158,7 @@ tf_parse <-
         .[purrr::map_lgl(., stringr::str_detect, "[:alpha:]{2,}")] %>% # must have at least two letters in a row
         # .[purrr::map_lgl(., ~ !any(stringr::str_detect(., avoid)))] %>% # remove lines contained in avoid
         stringr::str_remove_all("\n\\s*") %>%
-        stringr::str_remove_all("\\d{0,2}\\:?\\d{1,2}\\.\\d{3}") %>%
+        # stringr::str_remove_all("\\d{0,2}\\:?\\d{1,2}\\.\\d{3}") %>% # ties
         # trimws() %>%
         # stringr::str_replace_all(stats::setNames(replacement, typo)) %>%
         # remove 'A', 'B' etc. relay designators

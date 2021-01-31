@@ -46,6 +46,7 @@ attempts_parse <- function(text) {
           .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "[:lower:]{2,}")))] %>% # removes rows that have two lower case letters in a row
           .[purrr::map_lgl(., ~ !any(stringr::str_detect(., ":")))] %>% # helps with removing records like "NYS: 1.45m"
           stringr::str_replace_all("\\(\\+?\\-?\\d{1,3}\\.\\d{1,3}\\)", "  ") %>%  # remove anything in parenthesis, replace with spaces
+          stringr::str_replace_all("\\(NWI\\)", "  ") %>%  # remove NWI in parenthesis, replace with spaces
           stringr::str_replace_all(" ", "  ") %>% # put multiple spaces between attempts
           trimws()
       )

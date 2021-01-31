@@ -84,7 +84,7 @@ flash_parse <-
     #   add_row_numbers()
     # file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/014-1.pdf" # pole vault, attempt heights as single line above results
     # file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/036-1.pdf" # triple jump, attempts in line
-    # flash_file <- read_results("https://www.flashresults.com/2018_Meets/Outdoor/04-20_VirginiaChallenge/034-1.pdf") %>%
+    # flash_file <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/06-05_NCAAOTF-Austin/001-1.pdf") %>%
     #   add_row_numbers()
     # flash_file <- raw_results[11] %>%
     #   unlist() %>%
@@ -155,6 +155,8 @@ flash_parse <-
           stringr::str_replace_all(" SR ", "  SR  ") %>% # tf specific - split age and team
           stringr::str_replace_all(" DNS ", "  DNS  ") %>% # tf specific - split team and result string
           stringr::str_replace_all(" DNF ", "  DNF  ") %>% # tf specific - split team and result string
+          stringr::str_replace_all("(?<=[:alpha:])\\. (?=\\d)", "\\.   ") %>% # tf specific - split team and result string
+          stringr::str_replace_all("(?<=[:alpha:])\\. (?=[DNS|DNF|NH|FOUL|DQ])", "\\.   ") %>% # tf specific - split team and result string
           stringr::str_replace_all("DNF (?=[:alpha:])", "DNF  ") %>% # tf specific - split place string and name
           stringr::str_replace_all("DNS (?=[:alpha:])", "DNS  ") %>% # tf specific - split place string and name
           stringr::str_replace_all("(?<=[:alpha:]) (?=\\d)", "  ") %>% # tf specific - split name and age
@@ -299,6 +301,8 @@ flash_parse <-
               Notes = dplyr::case_when(
                 stringr::str_detect(V9, Points) == FALSE &
                   stringr::str_detect(V9, Result_Specials_String) == FALSE ~ V9,
+                stringr::str_detect(V6, "\\.\\d{3}") == TRUE ~ V6,
+                stringr::str_detect(V5, "\\.\\d{3}") == TRUE ~ V5,
                 TRUE ~ "NA"
               )
             ) %>%
@@ -421,6 +425,8 @@ flash_parse <-
             dplyr::mutate(
               Notes = dplyr::case_when(stringr::str_detect(V9, Points) == FALSE &
                                          stringr::str_detect(V9, Result_Specials_String) == FALSE ~ V9,
+                                       stringr::str_detect(V6, "\\.\\d{3}") == TRUE ~ V6,
+                                       stringr::str_detect(V5, "\\.\\d{3}") == TRUE ~ V5,
                                        TRUE ~ "NA")
             ) %>%
             dplyr::select(
@@ -542,6 +548,8 @@ flash_parse <-
             dplyr::mutate(
               Notes = dplyr::case_when(stringr::str_detect(V9, Points) == FALSE &
                                          stringr::str_detect(V9, Result_Specials_String) == FALSE ~ V9,
+                                       stringr::str_detect(V6, "\\.\\d{3}") == TRUE ~ V6,
+                                       stringr::str_detect(V5, "\\.\\d{3}") == TRUE ~ V5,
                                        TRUE ~ "NA")
             ) %>%
             dplyr::select(
@@ -783,6 +791,7 @@ flash_parse <-
             dplyr::mutate(
               Notes = dplyr::case_when(
                 stringr::str_detect(V5, "\\.\\d{3}") == TRUE ~ V5,
+                stringr::str_detect(V6, "\\.\\d{3}") == TRUE ~ V6,
                 TRUE ~ "NA"
               )
             ) %>%
