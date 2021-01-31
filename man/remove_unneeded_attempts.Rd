@@ -7,7 +7,7 @@
 remove_unneeded_attempts(x)
 }
 \arguments{
-\item{x}{dataframe with columns called bouth "Attempt_X" and "Attempt_X_Result" where X is a number}
+\item{x}{dataframe with columns called both "Attempt_X" and "Attempt_X_Result" where X is a number}
 }
 \value{
 returns a dataframe where Attempt_X columns that do no have a corresponding Attempt_X_Result have been removed

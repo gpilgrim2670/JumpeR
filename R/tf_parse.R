@@ -180,6 +180,7 @@ tf_parse <-
         stringr::str_replace_all("(?<=\\d) (?=[\\-|\\+|\\d])", "  ") %>% # tf specific - split time and windspeed
         stringr::str_replace_all("(?<=\\d{3}) (?=[:alpha:])", "  ") %>% # tf specific - split bib number and name
         stringr::str_replace_all("(?<=\\d{2}) (?=[:alpha:])", "  ") %>% # tf specific - split age and team
+        stringr::str_replace_all("(?<=\\.\\d{3})s ", "  ") %>% # tf specific - split tiebreaker and s designator
         stringr::str_replace_all(" FR ", "  FR  ") %>% # tf specific - split age and team
         stringr::str_replace_all(" SO ", "  SO  ") %>% # tf specific - split age and team
         stringr::str_replace_all(" JR ", "  JR  ") %>% # tf specific - split age and team
