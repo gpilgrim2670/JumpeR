@@ -87,7 +87,7 @@ Flash Results also post .html version of results like [these](https://www.flashr
 
 [Here's](http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm) the Womens 4x400m relay from the 2019 Greg Page relays at Cornell University.
 
-![Relay results](inst/extdata/HyTek_Cornell_4x400mRelay_html.png)
+![Relay results](inst/extdata/HyTek_Cornell_4x400mRelay_html.PNG)
 
 Here's the same thing after importing with `JumpeR`
 ```r
@@ -98,13 +98,13 @@ tf_parse(
     relay_athletes = TRUE
   )
 ```
-![Relay results](inst/extdata/HyTek_Cornell_4x400mRelay_html_Import.png)
+![Relay results](inst/extdata/HyTek_Cornell_4x400mRelay_html_Import.PNG)
 
 * `attempts` records a unit of length for events where athletes get to try multiple times (long jump, javelin, pole vault etc. - basically the "field" events in track and field).  The default is `FALSE` but setting `attempts` to `TRUE` will cause `tf_parse` to attempt to collect the distance/height (or FOUL) of each athlete's attempts.  New columns called `Attempt_1`, `Attempt_2` etc. will be created.
 
 [Here's](https://www.flashresults.com/2018_Meets/Outdoor/04-28_VirginiaGrandPrix/035-1.pdf) the long jump prelims from the 2019 Virginia Grand Prix at the University of Virginia with the "attempts" highlighted in yellow.
 
-![Long jump attempts](inst/extdata/Flash_Results_VA_longjump_Attempts.png)
+![Long jump attempts](inst/extdata/Flash_Results_VA_longjump_Attempts.PNG)
 
 Here's the same thing after importing with `JumpeR`
 ```r
@@ -115,13 +115,13 @@ tf_parse(
     attempts = TRUE
   )
 ```
-![New attempts columns](inst/extdata/Flash_Results_VA_longjump_Attempts_Import.png)
+![New attempts columns](inst/extdata/Flash_Results_VA_longjump_Attempts_Import.PNG)
 
-* `attempts_results` records the outcome of each attempt (height) in the vertical jumping events (high jump, pole vault).  The default for `attempts_results` is `FALSE` but setting it to `TRUE` will include these values (usually some combination of "X", "O" and "-") in new columns called `Attempt_1_Result`, `Attempt_2_Result`.  If `attempts_result = TRUE` it's generally recommended that `attempts = TRUE` as well.
+* `attempts_results` records the outcome of each attempt (height) in the vertical jumping events (high jump, pole vault).  The default for `attempts_results` is `FALSE` but setting it to `TRUE` will include these values (usually some combination of "X", "O" and "-") in new columns called `Attempt_1_Result`, `Attempt_2_Result`.  If `attempts_result = TRUE` then `attempts = TRUE` must be set as well.
 
 [Here's](https://www.flashresults.com/2018_Meets/Outdoor/04-20_DukeInvite/014-1.pdf) the pole vault results from the 2019 Duke Invite at (natch) Duke University with the "attempts_results" highlighted in yellow and the "attempts"" circled in red.
 
-![Pole vault results](inst/extdata/Flash_Results_Duke_polevault_Attempts_Results.png)
+![Pole vault results](inst/extdata/Flash_Results_Duke_polevault_Attempts_Results.PNG)
 
 Here's the same thing after importing with `JumpeR` - adding all these columns makes the results very wide.
 ```r
@@ -133,7 +133,7 @@ tf_parse(
     attempts_results = TRUE
   )
 ```
-![New attempts_results columns](inst/extdata/Flash_Results_Duke_polevault_Attempts_Results_Import.png)
+![New attempts_results columns](inst/extdata/Flash_Results_Duke_polevault_Attempts_Results_Import.PNG)
 
 
 See `?tf_parse` for more information.

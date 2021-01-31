@@ -64,6 +64,10 @@ tf_parse <-
       stop("typo and replacement must have the same number of elements (be the same length)")
     }
 
+    if (all((attempts_results == TRUE), (attempts == FALSE))) {
+      stop("If attempts_results is set to TRUE attempts should also be set to TRUE.")
+    }
+
     #### strings that if a line begins with one of them the line is ignored ####
     avoid_default <- c("Record\\:",
         "[:alpha:]\\: .*")
