@@ -10,7 +10,7 @@ test_that("flash parse works sprint", {
                               Team = c("FLORIDA", "KENTUCKY", "SOUTH CAROLINA", "LSU", "KENTUCKY", "GEORGIA", "ARKANSAS", "ARKANSAS", "ALABAMA", "KENTUCKY", "LSU", "FLORIDA", "OLE MISS", "ARKANSAS", "AUBURN"),
                               Finals_Result = c("13.07", "13.31", "13.49", "13.57", "13.62", "13.64", "13.79", "13.79", "13.83", "13.85", "13.89", "13.91", "13.99", "14.30", "14.36"),
                               Wind_Speed = c("+0.8", "+0.8", "+0.9", "+0.9", "+0.8", "+0.8", "+0.9", "+0.9", "+0.8", "+0.9", "+0.9", "+0.8", "+0.9", "+0.8", "+0.8"),
-                              Notes = c(NA, NA, NA, NA, NA, NA, "13.784", "13.786", NA, NA, NA, NA, NA, NA , NA),
+                              Tiebreaker = c(NA, NA, NA, NA, NA, NA, "13.784", "13.786", NA, NA, NA, NA, NA, NA , NA),
                               DQ = rep(0, 15),
                               Event = rep("Men 110 M Hurdles Prelims 6:00 PM 10 May 2019", 15))
 

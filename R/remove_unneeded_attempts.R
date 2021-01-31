@@ -9,14 +9,12 @@
 #' @importFrom stringr str_remove
 #' @importFrom stringr str_subset
 #'
-#' @param x dataframe with columns called bouth "Attempt_X" and "Attempt_X_Result" where X is a number
+#' @param x dataframe with columns called both "Attempt_X" and "Attempt_X_Result" where X is a number
 #' @return returns a dataframe where Attempt_X columns that do no have a corresponding Attempt_X_Result have been removed
 #'
 #' @seealso \code{remove_unneeded_attempts} runs inside \code{\link{flash_parse}} & \code{\link{tf_parse}}
 
 remove_unneeded_attempts <- function(x) {
-
-  x <- flash_data
 
   attempt_cols <-
     stringr::str_remove(stringr::str_subset(names(x), "^Attempt_"), "_Result")
