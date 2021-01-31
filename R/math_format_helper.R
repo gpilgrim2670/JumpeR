@@ -12,6 +12,7 @@ math_format_helper <- function(x) {
 
   x <- as.character(x)
   if(is.na(x) == TRUE) return(NA)
+  if(x %in% c("DNS", "DNF", "NH", "DQ", "SCR", "FOUL") == TRUE) return(NA)
   if (stringr::str_detect(x, ":") == TRUE) {
     min <- as.numeric(stringr::str_split_fixed(x, ":", n = 2)[,1])
     sec <- as.numeric(stringr::str_split_fixed(x, ":", n = 2)[,2])

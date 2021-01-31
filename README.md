@@ -160,6 +160,15 @@ tf_parse(
     attempt_results = TRUE
   )
 ```
+# Formatting Results
+
+By default all results (like the `Finals_Result` column) returned by `JumpeR` are characters, not numeric.  This is because lots of results don't fit `R`s notions of what a number is.  A result like `"1.65m"` for a long jump can't be a number because of the "m".  A result like `"1:45.32"` as a time can't be a number because of the ":".  Luckily `JUmpeR` is here to help with all of that.  Passing results to `math_format` will return results formated as numerics, such that they can be used in math.
+
+Please note however that `JumpeR` doesn't understand units.  Passing
+```r
+math_format(c("1.65m", "DNS", "1:45.32"))
+```
+will return `1.65` (meters, but not noted), `NA` (nice touch there), and `105.32` (seconds, also not noted).  You'll need to keep track of your units yourself.
 
 # Getting help
 
