@@ -67,20 +67,76 @@ Flash Results also post .html version of results like [these](https://www.flashr
 
 ## Importing Results
 
-`JumpeR` reads track and field results into `R` and outputs tidy dataframes.  `JumpeR` uses `read_results` to read in either a PDF or HTML file (like a url) and the `tf_parse` (for track and field) function to convert the read file to a tidy dataframe.  
+`JumpeR` reads track and field results into `R` and outputs tidy dataframes.  `JumpeR` uses `read_results` to read in either a PDF or HTML file (like a url) and the `tf_parse` (for track and field) function to convert the read file to a tidy dataframe.
+
 ### read_results
-`read_results` has two arguments, `file`, which is the file path to read in, and `node`, required only for HTML files, this is a CSS selector node where the results reside.  `node` defaults to `"pre"`, which has been correct in every instance tested thus far.
+`read_results` has two arguments.
+* `file`, which is the file path to read in
+* `node`, required only for HTML files, this is a CSS selector node where the results reside.  `node` defaults to `"pre"`, which has been correct in every instance tested thus far.
 
 ### tf_parse
 `tf_parse` has six arguments as of version 0.1.0.
 
-`file` is the output of `read_results` and is required.
+* `file` is the output of `read_results` and is required.
 
-`avoid` is a list of strings.  Rows in `file` containing any of those strings will not be included.  `avoid` is optional.  Incorrectly specifying it may lead to nonsense rows in the final dataframe, but will not cause an error.  Nonsense rows can be removed after import.  
+* `avoid` is a list of strings.  Rows in `file` containing any of those strings will not be included in the final results.  `avoid` is optional.  Incorrectly specifying it may lead to nonsense rows in the final dataframe, but will not cause an error.  Nonsense rows can be removed after import.  
 
-`typo` and `replacement` work together to fix typos, by replacing them with replacements.  Strings in `typo` will be replaced by strings in `replacement` in element index order - that is the first element of `typo` will be replaced everywhere it appears by the first element of `replacement`.  Typos can cause lost data and nonsense rows.
+* `typo` and `replacement` work together to fix typos, by replacing them with replacements.  Strings in `typo` will be replaced by strings in `replacement` in element index order - that is the first element of `typo` will be replaced everywhere it appears by the first element of `replacement`.  Uncorrected typos can cause lost data and nonsense rows.
 
-See `?tf_parse` or the package vignette for more information.
+* `relay_athletes` defaults to `FALSE`.  Setting it to `TRUE` will cause `tf_parse` to try to pull out the names of athletes participating in relays.  Athlete names will be in separate columns called `Relay_Athlete_1`, `Relay_Athlete_2` etc. etc.
+
+[Here's](http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm) the Womens 4x400m relay from the 2019 Greg Page relays at Cornell University.
+
+![Relay results](inst/extdata/HyTek_Cornell_4x400mRelay_html.png)
+
+Here's the same thing after importing with `JumpeR`
+```r
+tf_parse(
+    read_results(
+      "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
+    ),
+    relay_athletes = TRUE
+  )
+```
+![Relay results](inst/extdata/HyTek_Cornell_4x400mRelay_html_Import.png)
+
+* `attempts` records a unit of length for events where athletes get to try multiple times (long jump, javelin, pole vault etc. - basically the "field" events in track and field).  The default is `FALSE` but setting `attempts` to `TRUE` will cause `tf_parse` to attempt to collect the distance/height (or FOUL) of each athlete's attempts.  New columns called `Attempt_1`, `Attempt_2` etc. will be created.
+
+[Here's](https://www.flashresults.com/2018_Meets/Outdoor/04-28_VirginiaGrandPrix/035-1.pdf) the long jump prelims from the 2019 Virginia Grand Prix at the University of Virginia with the "attempts" highlighted in yellow.
+
+![Long jump attempts](inst/extdata/Flash_Results_VA_longjump_Attempts.png)
+
+Here's the same thing after importing with `JumpeR`
+```r
+tf_parse(
+    read_results(
+      "https://www.flashresults.com/2018_Meets/Outdoor/04-28_VirginiaGrandPrix/035-1.pdf"
+    ),
+    attempts = TRUE
+  )
+```
+![New attempts columns](inst/extdata/Flash_Results_VA_longjump_Attempts_Import.png)
+
+* `attempts_results` records the outcome of each attempt (height) in the vertical jumping events (high jump, pole vault).  The default for `attempts_results` is `FALSE` but setting it to `TRUE` will include these values (usually some combination of "X", "O" and "-") in new columns called `Attempt_1_Result`, `Attempt_2_Result`.  If `attempts_result = TRUE` it's generally recommended that `attempts = TRUE` as well.
+
+[Here's](https://www.flashresults.com/2018_Meets/Outdoor/04-20_DukeInvite/014-1.pdf) the pole vault results from the 2019 Duke Invite at (natch) Duke University with the "attempts_results" highlighted in yellow and the "attempts"" circled in red.
+
+![Pole vault results](inst/extdata/Flash_Results_Duke_polevault_Attempts_Results.png)
+
+Here's the same thing after importing with `JumpeR` - adding all these columns makes the results very wide.
+```r
+tf_parse(
+    read_results(
+      "https://www.flashresults.com/2018_Meets/Outdoor/04-20_DukeInvite/014-1.pdf"
+    ),
+    attempts = TRUE,
+    attempts_results = TRUE
+  )
+```
+![New attempts_results columns](inst/extdata/Flash_Results_Duke_polevault_Attempts_Results_Import.png)
+
+
+See `?tf_parse` for more information.
 
 ## Examples
 
@@ -99,7 +155,9 @@ tf_parse(
     read_results(
       "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
     ),
-    attempts = TRUE
+    relay_athletes = TRUE,
+    attempts = TRUE,
+    attempt_results = TRUE
   )
 ```
 
