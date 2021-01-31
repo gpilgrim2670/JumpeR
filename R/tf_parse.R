@@ -64,7 +64,7 @@ tf_parse <-
       stop("typo and replacement must have the same number of elements (be the same length)")
     }
 
-    if (all((attempts_results == TRUE), (attempts == FALSE))) {
+    if (all(attempts_results == TRUE & attempts == FALSE)) {
       stop("If attempts_results is set to TRUE attempts should also be set to TRUE.")
     }
 
