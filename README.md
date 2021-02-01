@@ -162,13 +162,26 @@ tf_parse(
 ```
 # Formatting Results
 
-By default all results (like the `Finals_Result` column) returned by `JumpeR` are characters, not numeric.  This is because lots of results don't fit `R`s notions of what a number is.  A result like `"1.65m"` for a long jump can't be a number because of the "m".  A result like `"1:45.32"` as a time can't be a number because of the ":".  Luckily `JUmpeR` is here to help with all of that.  Passing results to `math_format` will return results formated as numerics, such that they can be used in math.
+By default all results (like the `Finals_Result` column) returned by `JumpeR` are characters, not numeric.  This is because lots of results don't fit `R`s notions of what a number is.  A result like `"1.65m"` for a long jump can't be a number because of the "m".  A result like `"1:45.32"` as a time can't be a number because of the ":".  Luckily `JUmpeR` is here to help with all of that.  Passing results to `math_format` will return results formatted as numeric, such that they can be used in math.
 
 Please note however that `JumpeR` doesn't understand units.  Passing
 ```r
 math_format(c("1.65m", "DNS", "1:45.32"))
 ```
-will return `1.65` (meters, but not noted), `NA` (nice touch there), and `105.32` (seconds, also not noted).  You'll need to keep track of your units yourself.
+will return `1.65` (meters, but not noted), `NA` (nice touch there), and `105.32` (seconds, also not noted).  You'll need to keep track of your units yourself, or perhaps use the `units` package.  This is an area of possible future development.
+
+The best use of `math_format` is to convert an entire column, like `Finals_Results`
+```r
+df <- tf_parse(
+  read_results(
+    "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
+  )
+)
+
+df <- df %>% 
+  mutate(Finals_Result_Math = math_format(Finals_Result)) %>% 
+  select(Place, Name, Team, Finals_Result, Finals_Result_Math, Event)
+```
 
 # Getting help
 
@@ -176,7 +189,7 @@ You're welcome to contact me with bug reports, feature requests, etc. for `Jumpe
 
 If you find bug, please provide a minimal reproducible example at [github](https://github.com/gpilgrim2670/JumpeR).
 
-`JumpeR` is conceptually very similar to the `SwimmeR` package, which I also developed and maintain.  I do a lot of demos on how to use `SwimmeR` at my blog [Swimming + Data Science](https://pilgrim.netlify.app/).  `SwimmeR` also has a vignette.  Call `vignette("SwimmeR")`.  If you download from github don't forget to set `build_vignettes = TRUE`.
+`JumpeR` is conceptually very similar to the `SwimmeR` package, which I also developed and maintain.  I do a lot of demos on how to use `SwimmeR` at my blog [Swimming + Data Science](https://pilgrim.netlify.app/), which may be instructive for users of `JumpeR` as well.  `SwimmeR` also has a vignette (`JumpeR` does not at the moment).
 
 # Why is it called JumpeR?
 
