@@ -178,6 +178,7 @@ df <- tf_parse(
   )
 )
 
+library(dplyr)
 df <- df %>% 
   mutate(Finals_Result_Math = math_format(Finals_Result)) %>% 
   select(Place, Name, Team, Finals_Result, Finals_Result_Math, Event)
