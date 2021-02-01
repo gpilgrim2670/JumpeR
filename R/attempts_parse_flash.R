@@ -40,12 +40,12 @@ attempts_parse_flash <- function(text) {
   ### define strings ###
 
   attempt_string_flash <-
-    "\\d{1,2}\\.\\d{2} |\\d{1,3}\\-\\d{2}\\.?\\d{2}?|  X  |  \\–  " # special dash character
+    "\\d{1,2}\\.\\d{2} |\\d{1,3}\\-\\d{2}\\.?\\d{2}?|  X  |  \U2013  " # special dash character "em-dash" is \U2013
 
   text <- text %>%
     stringr::str_remove_all("\n\\s*") %>%
     .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "^[A-Z][a-km-z].{1,}$")))] %>%   # remove records, don't want to exclude rows beginning with "Pl "
-    .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "(?<=[\\–]) +X ")))] %>%  # remove special case where in vertical jumps someone passes a round then fails leaving "XX-  X" and that X gets picked up like it would for a horizontal event
+    .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "(?<=[\U2013]) +X ")))] %>%  # remove special case where in vertical jumps someone passes a round then fails leaving "XX-  X" and that X gets picked up like it would for a horizontal event
     .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "(?<=O) +X ")))] # remove special case where in vertical jumps someone passes a round then makes one attempt and passes leaving "O  X" and that X gets picked up like it would for a horizontal event
 
   #### collect row numbers from rows containing attempts ####

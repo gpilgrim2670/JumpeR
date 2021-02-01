@@ -118,16 +118,14 @@ test_that("flash parse works sprint, diamond league with some birthdates", {
     # generate standard
     df_standard <- data.frame(Place = as.character(seq(1, 6, 1)),
                               Name = c("Arian SMITH", "Marcellus MOORE", "Ryan MARTIN", "Ryan MULHOLLAND", "Lance BROOME", "Tyrese COOPER"),
-                              Age = c(NA, NA, "21-Sep-2001", NA, NA, "21-Mar-2000"),
                               Team = rep("USA", 6),
                               Finals_Result = c("10.41", "10.46", "10.56", "10.60", "10.63", "10.64"),
                               DQ = rep(0, 6),
+                              Birthdate = c(NA, NA, "21-Sep-2001", NA, NA, "21-Mar-2000"),
                               Event = rep("Boys 100 M High School 12:46 30 Jun 2019", 6))
-    df_test[,5]
 
     # generate test df
-    df_test <-
-      tf_parse(
+    df_test <- tf_parse(
         read_results(file),
         attempts = TRUE,
         attempts_results = TRUE,

@@ -39,7 +39,8 @@ attempts_results_parse_flash <- function(text) {
 
   #### define strings ####
   attempt_results_string_flash <-
-    " P  | ?PPP ?| O | X | XO ?| ?XXO ?| XX | ?XX\\- | ?XX\\– | ?X\\-{2} | ?X\\–{2} | ?XXX | XR | ?\\-{3} | ?\\–{3} " # for metric and imperial units, also has special dashes
+     " P  | ?PPP ?| O | X | XO ?| ?XXO ?| XX | ?XX\\- | ?XX\U2013 | ?X\\-{2} | ?X\U2013{2} | ?XXX | XR | ?\\-{3} | ?\U2013{3} " # for metric and imperial units, also has special dash "em-dash", code is \U2013
+
 
   #### Clean up incoming text ####
   text <- text %>%
@@ -219,7 +220,7 @@ attempts_results_parse_flash <- function(text) {
     data_attempts_results <- data_attempts_results %>%
       arrange(V1) %>%
       dplyr::mutate(V1 = dplyr::case_when(
-        stringr::str_detect(dplyr::lag(.[, ncol(.)], default = "NA"), "O ?$|\\– ?$") == TRUE ~ V1 - 1,
+        stringr::str_detect(dplyr::lag(.[, ncol(.)], default = "NA"), "O ?$|\U2013 ?$") == TRUE ~ V1 - 1,
         # checks for strings in the last column which mean the athlete can keep jumping and adjusts row numbs to reflect athlete having multiple rows of attempts
         TRUE ~ V1
       )) %>%

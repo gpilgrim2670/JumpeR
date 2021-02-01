@@ -45,45 +45,6 @@ flash_parse <-
 
 
     #### testing setup ####
-    # file_1 <-
-    #    system.file("extdata", "Results-IVP-Track-Field-Championship-2019-20-v2.pdf", package = "JumpeR")
-    #
-    # file_2 <- "http://results.yentiming.com/2019/Indoor/12-21-18-west.htm"
-    #
-    # file_3 <- system.file("extdata", "underdistance-2020-result.pdf", package = "JumpeR")
-    #
-    # file_4 <- "http://results.yentiming.com/2020/Indoor/2-29-20-MOC.htm"
-    # file <- "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
-    #
-    # file_1 <- read_results(file_1)
-    # file_2 <- read_results(file_2)
-    # file_3 <- read_results(file_3)
-    # file_4 <- read_results(file_4)
-    # file_5 <- read_results(file_5)
-    #
-    # file <- c(file_1, file_2, file_3, file_4, file_5)
-    #
-    # numbs_sing <- seq(1, 9, 1)
-    # numbs_sing <- paste0("0", numbs_sing)
-    # numbs_dub <- as.character(seq(10, 40, 1))
-    # numbs <- c(numbs_sing, numbs_dub)
-    # numbs_end <- paste0(numbs, "-1.pdf")
-    # # link_start <- "https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/0"
-    # # link_start <- "https://www.flashresults.com/2019_Meets/Indoor/01-18_HokieInvite/0"
-    # link_start <- "https://www.flashresults.com/2019_Meets/Outdoor/06-30_PreClassic/0"
-    # links <- paste0(link_start, numbs_end)
-    #
-    # raw_results <- map(links, purrr::safely(read_results, otherwise = NA))
-    # raw_results <- SwimmeR:::discard_errors(raw_results)
-    #
-    # raw_results <- unlist(raw_results) %>%
-    #   add_row_numbers()
-
-    # # raw_results <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/001-1.pdf") %>%
-    # raw_results <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/06-30_PreClassic/001-1.pdf") %>%
-    #   add_row_numbers()
-    # file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/014-1.pdf" # pole vault, attempt heights as single line above results
-    # file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/036-1.pdf" # triple jump, attempts in line
     # flash_file <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/06-05_NCAAOTF-Austin/001-1.pdf") %>%
     #   add_row_numbers()
     # flash_file <- raw_results[11] %>%
@@ -130,7 +91,7 @@ flash_parse <-
           stringr::str_replace_all("(?<=\\d{1,2}) (?=Jan |Feb |Mar |Apr |May |Jun |Jul |Aug |Sep |Oct |Nov |Dec )", "-") %>% # need space after month.abb to not roll up e.g. "1 Marie"
           stringr::str_replace_all("(?<=Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (?=\\d{4})", "-") %>%
           # remove 'A', 'B' etc. relay designators
-          stringr::str_replace_all("–", "PA$$ ") %>% # special dash from pole vault in flash results
+          stringr::str_replace_all("\U2013", "PA$$ ") %>% # special dash from pole vault in flash results
           stringr::str_replace_all(" \\'[A-Z]\\' ", "  ") %>% # tf specific  - removes relay A, B etc. designators
           stringr::str_replace_all("  [A-Z]  ", "  ") %>%
           stringr::str_replace_all("\\'\\'", "  ") %>%
@@ -1264,6 +1225,16 @@ flash_parse <-
           is.na(Gender) == FALSE ~ stringr::str_remove(Age, Gender),
           TRUE ~ Age
         ))
+      }
+
+      #### Address Birthdates ####
+      if("Age" %in% names(flash_data)){
+        flash_data <- flash_data %>%
+          dplyr::mutate(Birthdate = dplyr::case_when(stringr::str_detect(Age, Date_String) == TRUE ~ Age,
+                                                     TRUE ~ "NA")) %>%
+          dplyr::mutate(Age = dplyr::case_when(stringr::str_detect(Birthdate, "NA") == FALSE ~ "NA",
+                                               TRUE ~ Age)) %>%
+          dplyr::na_if("NA")
       }
 
       #### Address Names with "." renamed to "Period" - not sure if needed for flash results ####
