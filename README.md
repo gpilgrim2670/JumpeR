@@ -1,5 +1,5 @@
 # JumpeR
-JumpeR R package
+The `JumpeR` `R` package is used for converting human readable track and field (athletics) results into dataframes for use in analysis.
 
 ### Latest Development Version from Github
 
