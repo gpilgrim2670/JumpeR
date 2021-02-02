@@ -10,8 +10,8 @@ tf_parse(
   typo = typo_default,
   replacement = replacement_default,
   relay_athletes = FALSE,
-  attempts = FALSE,
-  attempts_results = FALSE
+  flights = FALSE,
+  flight_attempts = FALSE
 )
 }
 \arguments{
@@ -25,9 +25,9 @@ tf_parse(
 
 \item{relay_athletes}{should tf_parse try to include the names of relay athletes for relay events?  Names will be listed in new columns "Relay-Athlete_1", "Relay_Athlete_2" etc.  Defaults to \code{FALSE}.}
 
-\item{attempts}{should tf_parse try to include attempts for jumping/throwing events?  Please note this will add a significant number of columns to the resulting dataframe.  Defaults to \code{FALSE}.}
+\item{flights}{should tf_parse try to include flights for jumping/throwing events?  Please note this will add a significant number of columns to the resulting dataframe.  Defaults to \code{FALSE}.}
 
-\item{attempts_results}{should tf_parse try to include attempts results (i.e. "PASS", "X", "O") for high jump and pole value events?  Please note this will add a significant number of columns to the resulting dataframe.  Defaults to \code{FALSE}}
+\item{flight_attempts}{should tf_parse try to include flights results (i.e. "PASS", "X", "O") for high jump and pole value events?  Please note this will add a significant number of columns to the resulting dataframe.  Defaults to \code{FALSE}}
 }
 \value{
 a dataframe of track and field results

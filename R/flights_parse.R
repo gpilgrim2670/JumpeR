@@ -1,6 +1,6 @@
-#' Collects attempts within \code{tf_parse}
+#' Collects flights within \code{tf_parse}
 #'
-#' Takes the output of \code{read_results} and, inside of \code{tf_parse}, extracts jump/throw attempts and associated row numbers
+#' Takes the output of \code{read_results} and, inside of \code{tf_parse}, extracts jump/throw flights and associated row numbers
 #'
 #' @author Greg Pilgrim \email{gpilgrim2670@@gmail.com}
 #'
@@ -19,9 +19,9 @@
 #' @param text output of \code{read_results} with row numbers appended by \code{add_row_numbers}
 #' @return returns a dataframe with split times and row numbers
 #'
-#' @seealso \code{attempts_parse} runs inside \code{\link{tf_parse}} on the output of \code{\link{read_results}} with row numbers from \code{\link{add_row_numbers}}
+#' @seealso \code{flights_parse} runs inside \code{\link{tf_parse}} on the output of \code{\link{read_results}} with row numbers from \code{\link{add_row_numbers}}
 
-attempts_parse <- function(text) {
+flights_parse <- function(text) {
 
   #### Testing ####
   # file <- "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
@@ -32,12 +32,12 @@ attempts_parse <- function(text) {
   # text <- add_row_numbers(file)
 
   #### Actual Function ####
-  ### collect row numbers from rows containing attempts ###
+  ### collect row numbers from rows containing flights ###
   ### define strings ###
 
   attempt_string <- "\\d{1,2}\\.\\d{2}m?|PASS|FOUL|\\d{1,3}\\-\\d{2}\\.?\\d{2}?" # for metric and imperial units
 
-    #### pull out rows containing attempts ####
+    #### pull out rows containing flights ####
 
       suppressWarnings(
         data_1 <- text %>%
@@ -47,7 +47,7 @@ attempts_parse <- function(text) {
           .[purrr::map_lgl(., ~ !any(stringr::str_detect(., ":")))] %>% # helps with removing records like "NYS: 1.45m"
           stringr::str_replace_all("\\(\\+?\\-?\\d{1,3}\\.\\d{1,3}\\)", "  ") %>%  # remove anything in parenthesis, replace with spaces
           stringr::str_replace_all("\\(NWI\\)", "  ") %>%  # remove NWI in parenthesis, replace with spaces
-          stringr::str_replace_all(" ", "  ") %>% # put multiple spaces between attempts
+          stringr::str_replace_all(" ", "  ") %>% # put multiple spaces between flights
           trimws()
       )
 

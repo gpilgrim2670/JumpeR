@@ -20,9 +20,9 @@
 #' @param text output of \code{read_results} with row numbers appended by \code{add_row_numbers}
 #' @return returns a dataframe with split times and row numbers
 #'
-#' @seealso \code{attempts_parse_flash} runs inside \code{\link{flash_parse}} on the output of \code{\link{read_results}} with row numbers from \code{\link{add_row_numbers}}
+#' @seealso \code{flights_parse_flash} runs inside \code{\link{flash_parse}} on the output of \code{\link{read_results}} with row numbers from \code{\link{add_row_numbers}}
 
-attempts_parse_flash <- function(text) {
+flash_flights_parse <- function(text) {
   #### Testing ####
   # file <- "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
   # file <-
@@ -48,48 +48,48 @@ attempts_parse_flash <- function(text) {
     .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "(?<=[\U2013]) +X ")))] %>%  # remove special case where in vertical jumps someone passes a round then fails leaving "XX-  X" and that X gets picked up like it would for a horizontal event
     .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "(?<=O) +X ")))] # remove special case where in vertical jumps someone passes a round then makes one attempt and passes leaving "O  X" and that X gets picked up like it would for a horizontal event
 
-  #### collect row numbers from rows containing attempts ####
+  #### collect row numbers from rows containing flights ####
   row_numbs <- text %>%
     .[purrr::map_lgl(., stringr::str_detect, attempt_string_flash)] %>%
     str_extract("\\d{1,}$")
 
-  #### pull out rows containing attempts ####
+  #### pull out rows containing flights ####
 
   suppressWarnings(
-    data_attempts <- text %>%
+    data_flights <- text %>%
       .[purrr::map_lgl(., stringr::str_detect, attempt_string_flash)] %>%
       stringr::str_extract_all(attempt_string_flash, simplify = TRUE) %>%
       trimws()
   )
 
   #### reattach row numbers ####
-  data_attempts <- cbind(row_numbs, data_attempts) %>%
+  data_flights <- cbind(row_numbs, data_flights) %>%
     as.data.frame() %>%
     dplyr::na_if("") %>%
     dplyr::rename(V1 = row_numbs) # for list_sort, needs V1 to be row numbers, but named V1
 
   #### reattach row numbers ####
 
-  data_attempts <- data_attempts %>%
+  data_flights <- data_flights %>%
     lines_sort(min_row = min(as.numeric(row_numbs))) %>%
     dplyr::mutate(Row_Numb = as.numeric(Row_Numb))
 
   #### rename columns V1, V2 etc. at Attempt_1, Attempt_2 etc. ####
   old_names <-
-    names(data_attempts)[grep("^V", names(data_attempts))]
+    names(data_flights)[grep("^V", names(data_flights))]
   new_names <-
-    paste("Attempt", seq(1, length(names(data_attempts)) - 1), sep = "_")
+    paste("Flight", seq(1, length(names(data_flights)) - 1), sep = "_")
 
-  data_attempts <- data_attempts %>%
+  data_flights <- data_flights %>%
     dplyr::rename_at(dplyr::vars(dplyr::all_of(old_names)), ~ new_names)
 
   if (sum(suppressWarnings(str_detect(text, "\\d\\.\\d{2}m"))) >= 1) {
-    # keeps running times like 10.34 from getting into attempts
-    return(data_attempts)
+    # keeps running times like 10.34 from getting into flights
+    return(data_flights)
   } else {
-    data_attempts <- data.frame(Row_Numb = character(),
+    data_flights <- data.frame(Row_Numb = character(),
                                 stringsAsFactors = FALSE)
-    return(data_attempts)
+    return(data_flights)
   }
 
 }

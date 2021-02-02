@@ -2,7 +2,7 @@
 % Please edit documentation in R/attempts_remove.R
 \name{attempts_remove}
 \alias{attempts_remove}
-\title{Collects attempts within \code{tf_parse}}
+\title{Collects flight attempts within \code{tf_parse}}
 \usage{
 attempts_remove(df)
 }
@@ -13,7 +13,7 @@ attempts_remove(df)
 returns a dataframe with the attempt columns removed
 }
 \description{
-Takes the output of \code{read_results} and, inside of \code{tf_parse}, extracts jump/throw attempts and associated row numbers
+Takes the output of \code{read_results} and, inside of \code{tf_parse}, extracts vertical jump attempts and associated row numbers
 }
 \seealso{
 \code{attempts_remove} runs inside \code{\link{flash_parse}}

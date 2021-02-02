@@ -1,6 +1,6 @@
-#' Collects results of high jump & pole vault attempts within \code{tf_parse}
+#' Collects results of high jump & pole vault flight attempts within \code{tf_parse}
 #'
-#' Takes the output of \code{read_results} and, inside of \code{tf_parse}, extracts jump/throw attempts and associated row numbers
+#' Takes the output of \code{read_results} and, inside of \code{tf_parse}, extracts vertical jump flight attempts (XXO etc) and associated row numbers
 #'
 #' @author Greg Pilgrim \email{gpilgrim2670@@gmail.com}
 #'
@@ -23,14 +23,14 @@
 #' @param text output of \code{read_results} with row numbers appended by \code{add_row_numbers}
 #' @return returns a dataframe with split times and row numbers
 #'
-#' @seealso \code{attempts_results_parse} runs inside \code{\link{tf_parse}} on the output of \code{\link{read_results}} with row numbers from \code{\link{add_row_numbers}}
+#' @seealso \code{flash_flight_attempts_parse} runs inside \code{\link{flash_parse}} on the output of \code{\link{read_results}} with row numbers from \code{\link{add_row_numbers}}
 
-attempts_results_parse_flash <- function(text) {
+flash_flight_attempts_parse <- function(text) {
   #### Testing ####
   # file <- "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
   # file <-
   #    system.file("extdata", "Results-IVP-Track-Field-Championship-2019-20-v2.pdf", package = "JumpeR")
-  # file <- "https://www.flashresults.com/2018_Meets/Outdoor/04-20_VirginiaChallenge/034-1.pdf"
+  # file <- "https://www.flashresults.com/2019_Meets/Outdoor/05-23_NCAAEast-Jacksonville/014-1.pdf"
   # file <- read_results(file)
   # text <- add_row_numbers(file)
   # text <- flash_file
@@ -38,7 +38,7 @@ attempts_results_parse_flash <- function(text) {
   #### Actual Function ####
 
   #### define strings ####
-  attempt_results_string_flash <-
+  flash_attempts_string <-
      " P  | ?PPP ?| O | X | XO ?| ?XXO ?| XX | ?XX\\- | ?XX\U2013 | ?X\\-{2} | ?X\U2013{2} | ?XXX | XR | ?\\-{3} | ?\U2013{3} " # for metric and imperial units, also has special dash "em-dash", code is \U2013
 
 
@@ -47,22 +47,23 @@ attempts_results_parse_flash <- function(text) {
     stringr::str_remove_all("\n\\s*") %>%
     .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "^[A-Z][a-z].{1,}$")))]  # remove records
 
-  #### collect row numbers from rows containing attempts ####
+  #### collect row numbers from rows containing flights ####
   # row_numbs <- text %>%
   #   .[purrr::map_lgl(., stringr::str_detect, attempt_results_string_flash)] %>%
   #   str_extract("\\d{1,}$")
 
-  #### pull out rows containing attempts ####
+  #### pull out rows containing flights ####
   suppressWarnings(data_1 <- text %>%
-                     stringr::str_replace_all(" ", "  ") %>% # if results are close together "XO XO" to "XO   XO"
-                     .[purrr::map_lgl(., stringr::str_detect, attempt_results_string_flash)] %>%
+                     stringr::str_replace_all(" ", "  ") %>% # if attempts are close together "XO XO" to "XO   XO"
+                     .[purrr::map_lgl(., stringr::str_detect, flash_attempts_string)] %>%
+                     stringr::str_replace_all("\U2013", "\\-") %>% # replace em dashes with regular dashes
                      stringr::str_extract_all(paste0(
-                       attempt_results_string_flash, "|\\d{1,}$"
+                       flash_attempts_string, "|\\d{1,}$"
                      )))
 
 
   #### break out by length ####
-  # theoretically there can be any number of attempts, as long as
+  # theoretically there can be any number of flights, as long as
   # one athlete keeps clearing heights
   data_length_1 <- data_1[purrr::map(data_1, length) == 1]
   data_length_2 <- data_1[purrr::map(data_1, length) == 2]
@@ -190,7 +191,7 @@ attempts_results_parse_flash <- function(text) {
   #### bind up results ####
   # results are bound with named column "Row_Numb" retained
   suppressMessages(
-    data_attempts_results <-
+    data_flight_attempts <-
       dplyr::bind_rows(
         df_13,
         df_12,
@@ -206,56 +207,57 @@ attempts_results_parse_flash <- function(text) {
         df_2
       )
   )
-  if ("V1" %in% names(data_attempts_results)) {
-    data_attempts_results <- data_attempts_results %>%
+  if ("V1" %in% names(data_flight_attempts)) {
+    data_flight_attempts <- data_flight_attempts %>%
       dplyr::mutate(Row_Numb = as.numeric(Row_Numb)) %>%
       dplyr::rename(V1a = V1,
                     V1 = Row_Numb)
 
     # suppressMessages(
-    # data_attempts_results <- row_numbs %>%
-    #   dplyr::bind_cols(data_attempts_results)
+    # data_flight_attempts <- row_numbs %>%
+    #   dplyr::bind_cols(data_flight_attempts)
     # )
 
-    data_attempts_results <- data_attempts_results %>%
+    data_flight_attempts <- data_flight_attempts %>%
       arrange(V1) %>%
       dplyr::mutate(V1 = dplyr::case_when(
-        stringr::str_detect(dplyr::lag(.[, ncol(.)], default = "NA"), "O ?$|\U2013 ?$") == TRUE ~ V1 - 1,
-        # checks for strings in the last column which mean the athlete can keep jumping and adjusts row numbs to reflect athlete having multiple rows of attempts
+        stringr::str_detect(dplyr::lag(.[, ncol(.)], default = "NA"), "O ?$|\U2013 ?$|- ?$") == TRUE &
+          V1 - dplyr::lag(V1) < 1 ~ V1 - 1,
+        # checks for strings in the last column which mean the athlete can keep jumping and adjusts row numbs to reflect athlete having multiple rows of flights
         TRUE ~ V1
       )) %>%
-      lines_sort(min_row = min(data_attempts_results$V1)) %>%
+      lines_sort(min_row = min(data_flight_attempts$V1)) %>%
       dplyr::mutate(Row_Numb = as.numeric(Row_Numb)) %>%
       dplyr::arrange(Row_Numb)
 
 
-    # names(data_attempts_results)[ncol(data_attempts_results)] <-
+    # names(data_flight_attempts)[ncol(data_flight_attempts)] <-
     #   "Row_Numb" # to rename last column since we don't know how many columns there will be
 
-    # data_attempts_results <- data_attempts_results %>%
+    # data_flight_attempts <- data_flight_attempts %>%
     #   dplyr::mutate(Row_Numb = as.numeric(Row_Numb)) # make row number of split match row number of performance
 
     #### rename columns V1, V2 etc. at Attempt_1, Attempt_2 etc. ####
     old_names <-
-      names(data_attempts_results)[grep("^V", names(data_attempts_results))]
+      names(data_flight_attempts)[grep("^V", names(data_flight_attempts))]
     new_names <-
-      paste("Attempt", seq(1, length(names(
-        data_attempts_results
-      )) - 1), "Result", sep = "_")
+      paste("Flight", seq(1, length(names(
+        data_flight_attempts
+      )) - 1), "Attempts", sep = "_")
 
-    data_attempts_results <- data_attempts_results %>%
+    data_flight_attempts <- data_flight_attempts %>%
       dplyr::rename_at(dplyr::vars(dplyr::all_of(old_names)), ~ new_names) %>%
       # dplyr::arrange(Row_Numb) %>%
       dplyr::mutate(dplyr::across(new_names, stringr::str_trim))
   }
 
-  if (sum(suppressWarnings(str_detect(data_attempts_results, "O"))) >= 1) {
-    # some results, like long jump will have X for faults, but not O for pass - these are not the kind of results we want for attempts_results, rather they will be caputred as attempts
-    return(data_attempts_results)
+  if (sum(suppressWarnings(str_detect(data_flight_attempts, "O"))) >= 1) {
+    # some results, like long jump will have X for faults, but not O for pass - these are not the kind of results we want for flight_attempts, rather they will be caputred as flights
+    return(data_flight_attempts)
   } else {
-    data_attempts_results <- data.frame(Row_Numb = character(),
+    data_flight_attempts <- data.frame(Row_Numb = character(),
                                         stringsAsFactors = FALSE)
-    return(data_attempts_results)
+    return(data_flight_attempts)
   }
 
 }

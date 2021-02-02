@@ -29,8 +29,8 @@
 #' @importFrom SwimmeR `%!in%`
 #'
 #' @param flash_file a .pdf or .html file (could be a url) where containing track and field results.  Must be formatted in a "normal" fashion - see vignette
-#' @param flash_attempts should tf_parse try to include attempts for jumping/throwing events?  Defaults to \code{FALSE}
-#' @param flash_attempts_results should tf_parse try to include outcomes for attempts for vertical jumping events?  Defaults to \code{FALSE}
+#' @param flash_flights should tf_parse try to include flights for jumping/throwing events?  Defaults to \code{FALSE}
+#' @param flash_flight_attempts should tf_parse try to include outcomes for flights for vertical jumping events?  Defaults to \code{FALSE}
 #'
 #' @return a dataframe of track and field results
 #'
@@ -40,12 +40,12 @@
 
 flash_parse <-
   function(flash_file,
-           flash_attempts = attempts,
-           flash_attempts_results = attempts_results) {
+           flash_flights = flights,
+           flash_flight_attempts = flight_attempts) {
 
 
     #### testing setup ####
-    # flash_file <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/06-05_NCAAOTF-Austin/001-1.pdf") %>%
+    # flash_file <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/05-23_NCAAEast-Jacksonville/014-1.pdf") %>%
     #   add_row_numbers()
     # flash_file <- raw_results[11] %>%
     #   unlist() %>%
@@ -130,7 +130,7 @@ flash_parse <-
           stringr::str_replace_all("(?<=\\d) (?=\\d{1,}$)", "  ") %>% # tf specific - split off row_numb
           stringr::str_replace_all(" \\., ", "  Period, ") %>% # for names that only have a period, as in some singapore results
           stringr::str_replace_all("([:alpha])(\\.[:alpha:])", "\\1 \\2") %>%
-          stringr::str_remove_all("X?X?PA\\$\\$|XXX|XXO| XX | ?XO ?| O | X | XR ") %>%  # remove attempts
+          stringr::str_remove_all("X?X?PA\\$\\$|XXX|XXO| XX | ?XO ?| O | X | XR ") %>%  # remove flights
           # stringr::str_remove_all("^[A-Z][a-z].{1,}$") %>%
           trimws() %>%
           .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "^[A-Z][a-z].{1,}|^[:upper:]{3}.*Meet")))]  # remove records
@@ -1290,58 +1290,58 @@ flash_parse <-
       }
 
 
-      #### adding in attempts ####
-      if (flash_attempts == TRUE) {
-        attempts_data <- attempts_parse_flash(flash_file)
+      #### adding in flights ####
+      if (flash_flights == TRUE) {
+        flights_data <- flash_flights_parse(flash_file)
 
-        # attempts <- attempts %>%
-        #   # transform(attempts, Row_Numb_Adjusted = flash_data$Row_Numb[findInterval(Row_Numb, flash_data$Row_Numb)]) %>%
+        # flights <- flights %>%
+        #   # transform(flights, Row_Numb_Adjusted = flash_data$Row_Numb[findInterval(Row_Numb, flash_data$Row_Numb)]) %>%
         #   dplyr::select(-Row_Numb)
 
-        if (all(nrow(attempts_data) <  2 & nrow(attempts_data) >  0)) {
-          if (min(attempts_data$Row_Numb) < min(flash_data$Row_Numb)) {
+        if (all(nrow(flights_data) <  2 & nrow(flights_data) >  0)) {
+          if (min(flights_data$Row_Numb) < min(flash_data$Row_Numb)) {
             flash_data <-
-              cbind(flash_data, attempts_data %>% dplyr::select(-Row_Numb))
+              cbind(flash_data, flights_data %>% dplyr::select(-Row_Numb))
           }
 
           } else {
-            if(nrow(attempts_data) > nrow(flash_data)){
-              attempts_data <- attempts_data[1:nrow(flash_data),] # removes issue with team scores added to bottom of results being caught up as attempts
+            if(nrow(flights_data) > nrow(flash_data)){
+              flights_data <- flights_data[1:nrow(flash_data),] # removes issue with team scores added to bottom of results being caught up as flights
             }
 
-            attempts_data <-
-              transform(attempts_data, Row_Numb_Adjusted = flash_data$Row_Numb[findInterval(Row_Numb, flash_data$Row_Numb)]) %>%
+            flights_data <-
+              transform(flights_data, Row_Numb_Adjusted = flash_data$Row_Numb[findInterval(Row_Numb, flash_data$Row_Numb)]) %>%
               dplyr::select(-Row_Numb)
 
             flash_data <-
               dplyr::left_join(flash_data,
-                               attempts_data,
+                               flights_data,
                                by = c("Row_Numb" = "Row_Numb_Adjusted"))
           }
       }
 
-      #### adding in attempts results ####
-      if (flash_attempts_results == TRUE) {
-        attempts_results_data <- attempts_results_parse_flash(flash_file)
+      #### adding in flights attempts ####
+      if (flash_flight_attempts == TRUE) {
+        flight_attempts_data <- flash_flight_attempts_parse(flash_file)
 
-        if (nrow(attempts_results_data) > 1) {
-          attempts_results_data <-
-            transform(attempts_results_data, Row_Numb_Adjusted = flash_data$Row_Numb[findInterval(Row_Numb, flash_data$Row_Numb)]) %>%
+        if (nrow(flight_attempts_data) > 1) {
+          flight_attempts_data <-
+            transform(flight_attempts_data, Row_Numb_Adjusted = flash_data$Row_Numb[findInterval(Row_Numb, flash_data$Row_Numb)]) %>%
             dplyr::select(-Row_Numb)
 
           flash_data <-
             dplyr::left_join(flash_data,
-                             attempts_results_data,
+                             flight_attempts_data,
                              by = c("Row_Numb" = "Row_Numb_Adjusted"))
 
         }
       }
 
-      #### ordering columns after adding attempts ####
-      if (all(flash_attempts == TRUE &
-              flash_attempts_results == TRUE)) {
+      #### ordering columns after adding flights ####
+      if (all(flash_flights == TRUE &
+              flash_flight_attempts == TRUE)) {
         flash_data <- flash_data %>%
-          dplyr::select(colnames(.)[stringr::str_detect(names(.), "^Attempt", negate = TRUE)], sort(colnames(.)[stringr::str_detect(names(.), "^Attempt")]))
+          dplyr::select(colnames(.)[stringr::str_detect(names(.), "^Flight", negate = TRUE)], sort(colnames(.)[stringr::str_detect(names(.), "^Flight")]))
       }
 
 
@@ -1351,8 +1351,8 @@ flash_parse <-
         dplyr::select(which(SwimmeR::`%!in%`(names(.), c("Row_Numb", "Exhibition", "Points", "Heat"))))
 
       # removes unneeded Attempt_X columns (i.e. those that don't have an associated Attempt_Result)
-      if (any(stringr::str_detect(names(flash_data), "Attempt_\\d{1,}_Result")) == TRUE) {
-        flash_data <- remove_unneeded_attempts(flash_data)
+      if (any(stringr::str_detect(names(flash_data), "Flight_\\d{1,}_Attempts")) == TRUE) {
+        flash_data <- remove_unneeded_flights(flash_data)
       }
 
       #### remove empty columns (all values are NA) ####

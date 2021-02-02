@@ -1,6 +1,6 @@
-#' Collects attempts within \code{tf_parse}
+#' Collects flight attempts within \code{tf_parse}
 #'
-#' Takes the output of \code{read_results} and, inside of \code{tf_parse}, extracts jump/throw attempts and associated row numbers
+#' Takes the output of \code{read_results} and, inside of \code{tf_parse}, extracts vertical jump attempts and associated row numbers
 #'
 #' @author Greg Pilgrim \email{gpilgrim2670@@gmail.com}
 #'

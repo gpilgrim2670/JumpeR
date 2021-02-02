@@ -19,9 +19,9 @@
 #' @param text output of \code{read_results} with row numbers appended by \code{add_row_numbers}
 #' @return returns a dataframe with split times and row numbers
 #'
-#' @seealso \code{attempts_results_parse} runs inside \code{\link{tf_parse}} on the output of \code{\link{read_results}} with row numbers from \code{\link{add_row_numbers}}
+#' @seealso \code{flight_attempts_parse} runs inside \code{\link{tf_parse}} on the output of \code{\link{read_results}} with row numbers from \code{\link{add_row_numbers}}
 
-attempts_results_parse <- function(text) {
+flight_attempts_parse <- function(text) {
 
   #### Testing ####
   # file <- "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
@@ -35,12 +35,12 @@ attempts_results_parse <- function(text) {
   ### collect row numbers from rows containing attempts ###
 
   ### define strings ###
-  attempt_results_string <- " P | PPP | O | X | XO | XXO | XX | XXX " # for metric and imperial units
+  attempts_string <- " P | ?PPP | O | X | XO | ?XXO | XX | ?XXX " # for metric and imperial units
 
   #### pull out rows containing attempts ####
   suppressWarnings(
     data_1 <- text %>%
-      .[purrr::map_lgl(., stringr::str_detect, attempt_results_string)] %>%
+      .[purrr::map_lgl(., stringr::str_detect, attempts_string)] %>%
       .[purrr::map_lgl(., ~ stringr::str_detect(., "^\n\\s*\\d+\\s|^\n\\s*--", negate = TRUE))] %>% # removes rows that start with a place, to remove main results
       .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "[:lower:]{2,}")))] %>% # removes rows that have two lower case letters in a row
       .[purrr::map_lgl(., ~ !any(stringr::str_detect(., ":")))] %>% # helps with removing records like "NYS: 1.45m"
@@ -170,20 +170,20 @@ attempts_results_parse <- function(text) {
 
   #### bind up results ####
   # results are bound with named column "Row_Numb" retained
-  data <-
+  flight_attempts_data <-
     dplyr::bind_rows(df_12, df_11, df_10, df_9, df_8, df_7, df_6, df_5, df_4, df_3, df_2) %>%
     dplyr::mutate(Row_Numb = as.numeric(Row_Numb) - 1) # make row number of split match row number of performance
 
   #### rename columns V1, V2 etc. at Attempt_1, Attempt_2 etc. ####
-  old_names <- names(data)[grep("^V", names(data))]
+  old_names <- names(flight_attempts_data)[grep("^V", names(flight_attempts_data))]
   new_names <-
-    paste("Attempt", seq(1, length(names(data)) - 1), "Result", sep = "_")
+    paste("Flight", seq(1, length(names(flight_attempts_data)) - 1), "Attempts", sep = "_")
 
-  data <- data %>%
+  flight_attempts_data <- flight_attempts_data %>%
     dplyr::rename_at(dplyr::vars(dplyr::all_of(old_names)), ~ new_names) %>%
     dplyr::arrange(Row_Numb)
 
-  return(data)
+  return(flight_attempts_data)
 
 }
 

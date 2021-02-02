@@ -6,16 +6,16 @@
 \usage{
 flash_parse(
   flash_file,
-  flash_attempts = attempts,
-  flash_attempts_results = attempts_results
+  flash_flights = flights,
+  flash_flight_attempts = flight_attempts
 )
 }
 \arguments{
 \item{flash_file}{a .pdf or .html file (could be a url) where containing track and field results.  Must be formatted in a "normal" fashion - see vignette}
 
-\item{flash_attempts}{should tf_parse try to include attempts for jumping/throwing events?  Defaults to \code{FALSE}}
+\item{flash_flights}{should tf_parse try to include flights for jumping/throwing events?  Defaults to \code{FALSE}}
 
-\item{flash_attempts_results}{should tf_parse try to include outcomes for attempts for vertical jumping events?  Defaults to \code{FALSE}}
+\item{flash_flight_attempts}{should tf_parse try to include outcomes for flights for vertical jumping events?  Defaults to \code{FALSE}}
 }
 \value{
 a dataframe of track and field results

@@ -33,8 +33,8 @@
 #' @param typo a list of strings that are typos in the original results.  \code{tf_parse} is particularly sensitive to accidental double spaces, so "Central  High School", with two spaces between "Central" and "High" is a problem, which can be fixed.  Pass "Central  High School" to \code{typo}.
 #' @param replacement a list of fixes for the strings in \code{typo}.  Here one could pass "Central High School" (one space between "Central" and "High") to fix the issue described in \code{typo}
 #' @param relay_athletes should tf_parse try to include the names of relay athletes for relay events?  Names will be listed in new columns "Relay-Athlete_1", "Relay_Athlete_2" etc.  Defaults to \code{FALSE}.
-#' @param attempts should tf_parse try to include attempts for jumping/throwing events?  Please note this will add a significant number of columns to the resulting dataframe.  Defaults to \code{FALSE}.
-#' @param attempts_results should tf_parse try to include attempts results (i.e. "PASS", "X", "O") for high jump and pole value events?  Please note this will add a significant number of columns to the resulting dataframe.  Defaults to \code{FALSE}
+#' @param flights should tf_parse try to include flights for jumping/throwing events?  Please note this will add a significant number of columns to the resulting dataframe.  Defaults to \code{FALSE}.
+#' @param flight_attempts should tf_parse try to include flights results (i.e. "PASS", "X", "O") for high jump and pole value events?  Please note this will add a significant number of columns to the resulting dataframe.  Defaults to \code{FALSE}
 #'
 #' @return a dataframe of track and field results
 #'
@@ -48,8 +48,8 @@ tf_parse <-
            typo = typo_default,
            replacement = replacement_default,
            relay_athletes = FALSE,
-           attempts = FALSE,
-           attempts_results = FALSE) {
+           flights = FALSE,
+           flight_attempts = FALSE) {
 
     # file <- read_results("http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm")
     # file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/014-1.pdf"
@@ -64,8 +64,8 @@ tf_parse <-
       stop("typo and replacement must have the same number of elements (be the same length)")
     }
 
-    if (all(attempts_results == TRUE & attempts == FALSE)) {
-      stop("If attempts_results is set to TRUE attempts should also be set to TRUE.")
+    if (all(flight_attempts == TRUE & flights == FALSE)) {
+      stop("If flight_attempts is set to TRUE flights should also be set to TRUE.")
     }
 
     #### strings that if a line begins with one of them the line is ignored ####
@@ -125,7 +125,7 @@ tf_parse <-
     #### Flash results or Hy-Tek ####
     # Flash
     if(any(stringr::str_detect(raw_results[1:5], "CONDITIONS"), na.rm = TRUE) == TRUE){
-      data <- flash_parse(flash_file = raw_results, flash_attempts = attempts, flash_attempts_results = attempts_results)
+      data <- flash_parse(flash_file = raw_results, flash_flights = flights, flash_flight_attempts = flight_attempts)
 
       return(data)
 
@@ -852,37 +852,37 @@ tf_parse <-
         dplyr::left_join(relay_athletes_df, c("Row_Numb" = "Row_Numb_Adjusted"))
     }
 
-    #### adding in attempts ####
-    if(attempts == TRUE){
-      attempts_df <- attempts_parse(as_lines_list_2)
+    #### adding in flights ####
+    if(flights == TRUE){
+      flights_df <- flights_parse(as_lines_list_2)
 
-      attempts_df <-
-        transform(attempts_df, Row_Numb_Adjusted = data$Row_Numb[findInterval(Row_Numb, data$Row_Numb)]) %>%
+      flights_df <-
+        transform(flights_df, Row_Numb_Adjusted = data$Row_Numb[findInterval(Row_Numb, data$Row_Numb)]) %>%
         dplyr::select(-Row_Numb)
 
-      data <- dplyr::left_join(data, attempts_df, by = c("Row_Numb" = "Row_Numb_Adjusted"))
+      data <- dplyr::left_join(data, flights_df, by = c("Row_Numb" = "Row_Numb_Adjusted"))
     }
 
-    #### adding in attempts results ####
-    if(attempts_results == TRUE){
-      attempts_results_df <- attempts_results_parse(as_lines_list_2)
+    #### adding in flights results ####
+    if(flight_attempts == TRUE){
+      flight_attempts_df <- flight_attempts_parse(as_lines_list_2)
 
-      attempts_results_df <-
-        transform(attempts_results_df, Row_Numb_Adjusted = data$Row_Numb[findInterval(Row_Numb, data$Row_Numb)]) %>%
+      flight_attempts_df <-
+        transform(flight_attempts_df, Row_Numb_Adjusted = data$Row_Numb[findInterval(Row_Numb, data$Row_Numb)]) %>%
         dplyr::select(-Row_Numb)
 
-      data <- dplyr::left_join(data, attempts_results_df, by = c("Row_Numb" = "Row_Numb_Adjusted"))
+      data <- dplyr::left_join(data, flight_attempts_df, by = c("Row_Numb" = "Row_Numb_Adjusted"))
     }
 
-    #### ordering columns after adding attempts ####
-    if (all(attempts == TRUE & attempts_results == TRUE)) {
+    #### ordering columns after adding flights ####
+    if (all(flights == TRUE & flight_attempts == TRUE)) {
       data <- data %>%
-        dplyr::select(colnames(.)[stringr::str_detect(names(.), "^Attempt", negate = TRUE)], sort(colnames(.)[stringr::str_detect(names(.), "^Attempt")]))
+        dplyr::select(colnames(.)[stringr::str_detect(names(.), "^Flight", negate = TRUE)], sort(colnames(.)[stringr::str_detect(names(.), "^Flight")]))
     }
 
-    # removes unneeded Attempt_X columns (i.e. those that don't have an associated Attempt_Result)
-    if (any(stringr::str_detect(names(data), "Attempt_\\d{1,}_Result")) == TRUE) {
-      data <- remove_unneeded_attempts(data)
+    # removes unneeded Flight_X columns (i.e. those that don't have an associated Flight_Result)
+    if (any(stringr::str_detect(names(data), "Flight_\\d{1,}_Results")) == TRUE) {
+      data <- remove_unneeded_flights(data)
     }
 
     #### remove empty columns (all values are NA) ####
