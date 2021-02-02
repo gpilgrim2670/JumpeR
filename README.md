@@ -141,7 +141,7 @@ tf_parse(
 
 ![Pole vault results splits example](inst/extdata/HyTek_Cornell_polevault_splits_html.png)
 
-Here's how using `split_attempts` works - adding all these columns make the results extremely wide.  I'm only going to show the first six split columns.
+Here's how using `split_attempts` works - adding all these columns make the results extremely wide.  I'm only going to show the first three split columns, called `Flight_1_Attempt_1`, `Flight_1_Attempt_2` & `Flight_1_Attempt_3`.
 ```r
 tf_parse(
     read_results(
