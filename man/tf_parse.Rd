@@ -11,7 +11,8 @@ tf_parse(
   replacement = replacement_default,
   relay_athletes = FALSE,
   flights = FALSE,
-  flight_attempts = FALSE
+  flight_attempts = FALSE,
+  split_attempts = FALSE
 )
 }
 \arguments{

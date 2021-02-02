@@ -7,7 +7,8 @@
 flash_parse(
   flash_file,
   flash_flights = flights,
-  flash_flight_attempts = flight_attempts
+  flash_flight_attempts = flight_attempts,
+  flash_split_attempts = split_attempts
 )
 }
 \arguments{
@@ -16,6 +17,8 @@ flash_parse(
 \item{flash_flights}{should tf_parse try to include flights for jumping/throwing events?  Defaults to \code{FALSE}}
 
 \item{flash_flight_attempts}{should tf_parse try to include outcomes for flights for vertical jumping events?  Defaults to \code{FALSE}}
+
+\item{flash_split_attempts}{should flight_attempts columns be split into individual attempts}
 }
 \value{
 a dataframe of track and field results

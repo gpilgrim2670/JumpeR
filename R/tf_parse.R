@@ -49,7 +49,8 @@ tf_parse <-
            replacement = replacement_default,
            relay_athletes = FALSE,
            flights = FALSE,
-           flight_attempts = FALSE) {
+           flight_attempts = FALSE,
+           split_attempts = FALSE) {
 
     # file <- read_results("http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm")
     # file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/014-1.pdf"
@@ -66,6 +67,10 @@ tf_parse <-
 
     if (all(flight_attempts == TRUE & flights == FALSE)) {
       stop("If flight_attempts is set to TRUE flights should also be set to TRUE.")
+    }
+
+    if (all(flight_attempts == FALSE & split_attempts == TRUE)) {
+      stop("If split_attempts is set to TRUE flights and flight_attempts should also be set to TRUE.")
     }
 
     #### strings that if a line begins with one of them the line is ignored ####
@@ -125,7 +130,13 @@ tf_parse <-
     #### Flash results or Hy-Tek ####
     # Flash
     if(any(stringr::str_detect(raw_results[1:5], "CONDITIONS"), na.rm = TRUE) == TRUE){
-      data <- flash_parse(flash_file = raw_results, flash_flights = flights, flash_flight_attempts = flight_attempts)
+      data <-
+        flash_parse(
+          flash_file = raw_results,
+          flash_flights = flights,
+          flash_flight_attempts = flight_attempts,
+          flash_split_attempts = split_attempts
+        )
 
       return(data)
 
@@ -872,6 +883,10 @@ tf_parse <-
         dplyr::select(-Row_Numb)
 
       data <- dplyr::left_join(data, flight_attempts_df, by = c("Row_Numb" = "Row_Numb_Adjusted"))
+    }
+
+    if(split_attempts == TRUE){
+      data <- attempts_split(data)
     }
 
     #### ordering columns after adding flights ####

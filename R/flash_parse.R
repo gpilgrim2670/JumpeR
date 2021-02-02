@@ -31,6 +31,7 @@
 #' @param flash_file a .pdf or .html file (could be a url) where containing track and field results.  Must be formatted in a "normal" fashion - see vignette
 #' @param flash_flights should tf_parse try to include flights for jumping/throwing events?  Defaults to \code{FALSE}
 #' @param flash_flight_attempts should tf_parse try to include outcomes for flights for vertical jumping events?  Defaults to \code{FALSE}
+#' @param flash_split_attempts should flight_attempts columns be split into individual attempts
 #'
 #' @return a dataframe of track and field results
 #'
@@ -41,7 +42,8 @@
 flash_parse <-
   function(flash_file,
            flash_flights = flights,
-           flash_flight_attempts = flight_attempts) {
+           flash_flight_attempts = flight_attempts,
+           flash_split_attempts = split_attempts) {
 
 
     #### testing setup ####
@@ -1332,6 +1334,10 @@ flash_parse <-
                              by = c("Row_Numb" = "Row_Numb_Adjusted"))
 
         }
+      }
+
+      if(flash_split_attempts == TRUE){
+        flash_data <- attempts_split(flash_data)
       }
 
       #### ordering columns after adding flights ####
