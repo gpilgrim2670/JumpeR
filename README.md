@@ -152,7 +152,7 @@ tf_parse(
     split_attempts = TRUE
   )
 ```
-![New split columns](inst/extdata/HyTek_Cornell_polevault_splits_html_Import.png)
+![New split columns](inst/extdata/HyTek_Cornell_polevault_splits_html_Import_2.png)
 
 See `?tf_parse` for more information.
 
