@@ -44,7 +44,9 @@ utils::globalVariables(
     "Name_String",
     "Tiebreaker_String",
     "minimum_row",
-    "attempts",
-    "attempts_results"
+    "flights",
+    "flight_attempts",
+    "split_attempts",
+    ":="
   )
 )

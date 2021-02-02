@@ -69,8 +69,7 @@ test_that("tf_parse_standard", {
 
 test_that("tf_parse_attempts_splits_works", {
 
-  url_2 <-
-    "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
+  url_2 <- "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
 
   if (is_link_broken(url_2) == TRUE) {
     warning("Link to external data is broken")
