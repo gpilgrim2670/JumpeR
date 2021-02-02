@@ -40,7 +40,7 @@ tf_parse(
     read_results(
       system.file("extdata", "SMTFA-2019-Full-Results.pdf", package = "JumpeR")
     ),
-    attempts = TRUE
+    flights = TRUE
   )
 ```
 ![Imported with JumpeR](inst/extdata/HyTek_SMTFA_longjump_html_Import.png)
@@ -87,7 +87,7 @@ Flash Results also post .html version of results like [these](https://www.flashr
 
 [Here's](http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm) the Womens 4x400m relay from the 2019 Greg Page relays at Cornell University.
 
-![Relay results](inst/extdata/HyTek_Cornell_4x400mRelay_html.PNG)
+![Relay results](inst/extdata/HyTek_Cornell_4x400mRelay_html.png)
 
 Here's the same thing after importing with `JumpeR`
 ```r
@@ -98,13 +98,13 @@ tf_parse(
     relay_athletes = TRUE
   )
 ```
-![Relay results](inst/extdata/HyTek_Cornell_4x400mRelay_html_Import.PNG)
+![Relay results](inst/extdata/HyTek_Cornell_4x400mRelay_html_Import.png)
 
-* `attempts` records a unit of length for events where athletes get to try multiple times (long jump, javelin, pole vault etc. - basically the "field" events in track and field).  The default is `FALSE` but setting `attempts` to `TRUE` will cause `tf_parse` to attempt to collect the distance/height (or FOUL) of each athlete's attempts.  New columns called `Attempt_1`, `Attempt_2` etc. will be created.
+* `flights` records a unit of length for events where athletes get to try multiple times (long jump, javelin, pole vault etc. - basically the "field" events in track and field).  The default is `FALSE` but setting `flights` to `TRUE` will cause `tf_parse` to attempt to collect the distance/height (or FOUL) for each flight.  New columns called `Flight_1`, `Flight_2` etc. will be created.
 
-[Here's](https://www.flashresults.com/2018_Meets/Outdoor/04-28_VirginiaGrandPrix/035-1.pdf) the long jump prelims from the 2019 Virginia Grand Prix at the University of Virginia with the "attempts" highlighted in yellow.
+[Here's](https://www.flashresults.com/2018_Meets/Outdoor/04-28_VirginiaGrandPrix/035-1.pdf) the long jump prelims from the 2019 Virginia Grand Prix at the University of Virginia with the "flights" highlighted in yellow.
 
-![Long jump attempts](inst/extdata/Flash_Results_VA_longjump_Attempts.PNG)
+![Long jump flights](inst/extdata/Flash_Results_VA_longjump_Flights.png)
 
 Here's the same thing after importing with `JumpeR`
 ```r
@@ -112,16 +112,16 @@ tf_parse(
     read_results(
       "https://www.flashresults.com/2018_Meets/Outdoor/04-28_VirginiaGrandPrix/035-1.pdf"
     ),
-    attempts = TRUE
+    flights = TRUE
   )
 ```
-![New attempts columns](inst/extdata/Flash_Results_VA_longjump_Attempts_Import.PNG)
+![New flights columns](inst/extdata/Flash_Results_VA_longjump_Flights_Import.png)
 
-* `attempts_results` records the outcome of each attempt (height) in the vertical jumping events (high jump, pole vault).  The default for `attempts_results` is `FALSE` but setting it to `TRUE` will include these values (usually some combination of "X", "O" and "-") in new columns called `Attempt_1_Result`, `Attempt_2_Result`.  If `attempts_result = TRUE` then `attempts = TRUE` must be set as well.
+* `flight_attempts` records the outcome of each attempt (height) in the vertical jumping events (high jump, pole vault).  The default for `flight_attempts` is `FALSE` but setting it to `TRUE` will include these values (usually some combination of "X", "O" and "-") in new columns called `Flight_1_Attempts`, `Flight_2_Attempts` etc.  If `flight_attempts = TRUE` then `flights = TRUE` must be set as well.
 
-[Here's](https://www.flashresults.com/2018_Meets/Outdoor/04-20_DukeInvite/014-1.pdf) the pole vault results from the 2019 Duke Invite at (natch) Duke University with the "attempts_results" highlighted in yellow and the "attempts"" circled in red.
+[Here's](https://www.flashresults.com/2018_Meets/Outdoor/04-20_DukeInvite/014-1.pdf) the pole vault results from the 2019 Duke Invite at (natch) Duke University with the "flight_attempts" highlighted in yellow and the "flights" circled in red.
 
-![Pole vault results](inst/extdata/Flash_Results_Duke_polevault_Attempts_Results.PNG)
+![Pole vault results](inst/extdata/Flash_Results_Duke_polevault_Flight_Attempts.png)
 
 Here's the same thing after importing with `JumpeR` - adding all these columns makes the results very wide.
 ```r
@@ -129,37 +129,15 @@ tf_parse(
     read_results(
       "https://www.flashresults.com/2018_Meets/Outdoor/04-20_DukeInvite/014-1.pdf"
     ),
-    attempts = TRUE,
-    attempts_results = TRUE
+    flights = TRUE,
+    flight_attempts = TRUE
   )
 ```
-![New attempts_results columns](inst/extdata/Flash_Results_Duke_polevault_Attempts_Results_Import.PNG)
+![New flight_attempts columns](inst/extdata/Flash_Results_Duke_polevault_Flight_Attempts_Import.png)
 
 
 See `?tf_parse` for more information.
 
-## Examples
-
-```r
-tf_parse(
-    read_results(
-      "http://results.yentiming.com/2020/Indoor/2-29-20-MOC.htm"
-    )
-  )
-```
-
-To capture jump/throw attempts set `attempts = TRUE`
-
-```r
-tf_parse(
-    read_results(
-      "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
-    ),
-    relay_athletes = TRUE,
-    attempts = TRUE,
-    attempt_results = TRUE
-  )
-```
 # Formatting Results
 
 By default all results (like the `Finals_Result` column) returned by `JumpeR` are characters, not numeric.  This is because lots of results don't fit `R`s notions of what a number is.  A result like `"1.65m"` for a long jump can't be a number because of the "m".  A result like `"1:45.32"` as a time can't be a number because of the ":".  Luckily `JUmpeR` is here to help with all of that.  Passing results to `math_format` will return results formatted as numeric, such that they can be used in math.

@@ -887,7 +887,7 @@ tf_parse <-
 
     #### remove empty columns (all values are NA) ####
     data <- Filter(function(x)
-      ! all(is.na(x)), data)
+      !all(is.na(x)), data)
 
     #### remove unneeded columns ####
     data <- data %>%
