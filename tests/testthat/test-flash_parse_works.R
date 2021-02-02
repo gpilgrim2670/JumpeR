@@ -15,7 +15,7 @@ test_that("flash parse works sprint", {
                               Event = rep("Men 110 M Hurdles Prelims 6:00 PM 10 May 2019", 15))
 
     # generate test df
-    df_test <- tf_parse(read_results(file), attempts = TRUE, attempts_results = TRUE, relay_athletes = TRUE)
+    df_test <- tf_parse(read_results(file), flights = TRUE, flight_attempts = TRUE, relay_athletes = TRUE)
 
     # test
     expect_equivalent(df_standard,
@@ -35,7 +35,7 @@ test_that("flash parse works long jump, team scores in results", {
     # results realy do contain "ST. JOSEPH'S (PA" with a missing ")"
 
     # generate test df
-    df_test <- tf_parse(read_results(file), attempts = TRUE, attempts_results = TRUE, relay_athletes = TRUE)
+    df_test <- tf_parse(read_results(file), flights = TRUE, flight_attempts = TRUE, relay_athletes = TRUE)
 
     # test
     expect_equivalent(df_standard_longjump,
@@ -49,7 +49,6 @@ test_that("flash parse works long jump, team scores in results", {
     # to compare results
     # df <- dplyr::anti_join(df_standard_longjump, df_test)
   }
-
 })
 
 test_that("flash parse works pole vault", {
@@ -64,7 +63,7 @@ test_that("flash parse works pole vault", {
     # results realy do contain "ST. JOSEPH'S (PA" with a missing ")"
 
     # generate test df
-    df_test <- tf_parse(read_results(file), attempts = TRUE, attempts_results = TRUE, relay_athletes = TRUE)
+    df_test <- tf_parse(read_results(file), flights = TRUE, flight_attempts = TRUE, relay_athletes = TRUE)
 
     # test
     expect_equivalent(df_standard_polevault,
@@ -77,8 +76,8 @@ test_that("flash parse works pole vault", {
     # readr::write_rds(df_test, "inst/extdata/df_standard_polevault.rds")
     # to compare results
     # df <- dplyr::anti_join(df_standard_polevault, df_test)
-  }
 
+  }
 })
 
 test_that("flash parse works relay, team scores in results", {
@@ -98,8 +97,8 @@ test_that("flash parse works relay, team scores in results", {
     df_test <-
       tf_parse(
         read_results(file),
-        attempts = TRUE,
-        attempts_results = TRUE,
+        flights = TRUE,
+        flight_attempts = TRUE,
         relay_athletes = TRUE
       )
 
@@ -127,8 +126,8 @@ test_that("flash parse works sprint, diamond league with some birthdates", {
     # generate test df
     df_test <- tf_parse(
         read_results(file),
-        attempts = TRUE,
-        attempts_results = TRUE,
+        flights = TRUE,
+        flight_attempts = TRUE,
         relay_athletes = TRUE
       )
 
@@ -137,6 +136,5 @@ test_that("flash parse works sprint, diamond league with some birthdates", {
                       df_test)
   }
 })
-
 
 # testthat::test_file("tests/testthat/test-flash_parse_works.R")

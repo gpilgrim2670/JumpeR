@@ -261,8 +261,7 @@ flash_parse <-
             ) %>%
             dplyr::mutate(
               Tiebreaker = dplyr::case_when(
-                stringr::str_detect(V9, Points) == FALSE &
-                  stringr::str_detect(V9, Result_Specials_String) == FALSE ~ V9,
+                stringr::str_detect(V9, Tiebreaker_String) == TRUE ~ V9,
                 stringr::str_detect(V6, Tiebreaker_String) == TRUE ~ V6,
                 stringr::str_detect(V5, Tiebreaker_String) == TRUE ~ V5,
                 TRUE ~ "NA"
@@ -385,8 +384,7 @@ flash_parse <-
               )
             ) %>%
             dplyr::mutate(
-              Tiebreaker = dplyr::case_when(stringr::str_detect(V9, Points) == FALSE &
-                                         stringr::str_detect(V9, Result_Specials_String) == FALSE ~ V9,
+              Tiebreaker = dplyr::case_when(stringr::str_detect(V9, Tiebreaker_String) == TRUE ~ V9,
                                        stringr::str_detect(V6, Tiebreaker_String) == TRUE ~ V6,
                                        stringr::str_detect(V5, Tiebreaker_String) == TRUE ~ V5,
                                        TRUE ~ "NA")
@@ -508,8 +506,7 @@ flash_parse <-
               )
             ) %>%
             dplyr::mutate(
-              Tiebreaker = dplyr::case_when(stringr::str_detect(V9, Points) == FALSE &
-                                         stringr::str_detect(V9, Result_Specials_String) == FALSE ~ V9,
+              Tiebreaker = dplyr::case_when(stringr::str_detect(V9, Tiebreaker_String) == TRUE ~ V9,
                                        stringr::str_detect(V6, Tiebreaker_String) == TRUE ~ V6,
                                        stringr::str_detect(V5, Tiebreaker_String) == TRUE ~ V5,
                                        TRUE ~ "NA")
@@ -631,9 +628,9 @@ flash_parse <-
             ) %>%
             dplyr::mutate(
               Tiebreaker = dplyr::case_when(
+                stringr::str_detect(V9, Tiebreaker_String) == TRUE ~ V9,
                 stringr::str_detect(V6, Tiebreaker_String) == TRUE ~ V6,
-                stringr::str_detect(V9, Points) == FALSE &
-                  stringr::str_detect(V9, Result_Specials_String) == FALSE ~ V9,
+                stringr::str_detect(V5, Tiebreaker_String) == TRUE ~ V5,
                 TRUE ~ "NA"
               )
             ) %>%
@@ -1277,15 +1274,15 @@ flash_parse <-
           dplyr::na_if("NA")
 
         flash_data <- flash_data %>% # to remove team scores that can be captured if they are \\d\\.\\d\\d (like in the case of times)
-          filter(is.na(Team) == FALSE | all(
+          dplyr::filter(is.na(Team) == FALSE | all(
             is.na(Team) == TRUE &
-              str_detect(Event, "Jump|jump|Pole|pole|Shot|shot|Javelin|javelin|Hammer|hammer|Discus|discus|Unknown") == TRUE &
-              str_detect(Finals_Result, "DNS|DNF|FOUL|DQ|NH|\\dm|\\d\\-\\d{2}") == FALSE
+              stringr::str_detect(Event, "Jump|jump|Pole|pole|Shot|shot|Javelin|javelin|Hammer|hammer|Discus|discus|Unknown") == TRUE &
+              stringr::str_detect(Finals_Result, "DNS|DNF|FOUL|DQ|NH|\\dm|\\d\\-\\d{2}") == FALSE
           ) |
             all(
               is.na(Team) == TRUE &
-                str_detect(Event, "Jump|jump|Pole|pole|Shot|shot|Javelin|javelin|Hammer|hammer|Discus|discus|Unknown") == FALSE &
-                str_detect(Finals_Result, "DNS|DNF|FOUL|DQ|NH|^[8-9]\\.\\d\\d$|^1[8-9]\\.\\d\\d$|^[2-9]\\d\\.\\d\\d$|^\\d?\\d\\:\\d\\d\\.\\d\\d$") == FALSE
+                stringr::str_detect(Event, "Jump|jump|Pole|pole|Shot|shot|Javelin|javelin|Hammer|hammer|Discus|discus|Unknown") == FALSE &
+                stringr::str_detect(Finals_Result, "DNS|DNF|FOUL|DQ|NH|^[8-9]\\.\\d\\d$|^1[8-9]\\.\\d\\d$|^[2-9]\\d\\.\\d\\d$|^\\d?\\d\\:\\d\\d\\.\\d\\d$") == FALSE
             ))
       }
 
