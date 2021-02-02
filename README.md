@@ -152,6 +152,26 @@ tf_parse(
 
 See `?tf_parse` for more information.
 
+# Long Orientation Vertical Jump Results
+While setting `split_attempts = TRUE` in `tf_parse` can be used to generate wide format results of vertical jump attempts it might be more useful to create long format results instead.  This can be accomplished after `tf_parse`.
+
+Using those same [Duke pole vault results](https://www.flashresults.com/2018_Meets/Outdoor/04-20_DukeInvite/014-1.pdf) here's the first place finsher in long format
+```r
+df <-
+  tf_parse(
+    read_results(
+      "https://www.flashresults.com/2018_Meets/Outdoor/04-20_DukeInvite/014-1.pdf"
+    ),
+    flights = TRUE,
+    flight_attempts = TRUE,
+  )
+df %>% 
+  attempts_split_long() %>% 
+  select(Place, Name, Age, Team, Finals_Result, Event, Bar_Height, Attempt, Result)
+```
+
+![Long format pole jump](inst/extdata/Flash_Results_Duke_polevault_Flight_Attempts_Split_Import_Long.png)
+
 # Formatting Results
 
 By default all results (like the `Finals_Result` column) returned by `JumpeR` are characters, not numeric.  This is because lots of results don't fit `R`s notions of what a number is.  A result like `"1.65m"` for a long jump can't be a number because of the "m".  A result like `"1:45.32"` as a time can't be a number because of the ":".  Luckily `JUmpeR` is here to help with all of that.  Passing results to `math_format` will return results formatted as numeric, such that they can be used in math.

@@ -43,6 +43,7 @@ attempts_split_long <- function(data_to_split){
     return(df_split)
 
   } else {
+    message("No attempts columns to split in dataframe")
     return(data_to_split)
   }
 
