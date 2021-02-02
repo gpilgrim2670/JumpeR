@@ -13,7 +13,6 @@
 #' @param data_to_split output from \code{read_results} followed by \code{add_row_numbers}
 #' @return returns a dataframe with Flight_X_Attempts columns split into individual attempts as rows
 #'
-#' @seealso \code{attempts_split} is a helper function inside \code{\link{tf_parse}}
 #' @export
 
 attempts_split_long <- function(data_to_split){

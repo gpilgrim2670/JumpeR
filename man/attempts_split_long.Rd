@@ -15,9 +15,6 @@ returns a dataframe with Flight_X_Attempts columns split into individual attempt
 \description{
 Given a dataframe with columns "Flight_1_Attempts" it will three new rows, one for each of the attempts in flight 1
 }
-\seealso{
-\code{attempts_split} is a helper function inside \code{\link{tf_parse}}
-}
 \author{
 Greg Pilgrim \email{gpilgrim2670@gmail.com}
 }
