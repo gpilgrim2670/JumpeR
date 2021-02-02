@@ -47,8 +47,9 @@ attempts_split <- function(data_to_split){
     )
 
   #### collapse mapped results into one dataframe ####
-  df <- test_list %>%
+  df <- df_list %>%
     purrr::reduce(dplyr::left_join) %>%
+    # purrr::reduce(cbind) %>%
     dplyr::select(-dplyr::all_of(cols_to_split))
 
   # df <- df %>%

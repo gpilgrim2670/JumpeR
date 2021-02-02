@@ -17,7 +17,7 @@
 remove_unneeded_flights <- function(x) {
 
   attempt_cols <-
-    stringr::str_remove(stringr::str_subset(names(x), "^Flight_"), "_Attempts")
+    stringr::str_remove(stringr::str_subset(names(x), "^Flight_"), "_Attempts?_?\\d{0,}")
   keep_cols <- attempt_cols[duplicated(attempt_cols)]
   remove_cols <- attempt_cols[!attempt_cols %in% keep_cols]
   x <- x %>%

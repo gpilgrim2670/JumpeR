@@ -886,7 +886,7 @@ tf_parse <-
     }
 
     if(split_attempts == TRUE){
-      data <- attempts_split(data)
+      suppressMessages(data <- attempts_split(data))
     }
 
     #### ordering columns after adding flights ####
@@ -896,8 +896,9 @@ tf_parse <-
     }
 
     # removes unneeded Flight_X columns (i.e. those that don't have an associated Flight_Result)
-    if (any(stringr::str_detect(names(data), "Flight_\\d{1,}_Results")) == TRUE) {
-      data <- remove_unneeded_flights(data)
+    if (any(stringr::str_detect(names(data), "Flight_\\d{1,}_Attempt")) == TRUE) {
+      data <- remove_unneeded_flights(data) %>%
+        dplyr::na_if("")
     }
 
     #### remove empty columns (all values are NA) ####

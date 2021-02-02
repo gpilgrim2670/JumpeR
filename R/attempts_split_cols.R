@@ -16,13 +16,18 @@
 #' @seealso \code{attempts_split_cols} is a helper function inside  \code{attempts_split}
 
 attempts_split_cols <- function(i, data, new_cols, old_cols) {
+  # new_cols <- cols_to_create
+  # old_cols <- cols_to_split
+  # i <- 1
+  # data <- flash_data
+
   i_c <- (3 * i) - 2
 
-  df <- df %>%
+  data <- data %>%
     mutate(!!new_cols[i_c] := stringr::str_split_fixed(!!as.name(old_cols[i]), "", n = 3)[, 1]) %>%
     mutate(!!new_cols[i_c + 1] := stringr::str_split_fixed(!!as.name(old_cols[i]), "", n = 3)[, 2]) %>%
     mutate(!!new_cols[i_c + 2] := stringr::str_split_fixed(!!as.name(old_cols[i]), "", n = 3)[, 3])
 
-  return(df)
+  return(data)
 
 }

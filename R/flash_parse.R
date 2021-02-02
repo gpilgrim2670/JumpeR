@@ -1288,7 +1288,6 @@ flash_parse <-
             ))
       }
 
-
       #### adding in flights ####
       if (flash_flights == TRUE) {
         flights_data <- flash_flights_parse(flash_file)
@@ -1337,7 +1336,9 @@ flash_parse <-
       }
 
       if(flash_split_attempts == TRUE){
+        suppressMessages(
         flash_data <- attempts_split(flash_data)
+        )
       }
 
       #### ordering columns after adding flights ####
@@ -1354,8 +1355,9 @@ flash_parse <-
         dplyr::select(which(SwimmeR::`%!in%`(names(.), c("Row_Numb", "Exhibition", "Points", "Heat"))))
 
       # removes unneeded Attempt_X columns (i.e. those that don't have an associated Attempt_Result)
-      if (any(stringr::str_detect(names(flash_data), "Flight_\\d{1,}_Attempts")) == TRUE) {
-        flash_data <- remove_unneeded_flights(flash_data)
+      if (any(stringr::str_detect(names(flash_data), "Flight_\\d{1,}_Attempt")) == TRUE) {
+        flash_data <- remove_unneeded_flights(flash_data) %>%
+          dplyr::na_if("")
       }
 
       #### remove empty columns (all values are NA) ####
