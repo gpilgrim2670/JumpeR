@@ -137,7 +137,7 @@ tf_parse(
 
 * `split_attempts` setting `split_attempts = TRUE` will cause `tf_parse` to break each `Flight_X_Attempts` column into peices.  A column containing "XXO" foexample will become three columns, one containing "X", the second containing the second "X" and the third containing "O".  This will mean there are a lot of columns!  If `split_attempts = TRUE` then `flight_attempts` must be `TRUE` as well.
 
-Looking at those same Duke pole vault results, here's how using `split_attempts` works - adding all these columns make the results extremely wide.  I'm only going to show the first six split columns, called `Flight_1_Attempt_1`, `Flight_1_Attempt_2`, `Flight_1_Attempt_3` etc..
+Looking at those same [Duke pole vault results](https://www.flashresults.com/2018_Meets/Outdoor/04-20_DukeInvite/014-1.pdf), here's how using `split_attempts` works - adding all these columns make the results extremely wide.  I'm only going to show the first six split columns, called `Flight_1_Attempt_1`, `Flight_1_Attempt_2`, `Flight_1_Attempt_3` etc..
 ```r
 tf_parse(
     read_results(

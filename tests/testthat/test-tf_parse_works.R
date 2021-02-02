@@ -88,7 +88,7 @@ test_that("tf_parse_attempts_splits_works", {
     )
 
   df_test <- df %>%
-    filter(Event == "Men Pole Vault")
+    dplyr::filter(Event == "Men Pole Vault")
 
   expect_equivalent(df_test, df_standard_polevault_hytek)
 
