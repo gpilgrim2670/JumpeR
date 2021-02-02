@@ -35,6 +35,7 @@
 #' @param relay_athletes should tf_parse try to include the names of relay athletes for relay events?  Names will be listed in new columns "Relay-Athlete_1", "Relay_Athlete_2" etc.  Defaults to \code{FALSE}.
 #' @param flights should tf_parse try to include flights for jumping/throwing events?  Please note this will add a significant number of columns to the resulting dataframe.  Defaults to \code{FALSE}.
 #' @param flight_attempts should tf_parse try to include flights results (i.e. "PASS", "X", "O") for high jump and pole value events?  Please note this will add a significant number of columns to the resulting dataframe.  Defaults to \code{FALSE}
+#' @param split_attempts should tf_parse split attempts from each flight into separate columns?  For example "XXO" would result in three columns, one for "X', another for the second "X" and third for "O".  There will be a lot of columns.  Defaults to \code{FALSE}
 #'
 #' @return a dataframe of track and field results
 #'
@@ -102,14 +103,12 @@ tf_parse <-
     #
     # file <- read_results(event_links[75])
     # file <- read_results(system.file("extdata", "Results-IVP-Track-Field-Championship-2019-20-v2.pdf", package = "JumpeR"))
-    # file <- read_results("http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm")
+    # file <- read_results("https://www.flashresults.com/2020_Meets/Indoor/02-21_VTChallenge/031-1.pdf")
     # avoid <- c("[:alpha:]\\: .*")
     # typo <- "typo"
     # replacement <- "typo"
     # relay_athletes <- TRUE
-    # avoid <- avoid_default
-    # typo <- typo_default
-    # replacement <- replacement_default
+
 
     #### assign row numbers ####
     as_lines_list_2 <- add_row_numbers(text = file)
@@ -129,7 +128,7 @@ tf_parse <-
 
     #### Flash results or Hy-Tek ####
     # Flash
-    if(any(stringr::str_detect(raw_results[1:5], "CONDITIONS"), na.rm = TRUE) == TRUE){
+    if(any(stringr::str_detect(raw_results[1:5], "CONDITIONS|\\d\\d?\\:\\d{2}\\s?A?PM\\s+\\d\\d? [A-Z][a-z]{2} \\d{4}"), na.rm = TRUE) == TRUE){
       data <-
         flash_parse(
           flash_file = raw_results,
@@ -803,7 +802,7 @@ tf_parse <-
           #   dplyr::lag(Place) == Place ~ Place + 0.1,
           #   dplyr::lag(Place) != Place ~ Place
           # ),
-          Place = as.character(Place),
+          # Place = as.character(Place),
           Row_Numb = as.numeric(Row_Numb)
         ) %>%
         dplyr::filter(Row_Numb >= Min_Row_Numb) %>%
@@ -889,16 +888,17 @@ tf_parse <-
       suppressMessages(data <- attempts_split(data))
     }
 
-    #### ordering columns after adding flights ####
-    if (all(flights == TRUE & flight_attempts == TRUE)) {
-      data <- data %>%
-        dplyr::select(colnames(.)[stringr::str_detect(names(.), "^Flight", negate = TRUE)], sort(colnames(.)[stringr::str_detect(names(.), "^Flight")]))
-    }
 
     # removes unneeded Flight_X columns (i.e. those that don't have an associated Flight_Result)
     if (any(stringr::str_detect(names(data), "Flight_\\d{1,}_Attempt")) == TRUE) {
       data <- remove_unneeded_flights(data) %>%
         dplyr::na_if("")
+    }
+
+    #### ordering columns after adding flights ####
+    if (all(flights == TRUE & flight_attempts == TRUE)) {
+      data <- data %>%
+        dplyr::select(colnames(.)[stringr::str_detect(names(.), "^Flight", negate = TRUE)], sort(colnames(.)[stringr::str_detect(names(.), "^Flight")]))
     }
 
     #### remove empty columns (all values are NA) ####

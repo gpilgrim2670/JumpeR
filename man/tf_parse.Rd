@@ -29,6 +29,8 @@ tf_parse(
 \item{flights}{should tf_parse try to include flights for jumping/throwing events?  Please note this will add a significant number of columns to the resulting dataframe.  Defaults to \code{FALSE}.}
 
 \item{flight_attempts}{should tf_parse try to include flights results (i.e. "PASS", "X", "O") for high jump and pole value events?  Please note this will add a significant number of columns to the resulting dataframe.  Defaults to \code{FALSE}}
+
+\item{split_attempts}{should tf_parse split attempts from each flight into separate columns?  For example "XXO" would result in three columns, one for "X', another for the second "X" and third for "O".  There will be a lot of columns.  Defaults to \code{FALSE}}
 }
 \value{
 a dataframe of track and field results

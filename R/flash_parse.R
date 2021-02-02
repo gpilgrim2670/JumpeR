@@ -47,7 +47,7 @@ flash_parse <-
 
 
     #### testing setup ####
-    # flash_file <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/05-23_NCAAEast-Jacksonville/014-1.pdf") %>%
+    # flash_file <- read_results("https://www.flashresults.com/2020_Meets/Indoor/02-21_VTChallenge/031-1.pdf") %>%
     #   add_row_numbers()
     # flash_file <- raw_results[11] %>%
     #   unlist() %>%
@@ -135,7 +135,7 @@ flash_parse <-
           stringr::str_remove_all("X?X?PA\\$\\$|XXX|XXO| XX | ?XO ?| O | X | XR ") %>%  # remove flights
           # stringr::str_remove_all("^[A-Z][a-z].{1,}$") %>%
           trimws() %>%
-          .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "^[A-Z][a-z].{1,}|^[:upper:]{3}.*Meet")))]  # remove records
+          .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "^[A-Z][a-z].{1,}|^[:upper:]{3}.*Meet|^[A-CEG-MO-Z][:upper:]{1,2}")))]   # remove records
       )
 
       #### splits data into variables by splitting at multiple (>= 2) spaces ####

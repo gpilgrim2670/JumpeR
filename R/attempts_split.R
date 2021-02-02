@@ -11,6 +11,7 @@
 #' @importFrom stringr str_remove
 #' @importFrom stringr str_subset
 #' @importFrom stringr str_detect
+#' @importFrom stringr str_sort
 #' @importFrom purrr map
 #' @importFrom purrr reduce
 #'
@@ -21,11 +22,11 @@
 
 attempts_split <- function(data_to_split){
 
+  # data_to_split <- df
+
   #### get names of all Flight_X_Attempts columns ####
   cols_to_split <- stringr::str_subset(names(data_to_split), "^Flight_\\d{1,}_Attempts")
-  # if(length(cols_to_split) < 1){
-  #   stop("No Flight_X_Attempts columns to split")
-  # }
+  if(length(cols_to_split) >= 1){
 
   #### create ending for new split columns ####
   ending <- paste0("_", seq(1,3,1))
@@ -34,7 +35,7 @@ attempts_split <- function(data_to_split){
   cols_to_create <- as.vector(outer(cols_to_split, ending, paste0)) %>%
     unique() %>%
     stringr::str_remove("s") %>%
-    sort()
+    stringr::str_sort(numeric = TRUE)
 
   #### map attempts_split_cols function over lists of names ####
   df_list <-
@@ -56,6 +57,11 @@ attempts_split <- function(data_to_split){
   #   dplyr::select(colnames(.)[stringr::str_detect(names(.), "^Flight", negate = TRUE)], sort(colnames(.)[stringr::str_detect(names(.), "^Flight")]))
 
   return(df)
+
+  } else {
+    return(data_to_split)
+  }
+
 
 }
 

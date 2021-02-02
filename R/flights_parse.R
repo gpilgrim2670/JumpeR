@@ -177,7 +177,7 @@ flights_parse <- function(text) {
     #### rename columns V1, V2 etc. at Attempt_1, Attempt_2 etc. ####
     old_names <- names(data)[grep("^V", names(data))]
     new_names <-
-      paste("Attempt", seq(1, length(names(data)) - 1), sep = "_")
+      paste("Flight", seq(1, length(names(data)) - 1), sep = "_")
 
     data <- data %>%
       dplyr::rename_at(dplyr::vars(dplyr::all_of(old_names)), ~ new_names) %>%

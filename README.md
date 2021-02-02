@@ -135,6 +135,24 @@ tf_parse(
 ```
 ![New flight_attempts columns](inst/extdata/Flash_Results_Duke_polevault_Flight_Attempts_Import.png)
 
+* `split_attempts` setting `split_attempts = TRUE` will cause `tf_parse` to break each `Flight_X_Attempts` column into peices.  A column containing "XXO" foexample will become three columns, one containing "X", the second containing the second "X" and the third containing "O".  This will mean there are a lot of columns!  If `split_attempts = TRUE` then `flight_attempts` must be `TRUE` as well.
+
+[These](http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm) again from the 2019 Greg Page relays at Cornell University
+
+![Pole vault results splits example](inst/extdata/HyTek_Cornell_polevault_splits_html.png)
+
+Here's how using `split_attempts` works - adding all these columns make the results extremely wide.  I'm only going to show the first six split columns.
+```r
+tf_parse(
+    read_results(
+      "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
+    ),
+    flights = TRUE,
+    flight_attempts = TRUE,
+    split_attempts = TRUE
+  )
+```
+![New flight_attempts columns](inst/extdata/HyTek_Cornell_polevault_splits_html_Import.png)
 
 See `?tf_parse` for more information.
 

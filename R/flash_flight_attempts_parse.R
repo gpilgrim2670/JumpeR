@@ -222,7 +222,7 @@ flash_flight_attempts_parse <- function(text) {
       arrange(V1) %>%
       dplyr::mutate(V1 = dplyr::case_when(
         stringr::str_detect(dplyr::lag(.[, ncol(.)], default = "NA"), "O ?$|\U2013 ?$|- ?$") == TRUE &
-          V1 - dplyr::lag(V1) < 1 ~ V1 - 1,
+          V1 - dplyr::lag(V1) <= 1 ~ V1 - 1,
         # checks for strings in the last column which mean the athlete can keep jumping and adjusts row numbs to reflect athlete having multiple rows of flights
         TRUE ~ V1
       )) %>%

@@ -67,4 +67,41 @@ test_that("tf_parse_standard", {
                     df_test)
 })
 
+test_that("tf_parse_attempts_splits_works", {
+
+  url_2 <-
+    "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
+
+  if (is_link_broken(url_2) == TRUE) {
+    warning("Link to external data is broken")
+  } else {
+
+    df_standard_polevault_hytek <- readRDS(system.file("extdata", "df_standard_polevault_hytek.rds", package = "JumpeR"))
+
+  df <-
+    tf_parse(
+      read_results(
+        url_2
+      ),
+      flights = TRUE,
+      flight_attempts = TRUE,
+      split_attempts = TRUE
+    )
+
+  df_test <- df %>%
+    filter(Event == "Men Pole Vault")
+
+  expect_equivalent(df_test, df_standard_polevault_hytek)
+
+  # to regenerate df_standard if df_test is more correct
+  # windows
+  # readr::write_rds(df_test, "~/JumpeR/inst/extdata/df_standard_polevault_hytek.rds")
+  # mac
+  # readr::write_rds(df_test, "inst/extdata/df_standard_polevault_hytek.rds")
+  # to compare results
+  # df <- dplyr::anti_join(df_standard_polevault, df_test)
+
+  }
+})
+
 # testthat::test_file("tests/testthat/test-tf_parse_works.R")
