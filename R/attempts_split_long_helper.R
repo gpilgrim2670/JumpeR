@@ -4,6 +4,9 @@
 #'
 #' @author Greg Pilgrim \email{gpilgrim2670@@gmail.com}
 #'
+#' @importFrom stringr str_remove
+#' @importFrom stats ave
+#'
 #' @param i output from \code{read_results} followed by \code{add_row_numbers}
 #' @param data output from \code{tf_parse}
 #' @param old_cols a list of old columns to split
@@ -17,20 +20,20 @@ attempts_split_long_helper <- function(i, data, old_cols) {
   # data <- df
 
   #### split up attempts strings ####
-  s <- strsplit(data[[old_cols[i]]], split = "")
+  string_pieces <- strsplit(data[[old_cols[i]]], split = "")
 
-  height_cols <- str_remove(old_cols, "_Attempts")
+  height_cols <- stringr::str_remove(old_cols, "_Attempts")
 
 
   #### dataframe with new rows by row number ####
   data_split <- data.frame(
-    Row_Numb = rep(data$Row_Numb, sapply(s, length)),
-    Result = unlist(s),
+    Row_Numb <- rep(data$Row_Numb, sapply(string_pieces, length)),
+    Result <- unlist(string_pieces),
     Bar_Height <- unique(data[[height_cols[i]]])
   )
 
   #### add in attempt numbers
-  data_split$Attempt <- ave(data_split$Result, data_split$Row_Numb, FUN = seq_along)
+  data_split$Attempt <- stats::ave(data_split$Result, data_split$Row_Numb, FUN = seq_along)
 
   # names(data_split) <- c("Row_Numb", paste0("Result_", i), "Attempt", "Bar Height")
   names(data_split) <- c("Row_Numb", "Result", "Bar_Height", "Attempt")

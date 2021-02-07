@@ -7,7 +7,7 @@
 read_results(file, node = "pre")
 }
 \arguments{
-\item{file}{a .pdf or .html file (could be a url) where containing swimming results.  Must be formatted in a "normal" fashion - see vignette}
+\item{file}{a .pdf or .html file (could be a url) where containing swimming track and field results.  pdfs with multile columns will not work.}
 
 \item{node}{a CSS node where html results are stored.  Required for html results.  Default is "pre", which nearly always works.}
 }
@@ -16,6 +16,10 @@ returns a list of strings containing the information from \code{file}.  Should t
 }
 \description{
 Outputs list of strings to be processed by \code{tf_parse}
+}
+\examples{
+\dontrun{read_results("https://www.flashresults.com/2018_Meets/Outdoor/05-05_A10/015-1.pdf")}
+
 }
 \seealso{
 \code{read_results} is meant to be followed by \code{\link{tf_parse}}
