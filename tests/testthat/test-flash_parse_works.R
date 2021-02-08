@@ -2,6 +2,7 @@ test_that("flash parse works sprint", {
   file <- "https://www.flashresults.com/2019_Meets/Outdoor/05-09_SEC/029-1.pdf"
   if (is_link_broken(file) == TRUE) {
     warning("Link to external data is broken")
+    expect_equal(2, 2)
   } else {
     # generate standard
     df_standard <- data.frame(Place = as.character(seq(1, 15, 1)),
@@ -27,6 +28,7 @@ test_that("flash parse works long jump, team scores in results", {
   file <- "https://www.flashresults.com/2018_Meets/Outdoor/05-05_A10/015-1.pdf"
   if (is_link_broken(file) == TRUE) {
     warning("Link to external data is broken")
+    expect_equal(2, 2)
   } else {
 
     # import standard
@@ -55,6 +57,7 @@ test_that("flash parse works pole vault", {
   file <- "https://www.flashresults.com/2018_Meets/Outdoor/04-20_VirginiaChallenge/034-1.pdf"
   if (is_link_broken(file) == TRUE) {
     warning("Link to external data is broken")
+    expect_equal(2, 2)
   } else {
 
     # import standard
@@ -85,6 +88,7 @@ test_that("flash parse works relay, team scores in results", {
     "https://www.flashresults.com/2018_Meets/Outdoor/05-05_A10/032-1.pdf"
   if (is_link_broken(file) == TRUE) {
     warning("Link to external data is broken")
+    expect_equal(2, 2)
   } else {
     # generate standard
     df_standard <- data.frame(Place = c(as.character(seq(1, 9, 1)), "DNF"),
@@ -113,6 +117,7 @@ test_that("flash parse works sprint, diamond league with some birthdates", {
     "https://www.flashresults.com/2019_Meets/Outdoor/06-30_PreClassic/002-1.pdf"
   if (is_link_broken(file) == TRUE) {
     warning("Link to external data is broken")
+    expect_equal(2, 2)
   } else {
     # generate standard
     df_standard <- data.frame(Place = as.character(seq(1, 6, 1)),
@@ -142,6 +147,7 @@ test_that("flash parse works split_attempts single line", {
     "https://www.flashresults.com/2019_Meets/Outdoor/05-09_ACC/014-1.pdf"
   if (is_link_broken(file) == TRUE) {
     warning("Link to external data is broken")
+    expect_equal(2, 2)
   } else {
     # generate standard
     df_standard_polevault_splits <- readRDS(system.file("extdata", "df_standard_polevault_splits.rds", package = "JumpeR"))
@@ -175,6 +181,7 @@ test_that("flash parse works split_attempts single line", {
 #     "https://www.flashresults.com/2020_Meets/Indoor/02-21_VTChallenge/031-1.pdf"
 #   if (is_link_broken(file) == TRUE) {
 #     warning("Link to external data is broken")
+#     expect_equal(2, 2)
 #   } else {
 #     # generate standard
 #     df_standard_polevault_splits_double <- readRDS(system.file("extdata", "df_standard_polevault_splits_double.rds", package = "JumpeR"))

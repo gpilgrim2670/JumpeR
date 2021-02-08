@@ -30,7 +30,7 @@ tf_parse(
 ```
 ![Imported with JumpeR](https://github.com/gpilgrim2670/Pilgrim_Data/raw/master/JumepR_readme_files/HyTek_Cornell_60m_html_Import.png)
 
-[This](https://www.singaporeathletics.org.sg/download/28818/) is a Hy-tek .pdf results file, from the Singapore Masters Track and Field Assoication 2019 Championship,  This particular file contains the entire meet.
+[This](https://www.singaporeathletics.org.sg/download/28818/) is a Hy-tek .pdf results file, from the Singapore Masters Track and Field Association 2019 Championship,  This particular file contains the entire meet.
 
 ![Will work](https://github.com/gpilgrim2670/Pilgrim_Data/raw/master/JumepR_readme_files/HyTek_SMTFA_longjump_html.png)
 
