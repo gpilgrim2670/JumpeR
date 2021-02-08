@@ -1,5 +1,5 @@
 Package: JumpeR
-Title: Importing and Working with Track and Field Datat
+Title: Importing and Working with Track and Field Data
 Version: 0.1.0
 Authors@R: 
     c(person(given = "Greg",

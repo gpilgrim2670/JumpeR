@@ -1,6 +1,6 @@
 #' Removes unneeded flights columns within \code{tf_parse}
 #'
-#' Inside of \code{tf_parse} & \code{tf_parse}, removes flight columns that do not have an assoicated flight_attempts column
+#' Inside of \code{tf_parse} & \code{tf_parse}, removes flight columns that do not have an associated flight_attempts column
 #'
 #' @author Greg Pilgrim \email{gpilgrim2670@@gmail.com}
 #'

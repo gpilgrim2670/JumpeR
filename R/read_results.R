@@ -9,7 +9,7 @@
 #' @importFrom rvest html_text
 #' @importFrom pdftools pdf_text
 #'
-#' @param file a .pdf or .html file (could be a url) where containing swimming track and field results.  pdfs with multile columns will not work.
+#' @param file a .pdf or .html file (could be a url) where containing swimming track and field results.  pdfs with multiple columns will not work.
 #' @param node a CSS node where html results are stored.  Required for html results.  Default is "pre", which nearly always works.
 #' @return returns a list of strings containing the information from \code{file}.  Should then be parsed with \code{tf_parse}
 #'
