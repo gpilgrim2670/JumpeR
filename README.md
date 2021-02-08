@@ -9,7 +9,7 @@ Please wait for an upcoming CRAN release to acquire a stable version.
 
 # Usage
 
-Version 0.1.0 of `JumpeR` reads track and field results into `R`, similar to what the `SwimmeR` package does for swimming results.
+Version 0.1.1 of `JumpeR` reads track and field results into `R`, similar to what the `SwimmeR` package does for swimming results.
 
 ## Supported Formats
 
