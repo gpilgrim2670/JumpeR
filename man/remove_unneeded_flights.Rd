@@ -13,7 +13,7 @@ remove_unneeded_flights(x)
 returns a dataframe where Flight_X columns that do not have a corresponding Flight_X_Results have been removed
 }
 \description{
-Inside of \code{tf_parse} & \code{tf_parse}, removes flight columns that do not have an assoicated flight_attempts column
+Inside of \code{tf_parse} & \code{tf_parse}, removes flight columns that do not have an associated flight_attempts column
 }
 \seealso{
 \code{remove_unneeded_flights} runs inside \code{\link{flash_parse}} & \code{\link{tf_parse}}

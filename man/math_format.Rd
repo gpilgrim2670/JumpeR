@@ -7,7 +7,7 @@
 math_format(x)
 }
 \arguments{
-\item{x}{A character vector of time(s) in track format (e.g. 1:35.93, as miniutes:seconds.tenths hundreths) to be converted to seconds (95.93)}
+\item{x}{A character vector of time(s) in track format (e.g. 1:35.93, as minutes:seconds.tenths hundreths) to be converted to seconds (95.93)}
 }
 \value{
 returns the value of the string \code{x} which represents a time in track format (mm:ss.th) and converts it to seconds
