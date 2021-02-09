@@ -7,7 +7,7 @@
 #' @importFrom dplyr mutate
 #' @importFrom stringr str_split_fixed
 #'
-#' @param i output from \code{read_results} followed by \code{add_row_numbers}
+#' @param i iterative value
 #' @param data output from \code{tf_parse}
 #' @param new_cols a list of new column names to make
 #' @param old_cols a list of old columns to split
