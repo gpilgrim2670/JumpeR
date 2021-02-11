@@ -15,6 +15,17 @@ returns a dataframe with Flight_X_Attempts columns split into individual attempt
 \description{
 Given a dataframe with columns "Flight_1_Attempts" it will three new rows, one for each of the attempts in flight 1
 }
+\examples{
+\donttest{df <- tf_parse(
+read_results("https://www.flashresults.com/2018_Meets/Outdoor/05-05_A10/015-1.pdf"),
+flights = TRUE,
+flight_attempts = TRUE,
+split_attempts = TRUE)
+
+df \%>\%
+attempts_split_long()
+}
+}
 \author{
 Greg Pilgrim \email{gpilgrim2670@gmail.com}
 }

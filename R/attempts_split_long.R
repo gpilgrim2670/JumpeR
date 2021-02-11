@@ -14,6 +14,16 @@
 #' @return returns a dataframe with Flight_X_Attempts columns split into individual attempts as rows
 #'
 #' @export
+#'
+#' @examples \donttest{df <- tf_parse(
+#' read_results("https://www.flashresults.com/2018_Meets/Outdoor/05-05_A10/015-1.pdf"),
+#' flights = TRUE,
+#' flight_attempts = TRUE,
+#' split_attempts = TRUE)
+#'
+#' df %>%
+#' attempts_split_long()
+#' }
 
 attempts_split_long <- function(data_to_split){
 

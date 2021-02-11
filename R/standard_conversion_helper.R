@@ -6,6 +6,7 @@
 #' @importFrom stringr str_detect
 #'
 #' @param x A character vector of distance(s) to be converted from meters to feet-inches
+#' @return a character vector in feet-inches
 
 standard_conversion_helper <- function(x) {
 

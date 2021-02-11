@@ -6,6 +6,7 @@
 #' @importFrom stringr str_split_fixed
 #'
 #' @param x A character vector of distance(s) to be converted from feet-inches to meters
+#' @return a numeric value representing a number of meters.  Units are not included
 
 metric_conversion_helper <- function(x) {
 

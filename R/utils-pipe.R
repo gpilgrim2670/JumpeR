@@ -8,4 +8,5 @@
 #' @export
 #' @importFrom magrittr %>%
 #' @usage lhs \%>\% rhs
+#' @return no value returned, called for side effects
 NULL

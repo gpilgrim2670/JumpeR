@@ -18,7 +18,7 @@ returns a list of strings containing the information from \code{file}.  Should t
 Outputs list of strings to be processed by \code{tf_parse}
 }
 \examples{
-\dontrun{read_results("https://www.flashresults.com/2018_Meets/Outdoor/05-05_A10/015-1.pdf")}
+\donttest{read_results("https://www.flashresults.com/2018_Meets/Outdoor/05-05_A10/015-1.pdf")}
 
 }
 \seealso{

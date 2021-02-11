@@ -7,7 +7,7 @@
 attempts_split_cols(i, data, new_cols, old_cols)
 }
 \arguments{
-\item{i}{output from \code{read_results} followed by \code{add_row_numbers}}
+\item{i}{iterative value}
 
 \item{data}{output from \code{tf_parse}}
 

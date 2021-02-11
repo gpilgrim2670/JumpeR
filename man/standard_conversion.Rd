@@ -15,12 +15,6 @@ returns the value of the string \code{x} which represents a distance in feet-inc
 \description{
 Takes a character string (or list) representing a length in meters format (e.g. "3.85m") and converts it to a distance in feet-inches ("12-07.45")
 }
-\examples{
-\dontrun{
-distances <- c("1.23m", "5-02.34", "43.45", "6.89")
-standard_conversion(distances)
-}
-}
 \author{
 Greg Pilgrim \email{gpilgrim2670@gmail.com}
 }

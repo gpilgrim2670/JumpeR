@@ -13,7 +13,7 @@
 #' @param node a CSS node where html results are stored.  Required for html results.  Default is "pre", which nearly always works.
 #' @return returns a list of strings containing the information from \code{file}.  Should then be parsed with \code{tf_parse}
 #'
-#' @examples \dontrun{read_results("https://www.flashresults.com/2018_Meets/Outdoor/05-05_A10/015-1.pdf")}
+#' @examples \donttest{read_results("https://www.flashresults.com/2018_Meets/Outdoor/05-05_A10/015-1.pdf")}
 #'
 #' @seealso \code{read_results} is meant to be followed by \code{\link{tf_parse}}
 #'

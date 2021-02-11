@@ -12,11 +12,11 @@ is_link_broken(link_to_test, duration = 1)
 \item{duration}{the lowest row number}
 }
 \value{
-\code{TRUE} if the link works, \code{FALSE} if it fails
+\code{FALSE} if the link works, \code{TRUE} if it fails
 }
 \description{
 Used in testing links to external data, specifically inside of internal package tests.
-Attempts to connect to link for the length of duration (in s).  If it fails it returns \code{FALSE}
+Attempts to connect to link for the length of duration (in s).  If it fails it returns \code{TRUE}
 }
 \author{
 Greg Pilgrim \email{gpilgrim2670@gmail.com}

@@ -41,6 +41,13 @@
 #'
 #' @seealso \code{tf_parse} is meant to be preceded by \code{\link{read_results}}
 #'
+#' @examples \donttest{tf_parse(
+#' read_results("https://www.flashresults.com/2018_Meets/Outdoor/05-05_A10/015-1.pdf"),
+#' flights = TRUE,
+#' flight_attempts = TRUE,
+#' split_attempts = TRUE)
+#' }
+#'
 #' @export
 
 tf_parse <-
