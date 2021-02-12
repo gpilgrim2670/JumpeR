@@ -10,7 +10,7 @@
 #' @return returns the value of the string \code{x} which represents a distance in meters
 #'
 #' @examples
-#' distances <- c("1.23m", "5-02.34", "43.45", "6.89")
+#' distances <- c("1.23m", "5-02.34", "43.45", "6.89", NA)
 #' metric_conversion(distances)
 #'
 #' @export

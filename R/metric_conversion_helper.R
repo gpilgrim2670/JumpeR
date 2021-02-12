@@ -12,6 +12,7 @@ metric_conversion_helper <- function(x) {
 
   x <- as.character(x)
 
+  if(is.na(x) == TRUE) return(NA)
   if (str_detect(x, "-") == TRUE) {
     feet <- as.numeric(stringr::str_split_fixed(x, "-", n = 2)[, 1])
     inches <-
@@ -19,7 +20,7 @@ metric_conversion_helper <- function(x) {
     if (inches >= 12)
       stop("Inches must be less than 12 in a field formatted length")
     x <- (feet * 12) + inches
-    x <- round(x * 0.0254, 4) # convert to meters
+    x <- round(x * 0.0254, 2) # convert to meters
     x <- paste0(x, "m") # append m
   } else {
     x
