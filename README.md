@@ -1,11 +1,21 @@
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/JumpeR?color=blue)](https://cran.r-project.org/package=JumpeR)
+[![](http://cranlogs.r-pkg.org/badges/grand-total/JumpeR?color=blue)](https://cran.r-project.org/package=JumpeR)
+[![](http://cranlogs.r-pkg.org/badges/JumpeR?color=blue)](https://cran.r-project.org/package=JumpeR)
+[![](http://cranlogs.r-pkg.org/badges/last-week/JumpeR?color=blue)](https://cran.r-project.org/package=JumpeR)
+
 # JumpeR
 The `JumpeR` `R` package is used for converting human readable track and field (athletics) results into dataframes for use in analysis.
+
+### From CRAN
+
+Version 0.1.2 is available on CRAN
+`install.packages(JumpeR)`
 
 ### Latest Development Version from Github
 
 `devtools::install_github("gpilgrim2670/JumpeR")`
 Package is still under heavy development so development versions will be unstable.
-Please wait for an upcoming CRAN release to acquire a stable version.
+Please use the stable CRAN release unless you have a very good reason not to.
 
 # Usage
 
