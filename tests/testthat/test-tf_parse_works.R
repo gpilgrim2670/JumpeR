@@ -1,5 +1,7 @@
 test_that("tf_parse_standard", {
 
+  skip_on_cran() # due to time, risk of external resources failing
+
   # import standard
   df_standard <- readRDS(system.file("extdata", "df_standard.rds", package = "JumpeR"))
 
@@ -16,17 +18,18 @@ test_that("tf_parse_standard", {
 
   # test external links
   # if(sum(sapply(c(url_1, url_2), is_link_broken)) > 0.9){
-  if (is_link_broken(url_1) == TRUE){
-    warning("A link to external data is broken")
-    expect_equal(2, 2)
-  }
+  raw_data <- try(read_results(url_1), silent = TRUE)
+
+  if(any(grep("error", class(raw_data)))){
+    skip("Link to external data is broken")
+    suppressWarnings(closeAllConnections())
+  } else {
 
   # list of sources
   sources <- c(file_1,
                file_2,
                file_3,
-               file_4,
-               url_1)
+               file_4)
                # url_2)
 
   # helper function to apply read_results across list of links
@@ -51,7 +54,8 @@ test_that("tf_parse_standard", {
   }
 
   # get test data to compare with standard
-  df_test <- Read_Map(sources)
+  suppressWarnings(df_test <- Read_Map(sources))
+  suppressWarnings(df_test$url_1 <- raw_data)
   df_test <- Parse_Map(df_test)
   df_test <- dplyr::bind_rows(df_test, .id = "source") %>%
     dplyr::select(-source)
@@ -67,28 +71,32 @@ test_that("tf_parse_standard", {
   # compare standard to test
   expect_equivalent(df_standard,
                     df_test)
+  }
 })
 
 test_that("tf_parse_attempts_splits_works", {
 
+  skip_on_cran() # due to risk of external resources failing
+
   url_2 <- "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
 
-  if (is_link_broken(url_2) == TRUE) {
-    warning("Link to external data is broken")
-    expect_equal(2, 2)
+  raw_data <- try(read_results(url_2), silent = TRUE)
+
+  if(any(grep("error", class(raw_data)))){
+    skip("Link to external data is broken")
+    suppressWarnings(closeAllConnections())
   } else {
+
 
     df_standard_polevault_hytek <- readRDS(system.file("extdata", "df_standard_polevault_hytek.rds", package = "JumpeR"))
 
-  df <-
-    tf_parse(
-      read_results(
-        url_2
-      ),
-      flights = TRUE,
-      flight_attempts = TRUE,
-      split_attempts = TRUE
-    )
+    df <-
+      tf_parse(
+        raw_data,
+        flights = TRUE,
+        flight_attempts = TRUE,
+        split_attempts = TRUE
+      )
 
   df_test <- df %>%
     dplyr::filter(Event == "Men Pole Vault")

@@ -17,6 +17,7 @@ is_link_broken <- function(link_to_test, duration = 1) {
                          silent =
                            TRUE)
                      [1])
+
   suppressWarnings(try(close.connection(link_to_test), silent = TRUE)
   )
   ifelse(is.null(result), FALSE, TRUE)

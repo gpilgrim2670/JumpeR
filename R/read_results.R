@@ -30,6 +30,7 @@ read_results <- function(file, node = "pre") {
 
     return(as_lines_list_2)
 
+
   } else {
     ### HTML ###
     if (is.character(node) == FALSE) {
