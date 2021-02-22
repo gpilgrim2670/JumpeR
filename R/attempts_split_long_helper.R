@@ -16,8 +16,8 @@
 
 attempts_split_long_helper <- function(i, data, old_cols) {
   # old_cols <- cols_to_split
-  # i <- 2
-  # data <- df
+  # i <- 1
+  # data <- data_to_split
 
   #### split up attempts strings ####
   string_pieces <- strsplit(data[[old_cols[i]]], split = "")
@@ -29,7 +29,8 @@ attempts_split_long_helper <- function(i, data, old_cols) {
   data_split <- data.frame(
     Row_Numb <- rep(data$Row_Numb, sapply(string_pieces, length)),
     Result <- unlist(string_pieces),
-    Bar_Height <- unique(data[[height_cols[i]]])
+    Bar_Height <- unique(data[[height_cols[i]]]),
+    stringsAsFactors = FALSE
   )
 
   #### add in attempt numbers

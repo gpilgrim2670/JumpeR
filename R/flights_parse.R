@@ -27,7 +27,6 @@ flights_parse <- function(text) {
   # file <- "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
   # file <-
   #    system.file("extdata", "Results-IVP-Track-Field-Championship-2019-20-v2.pdf", package = "JumpeR")
-  # file <- "https://www.flashresults.com/2019_Meets/Outdoor/06-30_PreClassic/001-1.pdf"
   # file <- read_results(file)
   # text <- add_row_numbers(file)
 

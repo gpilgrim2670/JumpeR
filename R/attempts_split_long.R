@@ -27,6 +27,13 @@
 
 attempts_split_long <- function(data_to_split){
 
+  #### testing ####
+  # data_to_split <- tf_parse(
+  #   read_results("https://www.flashresults.com/2019_Meets/Outdoor/04-12_TamuInvite/014-1.pdf"),
+  #   flights = TRUE,
+  #   flight_attempts = TRUE
+  # )
+
   #### get names of all Flight_X_Attempts columns ####
   cols_to_split <- stringr::str_subset(names(data_to_split), "^Flight_\\d{1,}_Attempts")
 

@@ -29,11 +29,16 @@ flash_flights_parse <- function(text) {
   #    system.file("extdata", "Results-IVP-Track-Field-Championship-2019-20-v2.pdf", package = "JumpeR")
   # file <- "https://www.flashresults.com/2019_Meets/Outdoor/06-30_PreClassic/001-1.pdf"
   # file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/036-1.pdf"
+  # file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-12_TamuInvite/014-1.pdf"
+  # file <-
+  #   "https://www.flashresults.com/2018_Meets/Outdoor/05-05_A10/015-1.pdf"
+  # file <- read_results(file)
+  # text <- add_row_numbers(file)
+  # file <-
+  #   "https://www.flashresults.com/2019_Meets/Outdoor/04-12_TamuInvite/014-1.pdf"
   # file <- read_results(file)
   # text <- add_row_numbers(file)
   # text <- raw_results
-#
-#
   # text <- flash_file
 
   #### Actual Function ####
@@ -58,6 +63,7 @@ flash_flights_parse <- function(text) {
   suppressWarnings(
     data_flights <- text %>%
       .[purrr::map_lgl(., stringr::str_detect, attempt_string_flash)] %>%
+      # .[purrr::map_lgl(., ~ stringr::str_detect(., "^\\d", negate = TRUE))] %>% # removes rows that start with a place, to remove main results and scores with decimal places (5 Alfred U. 2.50 etc.)
       stringr::str_extract_all(attempt_string_flash, simplify = TRUE) %>%
       trimws()
   )
@@ -67,6 +73,12 @@ flash_flights_parse <- function(text) {
     as.data.frame() %>%
     dplyr::na_if("") %>%
     dplyr::rename(V1 = row_numbs) # for list_sort, needs V1 to be row numbers, but named V1
+
+  if(any(stringr::str_detect(text, "Scored")) == TRUE){ # gets rid of team scores in vertical jump events
+    row_score <- min(as.numeric(stringr::str_extract(text[stringr::str_detect(text, "Scored")], "\\d{1,}$")))
+    data_flights <- data_flights %>%
+      dplyr::filter(as.numeric(row_numbs) < row_score)
+  }
 
   #### reattach row numbers ####
 

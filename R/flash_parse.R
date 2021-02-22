@@ -52,6 +52,8 @@ flash_parse <-
     # flash_file <- raw_results[11] %>%
     #   unlist() %>%
     #   add_row_numbers()
+    # flash_file <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/04-12_TamuInvite/014-1.pdf") %>%
+    #   add_row_numbers()
 
     #### Begin actual function ####
 
