@@ -61,7 +61,7 @@ tf_parse <-
            split_attempts = FALSE) {
 
     # file <- read_results("http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm")
-    # file <- "https://www.flashresults.com/2019_Meets/Outdoor/04-27_VirginiaGrandPrix/014-1.pdf"
+    # file <- "http://www.leonetiming.com/2020/Indoor/IvyLeague/Results.htm"
     # file <- read_results(file)
 
     #### default typo and replacement strings ####
@@ -187,7 +187,9 @@ tf_parse <-
         stringr::str_replace_all(" \\'[A-Z]\\' ", "  ") %>% # tf specific  - removes relay A, B etc. designators
         stringr::str_replace_all("  [A-Z]  ", "  ") %>%
         stringr::str_replace_all("\\'\\'", "  ") %>%
-        stringr::str_remove_all("(?<=\\.\\d{2})[Q|R|M|\\$|q](?=\\s)") %>% # tf specific - removes "q" or "Q" sometimes used to designate a qualifying result, also 'R', "M" "$"
+        # stringr::str_remove_all("(?<=\\.\\d{2})[Q|R|M|E|\\$|q](?=\\s)") %>% # tf specific - removes "q" or "Q" sometimes used to designate a qualifying result, also 'R', "M", "$", "E"
+        stringr::str_remove_all("(?<=\\.\\d{2})[A-Z|\\$|q](?=\\s)") %>% # tf specific - removes "q" or "Q" sometimes used to designate a qualifying result, also 'R', "M", "$", "E"
+        stringr::str_replace_all("(?<=\\s{3})[A-Z|\\$|q] (?=\\d)", "   ") %>% # tf specific - removes upper case letters sometimes used before times to designate records etc.
         stringr::str_remove_all("(?<=\\s)[J|j](?=\\d)") %>% # tf specific - removes "j" or "J" sometimes used to designate a judged result
         stringr::str_replace_all("-{2,5}", "10000") %>% #8/26
         # stringr::str_replace_all("(\\.\\d{2})\\d+", "\\1 ") %>% # added 8/21 for illinois to deal with points column merging with final times column
@@ -386,6 +388,9 @@ tf_parse <-
               stringr::str_detect(V6, Result_Specials_String) == TRUE &
                 stringr::str_detect(V5, Result_Specials_String) == FALSE &
                 stringr::str_detect(V7, Result_Specials_String) == FALSE ~ V6,
+              stringr::str_detect(V5, Result_Specials_String) == TRUE &
+                stringr::str_detect(V6, Result_Specials_String) == FALSE &
+                stringr::str_detect(V4, Result_Specials_String) == FALSE ~ V5,
               stringr::str_detect(V6, Result_Specials_String) == TRUE &
                 stringr::str_detect(V5, Result_Specials_String) == TRUE &
                 stringr::str_detect(V5, "m") == TRUE &
