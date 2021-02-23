@@ -1,15 +1,10 @@
 test_that("flash parse works sprint", {
 
-  skip_on_cran() # due to risk of external resources failing
-
   file <-
-    "https://www.flashresults.com/2019_Meets/Outdoor/05-09_SEC/029-1.pdf"
+    system.file("extdata", "flash_sprint.pdf", package = "JumpeR")
 
-  raw_data <- try(read_results(file), silent = TRUE)
+  raw_data <- read_results(file)
 
-  if (any(grep("error", class(raw_data)))) {
-    skip("Link to external data is broken")
-  } else {
     # generate standard
     df_standard <- data.frame(
       Place = as.character(seq(1, 15, 1)),
@@ -135,7 +130,7 @@ test_that("flash parse works sprint", {
     # test
     expect_equivalent(df_standard,
                       df_test)
-  }
+
 })
 
 test_that("flash parse works long jump, team scores in results", {
@@ -324,16 +319,11 @@ test_that("flash parse works relay, team scores in results", {
 
 test_that("flash parse works split_attempts single line", {
 
-  skip_on_cran() # due to risk of external resources failing
-
   file <-
-    "https://www.flashresults.com/2019_Meets/Outdoor/05-09_ACC/014-1.pdf"
+    system.file("extdata", "flash_polevault_splits.pdf", package = "JumpeR")
 
-  raw_data <- try(read_results(file), silent = TRUE)
+  raw_data <- read_results(file)
 
-  if (any(grep("error", class(raw_data)))) {
-    skip("Link to external data is broken")
-  } else {
     # generate standard
     df_standard_polevault_splits <-
       readRDS(system.file("extdata", "df_standard_polevault_splits.rds", package = "JumpeR"))
@@ -360,7 +350,7 @@ test_that("flash parse works split_attempts single line", {
     # readr::write_rds(df_test, "inst/extdata/df_standard_polevault_splits.rds")
     # to compare results
     # df <- dplyr::anti_join(df_standard_polevault_splits, df_test)
-  }
+
 })
 
 #### this test works when called but not not work within devtools::check and I don't know why ####
