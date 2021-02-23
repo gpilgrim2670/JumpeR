@@ -1,5 +1,5 @@
 # JumpeR v. 0.1.3 February 22th, 2021
-## Per communication from CRAN team ##
+## Per communication from CRAN team
 * updated tests that require external resources to align with CRAN policies
 * built other tests that do not require external resources specifically for use on CRAN
 * fixed error on r-oldrel-macos-x86_64 resulting from strings/factors mismatch
