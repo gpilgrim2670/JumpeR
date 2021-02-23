@@ -1,3 +1,9 @@
+# JumpeR 0.1.3 February 22nd, 2021
+
+* Improved compliance with CRAN policies re: external resource testing
+* Minor bug fixes
+
+
 # JumpeR 0.1.2 February 18th, 2021
 
 * Improved documentation for CRAN submission
