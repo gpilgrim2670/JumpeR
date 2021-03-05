@@ -1,4 +1,7 @@
 test_that("tf_parse_flight_attempts", {
+
+  skip_on_cran()
+
   file <-
     system.file("extdata",
                 "Results-IVP-Track-Field-Championship-2019-20-v2.pdf",

@@ -319,6 +319,8 @@ test_that("flash parse works relay, team scores in results", {
 
 test_that("flash parse works split_attempts single line", {
 
+  skip_on_cran()
+
   file <-
     system.file("extdata", "flash_polevault_splits.pdf", package = "JumpeR")
 
