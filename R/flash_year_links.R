@@ -15,12 +15,12 @@
 #' @importFrom rvest read_html
 #' @importFrom rvest html_nodes
 #' @importFrom rvest html_table
-#' @importfrom rvest html_attr
+#' @importFrom rvest html_attr
 #'
 #' @param flash_year a link to a year landing page on flashresults.com
 #' @return returns a data frame with meet names, dates, locations, and links to flash results
 #'
-#' @example \donttest{flash_year_links("https://flashresults.com/2015results.htm")}
+#' @examples \donttest{flash_year_links("https://flashresults.com/2015results.htm")}
 
 flash_year_links <- function(flash_year) {
 
