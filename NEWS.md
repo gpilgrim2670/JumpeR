@@ -1,3 +1,8 @@
+# JumpeR 0.2.0 March 30th, 2021
+
+* Integration of tools for scraping flashresults.com
+* Minor bug fixes
+
 # JumpeR 0.1.4 March 5th, 2021
 
 * Resubmission due to removal from CRAN

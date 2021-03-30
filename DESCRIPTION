@@ -1,6 +1,6 @@
 Package: JumpeR
 Title: Importing and Working with Track and Field Data
-Version: 0.1.4
+Version: 0.2.0
 Authors@R: 
     c(person(given = "Greg",
             family = "Pilgrim",
