@@ -1,0 +1,38 @@
+#' Collects all event result links from a meet landing page on flashresults.com
+#'
+#' Used in scraping flashresults.com.  Collects event result links from a meet landing page
+#'
+#' @author Gregory A. Pilgrim \email{gpilgrim2670@@gmail.com}
+#'
+#' @importFrom stringr str_detect
+#' @importFrom rvest read_html
+#' @importFrom rvest html_nodes
+#' @importFrom rvest html_attr
+#'
+#' @param meet_home a link to a meet landing page on flashresults.com
+#' @return returns a list of links to individual events from a given meet
+#'
+#' @examples \donttest{flash_event_links("https://flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/")}
+
+flash_event_links <- function(meet_home) {
+
+  # meet_home <- "https://flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/"
+
+  page_contents <- rvest::read_html(meet_home)
+
+  # collect links
+  # this will grab all "href" from from a table, tr, a node
+  links <- page_contents %>%
+    rvest::html_nodes("table") %>%
+    rvest::html_nodes("tr") %>%
+    rvest::html_nodes("a") %>%
+    rvest::html_attr("href")
+
+  # Filter out start lists and scores
+  compiled_links <- links[stringr::str_detect(links, "compiled") == TRUE]
+
+  # links are missing their beginnings, which is just web_url from above
+  compiled_links <- paste0(web_url, compiled_links)
+
+  return(compiled_links)
+}
