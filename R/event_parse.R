@@ -29,7 +29,7 @@ event_parse <- function(text) {
   #### Build event names ####
   genders <- c("Women", 'Girls', "Men", "Boys", "Mixed")
   space1 <- " .*"
-  events_parts <- c("Yard", "Meter", "Y", "M", "Long", "High", "Triple", "Pole", "Pentathlon", "Decathlon", "Heptathlon", "Shot Put", "Javelin", "Weight", "Hammer", "Discus", "Medley", "Race", "Steeple")
+  events_parts <- c("Yard", "Meter", "Y", "M", "Long", "High", "Triple", "Pole", "Pentathlon", "Decathlon", "Heptathlon", "Shot Put", "Javelin", "Weight", "Hammer", "Discus", "Medley", "Race", "Steeple", "Mile", "Relay")
 
   event_string <-
     as.vector(outer(genders, events_parts, paste, sep = space1)) %>%

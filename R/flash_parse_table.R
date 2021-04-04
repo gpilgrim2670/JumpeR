@@ -9,7 +9,6 @@
 #' @importFrom dplyr na_if
 #' @importFrom stringr str_remove
 #' @importFrom stringr str_match
-#' @importFrom stringr str_to_title
 #' @importFrom stringr str_detect
 #' @importFrom rvest html_nodes
 #' @importFrom rvest html_attr
@@ -101,85 +100,30 @@ flash_parse_table <- function(link) {
   # df[!duplicated(as.list(df))]
 
   # Add event and gender to the result table
-  # All events & gender
-
-  all_events <-
-    paste0(
-      "(?i)",
-      c(
-        "Shot put",
-        "Discus",
-        "Javelin",
-        "Hammer",
-        "Weight",
-        "Long jump",
-        "Triple jump",
-        "High jump",
-        "Pole vault",
-        "\\d?\\s?x?\\s?\\d{3,4} relay",
-        "distance relay",
-        "distance medley relay",
-        "\\dx\\d{2,}\\s*m\\srelay", # for relays
-        "\\d{3}\\s*m[:alpha:]*\\s*h[:alpha:]*",
-        "\\d000\\s*m\\sSteeplechase",
-        # "110\\s*m[:alpha:]*\\s*h[:alpha:]*",
-        # "400\\s*m[:alpha:]*\\s*h[:alpha:]*",
-        # "100\\s*m(eter)?\\s*h(urdles)?",
-        # "110\\s*m(eter)?\\s*h(urdles)?",
-        # "400\\s*m(eter)?\\s*h(urdles)?",
-        "\\d{2,5}\\s*m ",
-        "60\\s*m",
-        "100\\s*m",
-        "200\\s*m",
-        "300\\s*m",
-        "\\B00\\s*m\\b",
-        "400\\s*m",
-        "800\\s*m",
-        "1500\\s*m",
-        "20\\,?000\\s*m",
-        "1 mile",
-        "5*000\\s*m",
-        "10*000\\s*m"
-      ),
-      collapse = "|"
-    )
-
-  male_female <- paste0("(?i)", c("men", "women", "boys", "girls", "mixed"), collapse = "|")
-
-  # convert page content to a vector to address warnings in str_match
+  # convert page content to a vector
   page_content_vector <- page_content %>%
     rvest::html_text()
 
   # determine name of event
-  event_name <- stringr::str_match(page_content_vector, all_events) # can produce list with NAs
-  event_name <- event_name[!is.na(event_name)] # remove NAs from list
+  event_name <- page_content_vector %>%
+    flash_event_parse()
 
   # determine gender of event
-  event_gender <- stringr::str_match(page_content_vector, male_female)
+  event_name <- page_content_vector %>%
+    flash_gender_parse()
 
   # include event name and gender
   df <- df %>%
-    dplyr::mutate(Event = event_name[1],
+    dplyr::mutate(Event = event_name,
                   Gender = event_gender) %>%
     dplyr::select(-matches("Placeholder")) %>%
     dplyr::na_if("") # blank cells to NA
-
-
-  # clean up event names
-  df <- df %>%
-    dplyr::mutate(Event = stringr::str_to_title(Event)) %>%  # capitalizes every word and also m/M
-    dplyr::mutate(Event = stringr::str_replace(Event, "(\\d)\\s\\M$", "\\1m"), # bring M next to digit as m
-           Event = stringr::str_replace(Event, "(\\d)\\s\\M ", "\\1m "), # bring M next to digit as m
-           Event = stringr::str_replace(Event, "(\\d)\\s\\M(eter)? Hurdles$", "\\1m Hurdles"),
-           Event = stringr::str_replace(Event, "1 Mile", "Mile"), # reformat mile event name
-           Event = stringr::str_replace(Event, "(\\d)0000m$", "\\10000m Race Walk")) # name race walks
 
   # keep times as characters for consistency's sake
   if("Time" %in% names(df)){
     df <- df %>%
       dplyr::mutate(Time = as.character(Time))
   }
-
 
   # regularize Name and Athlete columns
   if ("Name" %in% names(df)) {
