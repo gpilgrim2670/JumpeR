@@ -12,7 +12,6 @@
 #' @importFrom stringr str_split_fixed
 #' @importFrom stringr str_remove
 #' @importFrom stringr str_match
-#' @importFrom rvest read_html
 #' @importFrom rvest html_nodes
 #' @importFrom rvest html_table
 #' @importFrom rvest html_attr
@@ -21,12 +20,14 @@
 #' @return returns a data frame with meet names, dates, locations, and links to flash results
 #'
 #' @examples \donttest{flash_year_links("https://flashresults.com/2015results.htm")}
+#'
+#' @export
 
 flash_year_links <- function(flash_year) {
 
   # flash_year <- "https://flashresults.com/2015results.htm"
 
-  main <- rvest::read_html(flash_year)
+  main <- xml2::read_html(flash_year)
 
   # table of meet name, date, location
   main_table <- main %>%

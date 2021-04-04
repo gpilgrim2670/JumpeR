@@ -20,6 +20,7 @@
 #' @seealso \code{event_parse} is a helper function inside \code{\link{tf_parse}}
 
 event_parse <- function(text) {
+
   # text <- as_lines_list_2
   # text <- raw_results[31] %>%
   #   unlist() %>%

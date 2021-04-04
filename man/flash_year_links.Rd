@@ -17,6 +17,7 @@ Used in scraping flashresults.com.  Collects meet names, dates, and locations al
 }
 \examples{
 \donttest{flash_year_links("https://flashresults.com/2015results.htm")}
+
 }
 \author{
 George M. Perry
