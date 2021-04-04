@@ -18,7 +18,7 @@ flash_gender_parse <- function(text){
  genders <- paste0("(?i)", c("men", "women", "boys", "girls", "mixed"), collapse = "|")
 
   # find event name in text
- event_gender <- stringr::str_match(page_content_vector, male_female)
+ event_gender <- stringr::str_match(page_content_vector, genders)
  event_gender <-
    event_gender[!is.na(event_gender)] # remove NAs from list
 
