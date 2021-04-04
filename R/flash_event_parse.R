@@ -74,7 +74,7 @@ flash_event_parse <- function(text){
   # keep only first element of list (ideally there should only be one element anyway)
   event_name <- event_name[1]
 
-  # clean even name
+  # clean event name
   event_name <- event_name %>%
     stringr::str_to_title() %>%  # capitalizes every word and also m/M
     stringr::str_replace("(\\d)\\s\\M$", "\\1m") %>% # bring M next to digit as m

@@ -5,6 +5,7 @@
 #' @author Greg Pilgrim \email{gpilgrim2670@@gmail.com}
 #'
 #' @importFrom stringr str_match
+#' @importFrom stringr str_to_title
 #'
 #' @param text raw text of an event page from Flash Results
 #' @return a one element list containing the gender of the event
@@ -28,6 +29,10 @@ flash_gender_parse <- function(text){
 
   # keep only first element of list (ideally there should only be one element anyway)
   event_gender <- event_gender[1]
+
+  # clean event gender
+  event_gender <- event_gender %>%
+    stringr::str_to_title(event_gender)
 
   return(event_gender)
 }
