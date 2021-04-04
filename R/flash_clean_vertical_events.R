@@ -22,7 +22,7 @@ flash_clean_vertical_events <- function(df, wide_format_vertical = wide_format_c
   # url_2017_HJ <- "https://flashresults.com/2017_Meets/Outdoor/06-22_USATF/024-1-01.htm"
   # url_ncaa_PV <- "https://flashresults.com/2015_Meets/Outdoor/05-28_NCAAEast/033-1-01.htm"
   #
-  # df <- flash_parse_table(url_PV)
+  df <- flash_parse_table(url_PV)
 
   df <- df[-1, ] %>%
     data.frame() # remove tibble class because it doesn't work well with reshape
