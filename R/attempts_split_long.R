@@ -1,6 +1,6 @@
 #' Creates new rows of split attempts strings (long format change)
 #'
-#' Given a dataframe with columns "Flight_1_Attempts" it will three new rows, one for each of the attempts in flight 1
+#' Given a dataframe with columns "Flight_1_Attempts" it will create three new rows, one for each of the attempts in flight 1
 #'
 #' @author Greg Pilgrim \email{gpilgrim2670@@gmail.com}
 #'

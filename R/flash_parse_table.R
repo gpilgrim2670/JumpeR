@@ -15,6 +15,7 @@
 #' @importFrom rvest html_table
 #'
 #' @param link a link to an event landing page on flashresults.com
+#' @param wide_format should results be presented in wide format (defaults to \code{FALSE})
 #' @return returns a data frame of results scraped from \code{link}
 #'
 #' @examples \donttest{flash_parse_table("https://www.flashresults.com/2019_Meets/Outdoor/06-13_NBNO/067-4_compiled.htm")}
@@ -22,7 +23,7 @@
 #' @export
 
 
-flash_parse_table <- function(link) {
+flash_parse_table <- function(link, wide_format = FALSE) {
 
   # link <- "https://flashresults.com/2015_Meets/Outdoor/06-25_USATF/009-2-01.htm"
 
@@ -109,7 +110,7 @@ flash_parse_table <- function(link) {
     flash_event_parse()
 
   # determine gender of event
-  event_name <- page_content_vector %>%
+  event_gender <- page_content_vector %>%
     flash_gender_parse()
 
   # include event name and gender

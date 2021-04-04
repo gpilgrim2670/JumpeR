@@ -4,10 +4,12 @@
 \alias{flash_parse_table}
 \title{Collects results from a link to a Flash Results page}
 \usage{
-flash_parse_table(link)
+flash_parse_table(link, wide_format = FALSE)
 }
 \arguments{
 \item{link}{a link to an event landing page on flashresults.com}
+
+\item{wide_format}{should results be presented in wide format (defaults to \code{FALSE})}
 }
 \value{
 returns a data frame of results scraped from \code{link}

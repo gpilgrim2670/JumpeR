@@ -13,7 +13,7 @@ attempts_split_long(data_to_split)
 returns a dataframe with Flight_X_Attempts columns split into individual attempts as rows
 }
 \description{
-Given a dataframe with columns "Flight_1_Attempts" it will three new rows, one for each of the attempts in flight 1
+Given a dataframe with columns "Flight_1_Attempts" it will create three new rows, one for each of the attempts in flight 1
 }
 \examples{
 \donttest{df <- tf_parse(
