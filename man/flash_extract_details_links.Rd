@@ -19,7 +19,8 @@ returns list of links to corresponding detailed event result pages
 Used in scraping flashresults.com.  Collects detailed results (often called heat or flight results) from an associated event results landing page.  Detailed results often contain splits or attempts results.
 }
 \examples{
-\donttest{flash_extract_details_links("https://flashresults.com/2015_Meets/Outdoor/06-25_USATF/008-3_compiled.htm")}
+\donttest{flash_extract_details_links(
+"https://flashresults.com/2015_Meets/Outdoor/06-25_USATF/008-3_compiled.htm")}
 
 }
 \author{

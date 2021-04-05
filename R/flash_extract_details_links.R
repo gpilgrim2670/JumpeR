@@ -9,7 +9,8 @@
 #' @param link a link to an event landing page on flashresults.com
 #' @return returns list of links to corresponding detailed event result pages
 #'
-#' @examples \donttest{flash_extract_details_links("https://flashresults.com/2015_Meets/Outdoor/06-25_USATF/008-3_compiled.htm")}
+#' @examples \donttest{flash_extract_details_links(
+#' "https://flashresults.com/2015_Meets/Outdoor/06-25_USATF/008-3_compiled.htm")}
 #'
 #' @export
 

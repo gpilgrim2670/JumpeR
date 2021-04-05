@@ -12,7 +12,7 @@ horizontal_events(df, wide_format_horizontal = wide_format_clean)
 \arguments{
 \item{df}{a data frame of horizontal event data from Flash Results}
 
-\item{wide_format_clean}{should df be presented in wide format (default is \code{FALSE})?}
+\item{wide_format_horizontal}{should df be presented in wide format (default is \code{FALSE})?}
 }
 \value{
 a cleaned version of df

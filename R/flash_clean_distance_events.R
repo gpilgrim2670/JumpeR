@@ -8,16 +8,15 @@
 #' @importFrom dplyr mutate
 #' @importFrom dplyr across
 #' @importFrom dplyr rename
+#' @importFrom dplyr matches
 #' @importFrom stringr str_trim
 #' @importFrom stringr str_remove
 #'
 #' @param df a data frame of distance event data from Flash Results
-#' @param wide_format_clean should df be presented in wide format (default is \code{FALSE})?
+#' @param wide_format_distance should df be presented in wide format (default is \code{FALSE})?
 #' @return a cleaned version of df
 #'
 #' @seealso \code{flash_clean_distance_events} is a helper function inside \code{\link{flash_parse_table}}
-#'
-#' @aliases distance_events
 
 flash_clean_distance_events <- function(df, wide_format_distance = wide_format_clean) {
 
@@ -28,7 +27,7 @@ flash_clean_distance_events <- function(df, wide_format_distance = wide_format_c
   df <- df %>%
     data.frame() %>%
     dplyr::mutate(Time = stringr::str_remove(Time, "[Q|q]")) %>%
-    dplyr::mutate(dplyr::across(matches("[0-9]"), ~stringr::str_remove(.x, " ?\\[(.*)\\]")))
+    dplyr::mutate(dplyr::across(dplyr::matches("[0-9]"), ~stringr::str_remove(.x, " ?\\[(.*)\\]")))
 
   if (wide_format_distance == FALSE) {
 

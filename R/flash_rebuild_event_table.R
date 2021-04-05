@@ -11,6 +11,7 @@
 #' @importFrom rvest html_nodes
 #' @importFrom rvest html_text
 #' @importFrom purrr map
+#' @importFrom utils tail
 #'
 #' @param event_url_rebuild a link to an event page on flashresults.com
 #' @return returns a dataframe of event results
@@ -80,7 +81,7 @@ x <- stringr::str_split(x, "&&")[[1]] # string to vector
 x <-
   split(x, cumsum(x == "Begin")) # each list, which will be a row, should begin with "Begin"
 
-x <- purrr::map(x, tail,-1) # remove all the "Begin"s
+x <- purrr::map(x, utils::tail, -1) # remove all the "Begin"s
 
 # reassemble dataframe
 df <-

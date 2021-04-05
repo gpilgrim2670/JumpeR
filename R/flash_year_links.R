@@ -54,8 +54,7 @@ flash_year_links <- function(flash_year) {
     dplyr::mutate(Meet = stringr::str_split_fixed(Input, "\n", 3)[, 1]) %>%
     dplyr::mutate(Date = stringr::str_split_fixed(Input, "\n", 3)[, 2]) %>%
     dplyr::mutate(Location = stringr::str_split_fixed(Input, "\n", 3)[, 3]) %>%
-    dplyr:
-    select(-Input) %>%
+    dplyr::select(-Input) %>%
     # tidyr::separate(Input, into = c("Meet", "Date", "Location"), sep = "\\n") %>% # JumpeR doesn't have tidyr dependancy
     dplyr::mutate(Meet = stringr::str_remove(Meet, "\\s-(.*)")) %>%
     dplyr::mutate(Location = ifelse(
@@ -73,7 +72,7 @@ flash_year_links <- function(flash_year) {
   # add http to links that need it
   year_table <- year_table %>%
     dplyr::rename("MeetLink" = 4) %>%
-    dplyr::filter(stringr::str_detect(MeetLink, "xc") == FALSE)
+    dplyr::filter(stringr::str_detect(MeetLink, "xc") == FALSE) %>%
     dplyr::mutate(MeetLink = ifelse(
       stringr::str_detect(MeetLink, "http"),
       MeetLink,

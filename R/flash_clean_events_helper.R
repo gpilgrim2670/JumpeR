@@ -32,7 +32,7 @@ flash_clean_events_helper <-
 
     if (any(str_detect(event_name_helper, vertical_names)) == TRUE) {
       df_helper <- df_helper %>%
-        flash_clean_vertical_events(wide_format_vertica = wide_format_clean_helper)
+        flash_clean_vertical_events(wide_format_vertical = wide_format_clean_helper)
     } else if (any(str_detect(event_name_helper, horizontal_names)) == TRUE) {
       df_helper <- df_helper %>%
         flash_clean_horizontal_events(wide_format_horizontal = wide_format_clean_helper)

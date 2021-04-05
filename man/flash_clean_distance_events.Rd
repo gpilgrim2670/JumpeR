@@ -12,7 +12,7 @@ distance_events(df, wide_format_distance = wide_format_clean)
 \arguments{
 \item{df}{a data frame of distance event data from Flash Results}
 
-\item{wide_format_clean}{should df be presented in wide format (default is \code{FALSE})?}
+\item{wide_format_distance}{should df be presented in wide format (default is \code{FALSE})?}
 }
 \value{
 a cleaned version of df

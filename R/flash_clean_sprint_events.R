@@ -1,8 +1,6 @@
 #' Cleans sprint events
 #'
-#' Cleans sprint event results pulled from Flash Results html tables.  Distance events are generally those with lengths of less than 400m.  Can present cleaned data in wide or long format.
-#'
-#' @author Gregory A. Pilgrim \email{gpilgrim2670@@gmail.com} and George M. Perry
+#' Cleans results pulled from Flash Results html tables for sprint events.  Sprint events are generally those with lengths of less than 400m.  Can present cleaned data in wide or long format.
 #'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr rename
@@ -11,7 +9,6 @@
 #' @importFrom stringr str_remove
 #'
 #' @param df a data frame of sprint event data from Flash Results
-#' @param wide_format_clean should df be presented in wide format (default is \code{FALSE})?
 #' @return a cleaned version of df
 #'
 #' @seealso \code{flash_clean_sprint_events} is a helper function inside \code{\link{flash_parse_table}

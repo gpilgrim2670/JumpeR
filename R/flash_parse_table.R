@@ -1,6 +1,6 @@
 #' Collects results from a link to a Flash Results page
 #'
-#' Used in scraping flashresults.com.  Collects results given in html tables on a speciified page into a data frame.
+#' Used in scraping flashresults.com.  Collects results given in html tables on a specified page into a data frame.
 #'
 #' @author Gregory A. Pilgrim \email{gpilgrim2670@@gmail.com} and George M. Perry
 #'
@@ -13,6 +13,7 @@
 #' @importFrom rvest html_nodes
 #' @importFrom rvest html_attr
 #' @importFrom rvest html_table
+#' @importFrom stats na.omit
 #'
 #' @param link a link to an event landing page on flashresults.com
 #' @param wide_format should results be presented in wide format (defaults to \code{FALSE})
@@ -83,7 +84,7 @@ flash_parse_table <- function(link, wide_format = FALSE) {
   # if the data isn't rectangular (like in DNF cases for example)
   # this will result in an incorrectly formatted data frame
   if (any(nrow(df) < 1 |
-          (!any(stringr::str_detect(na.omit(as.vector(t(df))), "Athlete|Name|Team"))) &
+          (!any(stringr::str_detect(stats::na.omit(as.vector(t(df))), "Athlete|Name|Team"))) &
           !any(stringr::str_detect(names(df), "Athlete|Name|Team")))
   ) { # anys are needed to collapse vectors of T/F
     df <- flash_rebuild_event_table(event_url_rebuild = link)

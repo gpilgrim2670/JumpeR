@@ -12,7 +12,7 @@
 #' @importFrom stringr str_remove
 #'
 #' @param df a data frame of horizontal event data from Flash Results
-#' @param wide_format_clean should df be presented in wide format (default is \code{FALSE})?
+#' @param wide_format_horizontal should df be presented in wide format (default is \code{FALSE})?
 #' @return a cleaned version of df
 #'
 #' @seealso \code{flash_clean_horizontal_events} is a helper function inside \code{\link{flash_parse_table}}
