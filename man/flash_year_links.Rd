@@ -2,9 +2,12 @@
 % Please edit documentation in R/flash_year_links.R
 \name{flash_year_links}
 \alias{flash_year_links}
+\alias{year_links}
 \title{Collects all meet links from a given year on Flash Results}
 \usage{
 flash_year_links(flash_year)
+
+year_links(flash_year)
 }
 \arguments{
 \item{flash_year}{a link to a year landing page on flashresults.com}

@@ -36,3 +36,7 @@ flash_event_links <- function(meet_home) {
 
   return(compiled_links)
 }
+
+#' @rdname flash_event_links
+#' @export
+meet_links <- flash_event_links

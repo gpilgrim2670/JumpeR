@@ -2,9 +2,12 @@
 % Please edit documentation in R/flash_parse_table.R
 \name{flash_parse_table}
 \alias{flash_parse_table}
+\alias{get_results_table}
 \title{Collects results from a link to a Flash Results page}
 \usage{
 flash_parse_table(link, wide_format = FALSE)
+
+get_results_table(link, wide_format = FALSE)
 }
 \arguments{
 \item{link}{a link to an event landing page on flashresults.com}

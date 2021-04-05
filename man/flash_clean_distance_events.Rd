@@ -2,9 +2,12 @@
 % Please edit documentation in R/flash_clean_distance_events.R
 \name{flash_clean_distance_events}
 \alias{flash_clean_distance_events}
+\alias{distance_events}
 \title{Cleans distance events}
 \usage{
 flash_clean_distance_events(df, wide_format_distance = wide_format_clean)
+
+distance_events(df, wide_format_distance = wide_format_clean)
 }
 \arguments{
 \item{df}{a data frame of distance event data from Flash Results}

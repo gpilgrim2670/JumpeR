@@ -2,9 +2,12 @@
 % Please edit documentation in R/flash_extract_details_links.R
 \name{flash_extract_details_links}
 \alias{flash_extract_details_links}
+\alias{extract_details_links}
 \title{Collects links to all detailed results links from a given event link on Flash Results}
 \usage{
 flash_extract_details_links(link)
+
+extract_details_links(link)
 }
 \arguments{
 \item{link}{a link to an event landing page on flashresults.com}

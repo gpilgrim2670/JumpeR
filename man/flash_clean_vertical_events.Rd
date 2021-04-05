@@ -2,9 +2,12 @@
 % Please edit documentation in R/flash_clean_vertical_events.R
 \name{flash_clean_vertical_events}
 \alias{flash_clean_vertical_events}
+\alias{vertical_events}
 \title{Cleans vertical events}
 \usage{
 flash_clean_vertical_events(df, wide_format_vertical = wide_format_clean)
+
+vertical_events(df, wide_format_vertical = wide_format_clean)
 }
 \arguments{
 \item{df}{a data frame of vertical event data from Flash Results}

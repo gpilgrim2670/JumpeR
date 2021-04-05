@@ -21,3 +21,7 @@ flash_extract_details_links <- function(link) {
 
     return(link)
 }
+
+#' @rdname flash_extract_details_links
+#' @export
+extract_details_links <- flash_extract_details_links

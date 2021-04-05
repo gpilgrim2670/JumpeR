@@ -81,3 +81,7 @@ flash_year_links <- function(flash_year) {
 
   return(year_table)
 }
+
+#' @rdname flash_year_links
+#' @export
+year_links <- flash_year_links

@@ -59,3 +59,8 @@ flash_clean_events <- function(df, wide_format_clean = wide_format){
   return(df)
 
 }
+
+#' @rdname flash_clean_events
+#' @export
+clean_results <- flash_clean_events
+

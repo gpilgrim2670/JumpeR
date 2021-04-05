@@ -2,9 +2,12 @@
 % Please edit documentation in R/flash_clean_horizontal_events.R
 \name{flash_clean_horizontal_events}
 \alias{flash_clean_horizontal_events}
+\alias{horizontal_events}
 \title{Cleans horizontal events}
 \usage{
 flash_clean_horizontal_events(df, wide_format_horizontal = wide_format_clean)
+
+horizontal_events(df, wide_format_horizontal = wide_format_clean)
 }
 \arguments{
 \item{df}{a data frame of horizontal event data from Flash Results}

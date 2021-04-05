@@ -2,9 +2,12 @@
 % Please edit documentation in R/flash_event_links.R
 \name{flash_event_links}
 \alias{flash_event_links}
+\alias{meet_links}
 \title{Collects all event result links from a meet landing page on flashresults.com}
 \usage{
 flash_event_links(meet_home)
+
+meet_links(meet_home)
 }
 \arguments{
 \item{meet_home}{a link to a meet landing page on flashresults.com}

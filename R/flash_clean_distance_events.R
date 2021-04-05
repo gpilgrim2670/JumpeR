@@ -16,15 +16,14 @@
 #' @return a cleaned version of df
 #'
 #' @seealso \code{flash_clean_distance_events} is a helper function inside \code{\link{flash_parse_table}}
+#'
+#' @aliases distance_events
 
 flash_clean_distance_events <- function(df, wide_format_distance = wide_format_clean) {
 
   # testing
   # url_1500 <- "https://flashresults.com/2015_Meets/Outdoor/05-28_NCAAEast/005-1-03.htm"
   # df <- flash_parse_table(url_1500)
-
-
-  df <- df_1
 
   df <- df %>%
     data.frame() %>%
@@ -68,3 +67,7 @@ flash_clean_distance_events <- function(df, wide_format_distance = wide_format_c
 
   return(clean_distance_data)
 }
+
+#' @rdname flash_clean_distance_events
+#' @export
+distance_events <- flash_clean_distance_events

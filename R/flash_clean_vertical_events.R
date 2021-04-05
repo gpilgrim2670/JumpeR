@@ -63,3 +63,7 @@ flash_clean_vertical_events <- function(df, wide_format_vertical = wide_format_c
 
   return(df)
 }
+
+#' @rdname flash_clean_vertical_events
+#' @export
+vertical_events <- flash_clean_vertical_events

@@ -69,3 +69,7 @@ flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_form
 
   return(clean_horizontal_data)
 }
+
+#' @rdname flash_clean_horizontal_events
+#' @export
+horizontal_events <- flash_clean_horizontal_events

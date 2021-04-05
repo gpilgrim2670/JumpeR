@@ -2,9 +2,12 @@
 % Please edit documentation in R/flash_clean_events.R
 \name{flash_clean_events}
 \alias{flash_clean_events}
+\alias{clean_results}
 \title{Cleans event data}
 \usage{
 flash_clean_events(df, wide_format_clean = wide_format)
+
+clean_results(df, wide_format_clean = wide_format)
 }
 \arguments{
 \item{df}{a data frame or list of data frames containing event data from Flash Results}

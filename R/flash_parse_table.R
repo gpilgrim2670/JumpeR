@@ -163,3 +163,7 @@ flash_parse_table <- function(link, wide_format = FALSE) {
 
   return(df)
 }
+
+#' @rdname flash_parse_table
+#' @export
+get_results_table <- flash_parse_table
