@@ -39,6 +39,7 @@ flash_extract_details_links_helper <- function(link_helper = link) {
 
     link_helper_details <- paste0(url_base, link_helper_details)
     link_helper_details <- unlist(link_helper_details)
+    link_helper_details <- unique(link_helper_details)
 
     return(link_helper_details)
   }

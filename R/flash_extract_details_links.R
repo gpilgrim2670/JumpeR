@@ -17,7 +17,8 @@ flash_extract_details_links <- function(link) {
 
     link <- purrr::map(link, flash_extract_details_links_helper)
     link <- unlist(link)
-    link <- link[!is.na(links)]
+    link <- link[!is.na(link)]
+    link <- unique(link)
 
     return(link)
 }

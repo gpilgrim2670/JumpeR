@@ -36,6 +36,7 @@ flash_event_links <- function(meet_home) {
   # links are missing their beginnings, which is just web_url from above
   compiled_links <- paste0(meet_home, compiled_links)
   compiled_links <- unlist(compiled_links)
+  compiled_links <- unique(compiled_links) # remove duplicates
 
   return(compiled_links)
 }
