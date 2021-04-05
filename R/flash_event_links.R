@@ -12,6 +12,8 @@
 #' @return returns a list of links to individual events from a given meet
 #'
 #' @examples \donttest{flash_event_links("https://flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/")}
+#'
+#' @export
 
 flash_event_links <- function(meet_home) {
 

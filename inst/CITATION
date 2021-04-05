@@ -3,7 +3,7 @@ citHeader("To cite JumpeR in publications use:")
 citEntry(
   entry    = "manual",
   title    = "{JumpeR}: {P}ackage for working with Track and Field Data",
-  author   = c("Gregory A. Pilgrim", "George M. Perry")
+  author   = c("Gregory A. Pilgrim", "George M. Perry"),
   year     = "2020",
   url      = "https://github.com/gpilgrim2670/JumpeR",
   textVersion = paste("Pilgrim, Gregory A., Perry, George M. (2019).",
