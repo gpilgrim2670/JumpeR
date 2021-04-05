@@ -29,7 +29,7 @@ flash_parse_table <- function(link, wide_format = FALSE) {
   # link <- "https://flashresults.com/2015_Meets/Outdoor/05-28_NCAAEast/005-1-03.htm"
   # link <- "https://flashresults.com/2017_Meets/Outdoor/06-22_USATF/004-2-02.htm"
 
-  link <- links[2]
+  # link <- links[2]
 
   page_content <- xml2::read_html(link, options = c("DTDLOAD", "NOBLANKS"))
 
