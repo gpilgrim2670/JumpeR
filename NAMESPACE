@@ -2,6 +2,7 @@
 
 export("%>%")
 export(attempts_split_long)
+export(flash_clean_events)
 export(flash_extract_details_links)
 export(flash_parse)
 export(flash_parse_table)

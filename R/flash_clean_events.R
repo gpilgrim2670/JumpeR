@@ -14,8 +14,14 @@
 #' @return a cleaned version of df
 #'
 #' @seealso \code{flash_clean_events} is a helper function inside \code{\link{flash_parse_table}}
+#'
+#' @export
 
 flash_clean_events <- function(df, wide_format_clean = wide_format){
+
+  if(is.logical(wide_format_clean) == FALSE){
+    stop("wide-format clean must be either TRUE or FALSE")
+  }
 
   # tidy_table <- "table"
   #
