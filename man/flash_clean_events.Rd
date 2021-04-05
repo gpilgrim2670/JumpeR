@@ -21,5 +21,5 @@ Cleans event results pulled from Flash Results html tables.  Can present cleaned
 \code{flash_clean_events} is a helper function inside \code{\link{flash_parse_table}}
 }
 \author{
-Greg Pilgrim \email{gpilgrim2670@gmail.com}
+Gregory A. Pilgrim \email{gpilgrim2670@gmail.com} and George M. Perry
 }

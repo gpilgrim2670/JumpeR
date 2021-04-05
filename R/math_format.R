@@ -18,6 +18,6 @@
 
 
 math_format <- function(x) {
-  x <- map_dbl(x, math_format_helper)
+  x <- purrr::map_dbl(x, math_format_helper)
   return(x)
 }

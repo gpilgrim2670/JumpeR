@@ -2,7 +2,7 @@
 #'
 #' Cleans event results pulled from Flash Results html tables.  Can present cleaned data in wide or long format.
 #'
-#' @author Greg Pilgrim \email{gpilgrim2670@@gmail.com}
+#' @author Gregory A. Pilgrim \email{gpilgrim2670@@gmail.com} and George M. Perry
 #'
 #' @importFrom dplyr select
 #' @importFrom dplyr group_split

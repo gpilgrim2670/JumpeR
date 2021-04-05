@@ -23,6 +23,9 @@ flash_clean_distance_events <- function(df, wide_format_distance = wide_format_c
   # url_1500 <- "https://flashresults.com/2015_Meets/Outdoor/05-28_NCAAEast/005-1-03.htm"
   # df <- flash_parse_table(url_1500)
 
+
+  df <- df_1
+
   df <- df %>%
     data.frame() %>%
     dplyr::mutate(Time = stringr::str_remove(Time, "[Q|q]")) %>%
@@ -30,7 +33,7 @@ flash_clean_distance_events <- function(df, wide_format_distance = wide_format_c
 
   if (wide_format_distance == FALSE) {
 
-    varying_cols <- names(df)[grep("^X\\d", names(df))] # determine names of varying columns
+    varying_cols <- names(df)[grep("(^X\\d)|(^Lap)|(^L\\d)", names(df))] # determine names of varying columns
 
     df <- df %>%
       reshape(

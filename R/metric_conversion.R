@@ -18,6 +18,6 @@
 
 
 metric_conversion <- function(x) {
-  x <- map_chr(x, metric_conversion_helper)
+  x <- purrr::map_chr(x, metric_conversion_helper)
   return(x)
 }
