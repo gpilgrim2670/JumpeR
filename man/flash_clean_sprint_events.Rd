@@ -2,9 +2,12 @@
 % Please edit documentation in R/flash_clean_sprint_events.R
 \name{flash_clean_sprint_events}
 \alias{flash_clean_sprint_events}
+\alias{sprint_events}
 \title{Cleans sprint events}
 \usage{
 flash_clean_sprint_events(df)
+
+sprint_events(df)
 }
 \arguments{
 \item{df}{a data frame of sprint event data from Flash Results}

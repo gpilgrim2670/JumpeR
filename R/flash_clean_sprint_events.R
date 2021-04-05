@@ -34,3 +34,7 @@ flash_clean_sprint_events <- function(df) {
   return(clean_sprint_data)
 
 }
+
+#' @rdname flash_clean_sprint_events
+#' @export
+sprint_events <- flash_clean_sprint_events

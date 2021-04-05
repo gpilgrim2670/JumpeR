@@ -17,7 +17,7 @@
 #'
 #' @export
 
-flash_clean_events <- function(df, wide_format_clean = wide_format){
+flash_clean_events <- function(df, wide_format_clean = FALSE){
 
   if(is.logical(wide_format_clean) == FALSE){
     stop("wide-format clean must be either TRUE or FALSE")

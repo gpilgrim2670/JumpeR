@@ -47,7 +47,7 @@ flash_clean_distance_events <- function(df, wide_format_distance = wide_format_c
       dplyr::select(-id) %>%
       dplyr::mutate(Split_Distance = varying_cols[Split_Distance], # reshape converts varying cols to indexes for some reason, this is a workaround
                     Split_Distance = stringr::str_remove(Split_Distance, "^X"),
-                    Split_Distance = stringr::str_remove(Split_Distance, "[m|M]$"))
+                    Split_Distance = stringr::str_remove(Split_Distance, "[m|M]\\.?$"))
 
     # old version, requires tidyr
     # clean_distance_data <- df %>%
