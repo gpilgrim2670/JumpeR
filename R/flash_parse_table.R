@@ -51,7 +51,7 @@ flash_parse_table <- function(link, wide_format = FALSE) {
   result_table <-
     list_of_tables[which.max(lapply(get_atts, get_lengths))]
 
-  # table as dataframe
+  # table as data frame
   df <- result_table[[1]]
 
   # if there are more than one blank headers
@@ -71,6 +71,9 @@ flash_parse_table <- function(link, wide_format = FALSE) {
     }
 
   }
+
+  # remove unnamed columns
+  df[names(df) != ""]
 
   # if the previous code comes up empty
   # this will collect rawer contents of th (headers) and td (cells)
