@@ -27,6 +27,9 @@ flash_event_links <- function(meet_home) {
     rvest::html_nodes("a") %>%
     rvest::html_attr("href")
 
+  # remove NA links
+  links <- links[!is.na(links)]
+
   # Filter out start lists and scores
   compiled_links <- links[stringr::str_detect(links, "compiled") == TRUE]
 
