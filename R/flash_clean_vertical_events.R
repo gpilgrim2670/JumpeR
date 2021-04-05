@@ -44,7 +44,7 @@ flash_clean_vertical_events <- function(df, wide_format_vertical = wide_format_c
     dplyr::mutate(Team = stringr::str_split_fixed(Name, "\\\n", 2)[,2],
                   Name = stringr::str_split_fixed(Name, "\\\n", 2)[,1],)
 
-  # originial version, uses tidyr
+  # original version, uses tidyr
   # clean_vertical_data <- df %>%
   #   tidyr::pivot_longer(matches("[0-9]"),
   #                names_to = "Height",
@@ -54,7 +54,7 @@ flash_clean_vertical_events <- function(df, wide_format_vertical = wide_format_c
 
   # if (tidy_table == "table") {
 
-    # originial version, uses tidyr
+    # original version, uses tidyr
     # clean_vertical_data <- clean_vertical_data %>%
     #   tidyr::pivot_wider(names_from = Height, values_from = Result)
 

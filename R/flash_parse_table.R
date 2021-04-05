@@ -145,10 +145,16 @@ flash_parse_table <- function(link, wide_format = FALSE) {
       dplyr::rename("Place" = "Pl")
   }
 
-  # regularize Place column name
+  # regularize Lane column name
   if ("Ln" %in% names(df)) {
     df <- df %>%
       dplyr::rename("Lane" = "Ln")
+  }
+
+  # regularize Team column name
+  if ("Affiliation" %in% names(df)) {
+    df <- df %>%
+      dplyr::rename("Team" = "Affiliation")
   }
 
   # clean results
