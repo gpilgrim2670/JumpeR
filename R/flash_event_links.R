@@ -31,7 +31,8 @@ flash_event_links <- function(meet_home) {
   compiled_links <- links[stringr::str_detect(links, "compiled") == TRUE]
 
   # links are missing their beginnings, which is just web_url from above
-  compiled_links <- paste0(web_url, compiled_links)
+  compiled_links <- paste0(meet_home, compiled_links)
+  compiled_links <- unlist(compiled_links)
 
   return(compiled_links)
 }

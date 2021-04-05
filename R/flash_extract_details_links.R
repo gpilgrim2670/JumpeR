@@ -30,6 +30,7 @@ flash_extract_details_links <- function(link) {
   url_base <- stringr::str_remove(link, "[^\\/]*$")
 
   links_details <- paste0(url_base, links_details)
+  links_details <- unlist(links_details)
 
   return(links_details)
 }
