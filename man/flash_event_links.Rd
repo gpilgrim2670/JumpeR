@@ -19,5 +19,5 @@ Used in scraping flashresults.com.  Collects event result links from a meet land
 \donttest{flash_event_links("https://flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/")}
 }
 \author{
-Gregory A. Pilgrim \email{gpilgrim2670@gmail.com}
+Gregory A. Pilgrim \email{gpilgrim2670@gmail.com} and George M. Perry
 }

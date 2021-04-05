@@ -1,8 +1,8 @@
 #' Cleans vertical events
 #'
-#' Cleans veritcal event results pulled from Flash Results html tables.  Can present cleaned data in wide or long format.
+#' Cleans vertical event results pulled from Flash Results html tables.  Can present cleaned data in wide or long format.
 #'
-#' @author Greg Pilgrim \email{gpilgrim2670@@gmail.com}
+#' @author Gregory A. Pilgrim \email{gpilgrim2670@@gmail.com} and George M. Perry
 #'
 #' @importFrom dplyr select
 #' @importFrom dplyr mutate
@@ -21,8 +21,7 @@ flash_clean_vertical_events <- function(df, wide_format_vertical = wide_format_c
   # url_2017_PV <- "https://flashresults.com/2017_Meets/Outdoor/06-22_USATF/026-1-01.htm"
   # url_2017_HJ <- "https://flashresults.com/2017_Meets/Outdoor/06-22_USATF/024-1-01.htm"
   # url_ncaa_PV <- "https://flashresults.com/2015_Meets/Outdoor/05-28_NCAAEast/033-1-01.htm"
-  #
-  df <- flash_parse_table(url_PV)
+  # df <- flash_parse_table(url_PV)
 
   df <- df[-1, ] %>%
     data.frame() # remove tibble class because it doesn't work well with reshape

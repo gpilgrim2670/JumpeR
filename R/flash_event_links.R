@@ -2,7 +2,7 @@
 #'
 #' Used in scraping flashresults.com.  Collects event result links from a meet landing page
 #'
-#' @author Gregory A. Pilgrim \email{gpilgrim2670@@gmail.com}
+#' @author Gregory A. Pilgrim \email{gpilgrim2670@@gmail.com} and George M. Perry
 #'
 #' @importFrom stringr str_detect
 #' @importFrom rvest html_nodes

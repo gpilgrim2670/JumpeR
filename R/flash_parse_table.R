@@ -151,5 +151,9 @@ flash_parse_table <- function(link, wide_format = FALSE) {
       dplyr::rename("Lane" = "Ln")
   }
 
+  # clean results
+  df <- df %>%
+    flash_clean_events(wide_format_clean = wide_format)
+
   return(df)
 }

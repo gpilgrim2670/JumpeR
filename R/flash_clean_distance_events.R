@@ -25,7 +25,7 @@ flash_clean_distance_events <- function(df, wide_format_distance = wide_format_c
 
   df <- df %>%
     data.frame() %>%
-    dplyr::mutate(Time = stringr::str_remove(Time, "Q")) %>%
+    dplyr::mutate(Time = stringr::str_remove(Time, "[Q|q]")) %>%
     dplyr::mutate(dplyr::across(matches("[0-9]"), ~stringr::str_remove(.x, " ?\\[(.*)\\]")))
 
   if (wide_format_distance == FALSE) {

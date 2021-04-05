@@ -20,5 +20,5 @@ Used in scraping flashresults.com.  Collects meet names, dates, and locations al
 
 }
 \author{
-George M. Perry
+Gregory A. Pilgrim \email{gpilgrim2670@gmail.com} and George M. Perry
 }

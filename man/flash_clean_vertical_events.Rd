@@ -15,11 +15,11 @@ flash_clean_vertical_events(df, wide_format_vertical = wide_format_clean)
 a cleaned version of df
 }
 \description{
-Cleans veritcal event results pulled from Flash Results html tables.  Can present cleaned data in wide or long format.
+Cleans vertical event results pulled from Flash Results html tables.  Can present cleaned data in wide or long format.
 }
 \seealso{
 \code{flash_clean_vertical_events} is a helper function inside \code{\link{flash_parse_table}}
 }
 \author{
-Greg Pilgrim \email{gpilgrim2670@gmail.com}
+Gregory A. Pilgrim \email{gpilgrim2670@gmail.com} and George M. Perry
 }
