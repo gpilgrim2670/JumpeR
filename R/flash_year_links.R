@@ -73,6 +73,7 @@ flash_year_links <- function(flash_year) {
   # add http to links that need it
   year_table <- year_table %>%
     dplyr::rename("MeetLink" = 4) %>%
+    dplyr::filter(stringr::str_detect(MeetLink, "xc") == FALSE)
     dplyr::mutate(MeetLink = ifelse(
       stringr::str_detect(MeetLink, "http"),
       MeetLink,
