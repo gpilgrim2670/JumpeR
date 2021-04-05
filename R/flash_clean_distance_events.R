@@ -1,6 +1,6 @@
 #' Cleans distance events
 #'
-#' Cleans distance event results pulled from Flash Results html tables.  Distance events are generally those with lengths of 400m or greater  Can present cleaned data in wide or long format.
+#' Cleans distance event results pulled from Flash Results html tables.  Distance events are generally those with lengths of 400m or greater.  Can present cleaned data in wide or long format.
 #'
 #' @author Gregory A. Pilgrim \email{gpilgrim2670@@gmail.com} and George M. Perry
 #'

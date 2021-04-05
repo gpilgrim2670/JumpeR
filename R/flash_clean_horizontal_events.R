@@ -27,7 +27,7 @@ flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_form
 
   df <- df %>%
     data.frame() %>%
-    dplyr::select(Place, Athlete, dplyr::starts_with("R"), Event, Gender)
+    dplyr::select(Place, Name, dplyr::starts_with("R"), Event, Gender)
 
   if (wide_format_horizontal == FALSE) {
 
@@ -48,9 +48,9 @@ flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_form
 
   clean_horizontal_data <- df %>%
     dplyr::mutate(
-      Flight = stringr::str_split_fixed(Athlete, "\\\n", 3)[, 3],
-      Team = stringr::str_split_fixed(Athlete, "\\\n", 3)[, 2],
-      Athlete = stringr::str_split_fixed(Athlete, "\\\n", 3)[, 1]
+      Flight = stringr::str_split_fixed(Name, "\\\n", 3)[, 3],
+      Team = stringr::str_split_fixed(Name, "\\\n", 3)[, 2],
+      Name = stringr::str_split_fixed(Name, "\\\n", 3)[, 1]
     ) %>%
     dplyr::mutate(
       Wind = stringr::str_split_fixed(Result, "\\\n", 3)[, 3],

@@ -27,6 +27,7 @@ flash_parse_table <- function(link, wide_format = FALSE) {
 
   # link <- "https://flashresults.com/2015_Meets/Outdoor/06-25_USATF/009-2-01.htm"
   # link <- "https://flashresults.com/2015_Meets/Outdoor/05-28_NCAAEast/005-1-03.htm"
+  # link <- "https://flashresults.com/2017_Meets/Outdoor/06-22_USATF/004-2-02.htm"
 
   page_content <- xml2::read_html(link, options = c("DTDLOAD", "NOBLANKS"))
 
@@ -73,8 +74,6 @@ flash_parse_table <- function(link, wide_format = FALSE) {
 
   }
 
-  # remove unnamed columns
-  df[names(df) != ""]
 
   # if the previous code comes up empty
   # this will collect rawer contents of th (headers) and td (cells)
@@ -85,24 +84,28 @@ flash_parse_table <- function(link, wide_format = FALSE) {
           (!any(stringr::str_detect(na.omit(as.vector(t(df))), "Athlete|Name|Team"))) &
           !any(stringr::str_detect(names(df), "Athlete|Name|Team")))
   ) { # anys are needed to collapse vectors of T/F
-    flash_rebuild_event_table(rebuild_event_link = link)
+    df <- flash_rebuild_event_table(event_url_rebuild = link)
   }
 
 
   # dplyr does not react well to nameless columns: some verbs will throw an error if there's a nameless column. Some tables populate with a nameless column. For vertical jumps, this is due to the 2-line nature of the header on Flash which puts the single-line column name in Row 1. In vertical jumps, the affected column is "Athlete," so we find the column containing "Athlete" and then name it as such. Some horizontal events do not name the "Wind" or "Qualifying" (Q/q) column, so we find the blank column and then name it "Placeholder."
 
-  athlete_col <- which(stringr::str_detect(as.vector(t(df)), "Athlete"))
-  blank_col <- which(colnames(df) == "")
-  df <- df %>%
-    rename("Placeholder" = all_of(blank_col), "Athlete" = all_of(athlete_col))
+  # remove unnamed columns
+  df <- df[names(df) != ""]
 
-  # remove empty columns - moved this below the `Placeholder` insertion because this function will name unnamed columns as ".X" which is needlessly complicating
-
+  # remove empty columns
   df <- Filter(function(x)
     !all(is.na(x)), df)
 
   # remove duplicated columns
   # df[!duplicated(as.list(df))]
+
+  athlete_col <- which(stringr::str_detect(as.vector(t(df)), "Athlete"))
+  # blank_col <- which(colnames(df) == "")
+  df <- df %>%
+    rename(
+      # "Placeholder" = all_of(blank_col),
+           "Athlete" = all_of(athlete_col))
 
   # Add event and gender to the result table
   # convert page content to a vector
@@ -121,7 +124,7 @@ flash_parse_table <- function(link, wide_format = FALSE) {
   df <- df %>%
     dplyr::mutate(Event = event_name,
                   Gender = event_gender) %>%
-    dplyr::select(-matches("Placeholder")) %>%
+    # dplyr::select(-matches("Placeholder")) %>%
     dplyr::na_if("") # blank cells to NA
 
   # keep times as characters for consistency's sake
@@ -131,9 +134,21 @@ flash_parse_table <- function(link, wide_format = FALSE) {
   }
 
   # regularize Name and Athlete columns
-  if ("Name" %in% names(df)) {
+  if ("Athlete" %in% names(df)) {
     df <- df %>%
-      dplyr::rename("Athlete" = "Name")
+      dplyr::rename("Name" = "Athlete")
+  }
+
+  # regularize Place column name
+  if ("Pl" %in% names(df)) {
+    df <- df %>%
+      dplyr::rename("Place" = "Pl")
+  }
+
+  # regularize Place column name
+  if ("Ln" %in% names(df)) {
+    df <- df %>%
+      dplyr::rename("Lane" = "Ln")
   }
 
   return(df)
