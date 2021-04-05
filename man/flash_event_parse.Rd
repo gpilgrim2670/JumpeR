@@ -19,5 +19,5 @@ Locates an event label in text of results from a flash results html page for a g
 \code{flash_event_parse} is a helper function inside \code{\link{flash_parse_table}}
 }
 \author{
-Greg Pilgrim \email{gpilgrim2670@gmail.com}
+Gregory A. Pilgrim \email{gpilgrim2670@gmail.com} and George M. Perry
 }

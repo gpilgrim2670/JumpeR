@@ -2,7 +2,7 @@
 #'
 #' Used in scraping flashresults.com.  Collects results given in html tables on a speciified page into a data frame.
 #'
-#' @author Gregory A. Pilgrim
+#' @author Gregory A. Pilgrim \email{gpilgrim2670@@gmail.com} and George M. Perry
 #'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr select
@@ -26,6 +26,7 @@
 flash_parse_table <- function(link, wide_format = FALSE) {
 
   # link <- "https://flashresults.com/2015_Meets/Outdoor/06-25_USATF/009-2-01.htm"
+  # link <- "https://flashresults.com/2015_Meets/Outdoor/05-28_NCAAEast/005-1-03.htm"
 
   page_content <- xml2::read_html(link, options = c("DTDLOAD", "NOBLANKS"))
 

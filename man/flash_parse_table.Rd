@@ -22,5 +22,5 @@ Used in scraping flashresults.com.  Collects results given in html tables on a s
 
 }
 \author{
-Gregory A. Pilgrim
+Gregory A. Pilgrim \email{gpilgrim2670@gmail.com} and George M. Perry
 }

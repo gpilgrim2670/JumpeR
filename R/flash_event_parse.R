@@ -2,7 +2,7 @@
 #'
 #' Locates an event label in text of results from a flash results html page for a given event.
 #'
-#' @author Greg Pilgrim \email{gpilgrim2670@@gmail.com}
+#' @author Gregory A. Pilgrim \email{gpilgrim2670@@gmail.com} and George M. Perry
 #'
 #' @importFrom stringr str_match
 #' @importFrom stringr str_replace
@@ -20,44 +20,24 @@ flash_event_parse <- function(text){
     paste0(
       "(?i)",
       c(
-        "Shot put",
-        "Discus",
-        "Javelin",
+        "((Hep|Pen|Dec)(.*\\s))?Shot put",
+        "((Hep|Pen|Dec)(.*\\s))?Discus",
+        "((Hep|Pen|Dec)(.*\\s))?Javelin",
         "Hammer",
         "Weight",
-        "Long jump",
+        "((Hep|Pen|Dec)(.*\\s))?Long jump",
         "Triple jump",
-        "High jump",
-        "Pole vault",
-        "decathlon",
-        "heptaathlon",
-        "pentathlon",
+        "((Hep|Pen|Dec)(.*\\s))?High jump",
+        "((Hep|Pen|Dec)(.*\\s))?Pole vault",
+        "((Hep|Pen|Dec)(.*\\s))?\\d{2,5}\\s*m(eter)?",
+        "\\d mile",
         "\\d?\\s?x?\\s?\\d{3,4} relay",
         "distance relay",
         "distance medley relay",
         "\\dx\\d{2,}\\s*m\\srelay", # for relays
-        "\\d{3}\\s*m[:alpha:]*\\s*h[:alpha:]*", # for hurdles, to differentiate between 400 m dash and 400 m hurtles
+        "((Hep|Pen|Dec)(.*\\s))?\\d{2,3}\\s*m[:alpha:]*\\s*h[:alpha:]*",
         "\\d000\\s*m\\sSteeplechase",
-        # "110\\s*m[:alpha:]*\\s*h[:alpha:]*",
-        # "400\\s*m[:alpha:]*\\s*h[:alpha:]*",
-        # "100\\s*m(eter)?\\s*h(urdles)?",
-        # "110\\s*m(eter)?\\s*h(urdles)?",
-        # "400\\s*m(eter)?\\s*h(urdles)?",
-        "\\d{2,5}\\s*m ",
-        "\\d{1,2}?,\\d{3}\\s*m ",
-        # "60\\s*m",
-        # "100\\s*m",
-        # "200\\s*m",
-        # "300\\s*m",
-        # "\\B00\\s*m\\b",
-        # "400\\s*m",
-        # "800\\s*m",
-        # "1500\\s*m",
-        # "20\\,?000\\s*m",
-        "\\d mile"
-        # "1 mile",
-        # "5*000\\s*m",
-        # "10*000\\s*m"
+        "walk"
       ),
       collapse = "|"
     )
