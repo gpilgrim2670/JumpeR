@@ -19,5 +19,8 @@ a cleaned version of df
 Cleans results pulled from Flash Results html tables for sprint events.  Sprint events are generally those with lengths of less than 400m.  Can present cleaned data in wide or long format.
 }
 \seealso{
-\code{flash_clean_sprint_events} is a helper function inside \code{\link{flash_parse_table}
+\code{flash_clean_sprint_events} is a helper function inside \code{\link{flash_parse_table}}
+}
+\author{
+Gregory A. Pilgrim \email{gpilgrim2670@gmail.com} and George M. Perry
 }
