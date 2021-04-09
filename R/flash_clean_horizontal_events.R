@@ -8,6 +8,7 @@
 #' @importFrom dplyr mutate
 #' @importFrom dplyr everything
 #' @importFrom dplyr na_if
+#' @importFrom dplyr contains
 #' @importFrom stringr str_split_fixed
 #' @importFrom stringr str_remove
 #'
@@ -25,9 +26,11 @@ flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_form
   #
   # df <- flash_parse_table(url_TJ)
 
+# df <- df_1
+
   df <- df %>%
     data.frame() %>%
-    dplyr::select(Place, Name, dplyr::starts_with("R"), Event, Gender)
+    dplyr::select(Place, Name, dplyr::starts_with("R"), Event, Gender, dplyr::contains("Order"), dplyr::contains("Wind"))
 
   if (wide_format_horizontal == FALSE) {
 
@@ -37,7 +40,7 @@ flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_form
         direction = "long",
         varying = grep("^R", names(df)),
         sep = "",
-        timevar = "Flight",
+        timevar = "Round",
         ids = row.names(df),
         v.names = "Result"
       ) %>%
@@ -45,6 +48,8 @@ flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_form
 
     rownames(df) <- NULL # reshape sets row names, remove them
   }
+
+
 
   clean_horizontal_data <- df %>%
     dplyr::mutate(
