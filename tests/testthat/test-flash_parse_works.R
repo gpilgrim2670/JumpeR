@@ -149,7 +149,7 @@ test_that("flash parse works long jump, team scores in results", {
     df_standard_longjump <-
       readRDS(system.file("extdata", "df_standard_longjump.rds", package = "JumpeR"))
 
-    # results realy do contain "ST. JOSEPH'S (PA" with a missing ")"
+    # results really do contain "ST. JOSEPH'S (PA" with a missing ")"
 
     # generate test df
     suppressWarnings(

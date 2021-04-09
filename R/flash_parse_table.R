@@ -179,7 +179,7 @@ flash_parse_table <- function(link, wide_format = FALSE) {
     # dplyr::select(-matches("Placeholder")) %>%
     dplyr::mutate(dplyr::across(where(is.character), stringr::str_trim)) %>%  # remove whitespaces
     dplyr::na_if("") %>%  # blank cells to NA
-    dplyr::na_if("^-$")
+    dplyr::na_if("-")
 
   # include wind (if present in separate table)
   if(is.na(wind_value) == FALSE){
