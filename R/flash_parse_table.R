@@ -36,6 +36,9 @@ flash_parse_table <- function(link, wide_format = FALSE) {
   # link <- "https://flashresults.com/2017_Meets/Outdoor/06-22_USATF/004-2-02.htm"
   # link <- "https://flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/004-1-03.htm"
 
+  # link <- "https://flashresults.com/2015_Meets/Outdoor/05-28_NCAAEast/017-1_compiledSeries.htm"
+  # link <- "https://flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/004-1-03.htm"
+
   # link <- links[2]
 
   page_content <- xml2::read_html(link, options = c("DTDLOAD", "NOBLANKS"))
@@ -56,6 +59,16 @@ flash_parse_table <- function(link, wide_format = FALSE) {
   # determine length of table
   get_lengths <- function(df) {
     return(length(df$names))
+  }
+
+  # collect wind df if it exists
+  # wind_df_index <- suppressWarnings(which(stringr::str_detect(get_atts, "Wind"), TRUE))
+  wind_df <-suppressWarnings(list_of_tables[stringr::str_detect(get_atts, "Wind")]) # warning about atomic vector - should fix
+
+  if(length(wind_df) > 0){
+  wind_value <- stringr::str_match(wind_df[[1]]$Wind, "(\\+|-)?\\d\\.\\d")[1]
+  } else {
+    wind_value <- NA # need to define as NA since we will need wind_value later
   }
 
   # desired table is the longest one
@@ -104,16 +117,32 @@ flash_parse_table <- function(link, wide_format = FALSE) {
   # Some horizontal events do not name the "Wind" or "Qualifying" (Q/q) column, so we find the blank column and then name it "Placeholder."
   # Some sprint events have an unnamed column for reaction time.  Need to match that.
 
-  athlete_col <- which(stringr::str_detect(as.vector(t(df)), "Athlete"))
-  reaction_time_col <- which(stringr::str_detect(as.vector(t(df)), "0\\.\\d{3}"))
+  # athlete column
+  athlete_col <-
+    which(stringr::str_detect(as.vector(t(df)), "Athlete"))
+
+  # reaction time columns
+  if (any(stringr::str_detect(as.vector(t(df)), "0\\.\\d{3}"), na.rm = TRUE) == TRUE) {
+    reaction_time_col <-
+      min(which(stringr::str_detect(as.vector(t(
+        df
+      )), "0\\.\\d{3}")))
+  } else {
+    reaction_time_col <- numeric(0)
+  }
+
+  # blank columns
   blank_col <- which(colnames(df) == "")
-  blank_col <- setdiff(blank_col, min(reaction_time_col)) # don't want to capture reaction time column (if it exists)
+  if (length(reaction_time_col) > 0) {
+    blank_col <-
+      setdiff(blank_col, min(reaction_time_col)) # don't want to capture reaction time column (if it exists)
+  }
 
   df <- df %>%
     dplyr::rename(
       # "Placeholder" = all_of(blank_col),
            "Athlete" = dplyr::all_of(athlete_col),
-           "Reaction_Time" = min(reaction_time_col),
+           "Reaction_Time" = reaction_time_col,
            "Placeholder" = dplyr::all_of(blank_col)
            ) %>%
     dplyr::select(-dplyr::contains("Placeholder"))
@@ -149,6 +178,13 @@ flash_parse_table <- function(link, wide_format = FALSE) {
     dplyr::mutate(dplyr::across(where(is.character), stringr::str_trim)) %>%  # remove whitespaces
     dplyr::na_if("") %>%  # blank cells to NA
     dplyr::na_if("^-$")
+
+  # include wind (if present in separate table)
+  if(is.na(wind_value) == FALSE){
+    df <- df %>%
+      dplyr::mutate(Wind = as.character(wind_value))
+  }
+
 
   # keep times as characters for consistency's sake
   if("Time" %in% names(df)){
