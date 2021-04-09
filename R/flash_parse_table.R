@@ -7,9 +7,14 @@
 #' @importFrom dplyr mutate
 #' @importFrom dplyr select
 #' @importFrom dplyr na_if
+#' @importFrom dplyr all_of
+#' @importFrom dplyr rename
+#' @importFrom dplyr contains
+#' @importFrom dplyr across
 #' @importFrom stringr str_remove
 #' @importFrom stringr str_match
 #' @importFrom stringr str_detect
+#' @importFrom stringr str_trim
 #' @importFrom rvest html_nodes
 #' @importFrom rvest html_attr
 #' @importFrom rvest html_table
@@ -29,6 +34,7 @@ flash_parse_table <- function(link, wide_format = FALSE) {
   # link <- "https://flashresults.com/2015_Meets/Outdoor/06-25_USATF/009-2-01.htm"
   # link <- "https://flashresults.com/2015_Meets/Outdoor/05-28_NCAAEast/005-1-03.htm"
   # link <- "https://flashresults.com/2017_Meets/Outdoor/06-22_USATF/004-2-02.htm"
+  # link <- "https://flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/004-1-03.htm"
 
   # link <- links[2]
 
@@ -91,7 +97,26 @@ flash_parse_table <- function(link, wide_format = FALSE) {
   }
 
 
-  # dplyr does not react well to nameless columns: some verbs will throw an error if there's a nameless column. Some tables populate with a nameless column. For vertical jumps, this is due to the 2-line nature of the header on Flash which puts the single-line column name in Row 1. In vertical jumps, the affected column is "Athlete," so we find the column containing "Athlete" and then name it as such. Some horizontal events do not name the "Wind" or "Qualifying" (Q/q) column, so we find the blank column and then name it "Placeholder."
+  # dplyr does not react well to nameless columns: some verbs will throw an error if there's a nameless column.
+  # Some tables populate with a nameless column.
+  # For vertical jumps, this is due to the 2-line nature of the header on Flash which puts the single-line column name in Row 1.
+  # In vertical jumps, the affected column is "Athlete," so we find the column containing "Athlete" and then name it as such.
+  # Some horizontal events do not name the "Wind" or "Qualifying" (Q/q) column, so we find the blank column and then name it "Placeholder."
+  # Some sprint events have an unnamed column for reaction time.  Need to match that.
+
+  athlete_col <- which(stringr::str_detect(as.vector(t(df)), "Athlete"))
+  reaction_time_col <- which(stringr::str_detect(as.vector(t(df)), "0\\.\\d{3}"))
+  blank_col <- which(colnames(df) == "")
+  blank_col <- setdiff(blank_col, min(reaction_time_col)) # don't want to capture reaction time column (if it exists)
+
+  df <- df %>%
+    dplyr::rename(
+      # "Placeholder" = all_of(blank_col),
+           "Athlete" = dplyr::all_of(athlete_col),
+           "Reaction_Time" = min(reaction_time_col),
+           "Placeholder" = dplyr::all_of(blank_col)
+           ) %>%
+    dplyr::select(-dplyr::contains("Placeholder"))
 
   # remove unnamed columns
   df <- df[names(df) != ""]
@@ -102,13 +127,6 @@ flash_parse_table <- function(link, wide_format = FALSE) {
 
   # remove duplicated columns
   # df[!duplicated(as.list(df))]
-
-  athlete_col <- which(stringr::str_detect(as.vector(t(df)), "Athlete"))
-  # blank_col <- which(colnames(df) == "")
-  df <- df %>%
-    rename(
-      # "Placeholder" = all_of(blank_col),
-           "Athlete" = all_of(athlete_col))
 
   # Add event and gender to the result table
   # convert page content to a vector
@@ -128,6 +146,7 @@ flash_parse_table <- function(link, wide_format = FALSE) {
     dplyr::mutate(Event = event_name,
                   Gender = event_gender) %>%
     # dplyr::select(-matches("Placeholder")) %>%
+    dplyr::mutate(dplyr::across(where(is.character), stringr::str_trim)) %>%  # remove whitespaces
     dplyr::na_if("") %>%  # blank cells to NA
     dplyr::na_if("^-$")
 
