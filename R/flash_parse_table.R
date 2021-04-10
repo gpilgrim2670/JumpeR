@@ -199,8 +199,11 @@ flash_parse_table <- function(link, wide_format = FALSE) {
   df <- data.frame(lapply(df, function(x) {
     stringr::str_replace_all(x, "\\-\\.", "\\-0\\.")
   }))
-  df <- data.frame(lapply(df, function(x) {
-    iconv(x, "latin1", "ASCII", sub="")
+  df <- data.frame(lapply(df, function(x) { # unicode em dashes
+    stringr::str_replace_all(x, "\u2013", "-")
+  }))
+  df <- data.frame(lapply(df, function(x) { # remove all non ASCII characters
+    iconv(x, "latin1", "ASCII", sub = "")
   }))
 
   # include event name and gender
