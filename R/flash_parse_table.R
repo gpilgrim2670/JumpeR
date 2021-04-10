@@ -15,6 +15,7 @@
 #' @importFrom stringr str_match
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_trim
+#' @importFrom stringr str_replace_all
 #' @importFrom rvest html_nodes
 #' @importFrom rvest html_attr
 #' @importFrom rvest html_table
@@ -38,9 +39,12 @@ flash_parse_table <- function(link, wide_format = FALSE) {
 
   # link <- "https://flashresults.com/2015_Meets/Outdoor/05-28_NCAAEast/017-1_compiledSeries.htm"
   # link <- "https://flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/004-1-03.htm"
+  # link <- "https://flashresults.com/2016_Meets/Indoor/02-05_CharlieThomasInvite/001-1-03.htm"
 
   # link <- links[2]
 
+  # link <- "https://flashresults.com/2015_Meets/Outdoor/05-28_NCAAEast/017-1_compiledSeries.htm"
+  # link <- "https://flashresults.com/2016_Meets/Indoor/02-05_CharlieThomasInvite/001-1-03.htm"
   # link <- "https://flashresults.com/2015_Meets/Outdoor/05-28_NCAAEast/017-1_compiledSeries.htm"
 
   page_content <- xml2::read_html(link, options = c("DTDLOAD", "NOBLANKS"))
@@ -65,7 +69,7 @@ flash_parse_table <- function(link, wide_format = FALSE) {
 
   # collect wind df if it exists
   # wind_df_index <- suppressWarnings(which(stringr::str_detect(get_atts, "Wind"), TRUE))
-  wind_df <-suppressWarnings(list_of_tables[stringr::str_detect(get_atts, "Wind")]) # warning about atomic vector - should fix
+  wind_df <- suppressWarnings(list_of_tables[stringr::str_detect(get_atts, "Wind")]) # warning about atomic vector - should fix
 
   if(length(wind_df) > 0){
   wind_value <- stringr::str_match(wind_df[[1]]$Wind, "(\\+|-)?\\d\\.\\d")[1]
@@ -73,9 +77,19 @@ flash_parse_table <- function(link, wide_format = FALSE) {
     wind_value <- NA # need to define as NA since we will need wind_value later
   }
 
+  # remove record table
+  list_of_tables <- suppressWarnings(list_of_tables[stringr::str_detect(get_atts, "Record", negate = TRUE)])
+  list_of_tables <- suppressWarnings(list_of_tables[stringr::str_detect(get_atts, "Status", negate = TRUE)])
+
+  # remove NULL elements
+  list_of_tables <- list_of_tables[lengths(list_of_tables) != 0]
+
+  # new table components
+  get_atts_2 <- lapply(list_of_tables, attributes)
+
   # desired table is the longest one
   result_table <-
-    list_of_tables[which.max(lapply(get_atts, get_lengths))]
+    list_of_tables[which.max(lapply(get_atts_2, get_lengths))]
 
   # table as data frame
   df <- result_table[[1]]
@@ -171,6 +185,23 @@ flash_parse_table <- function(link, wide_format = FALSE) {
   # determine gender of event
   event_gender <- page_content_vector %>%
     flash_gender_parse()
+
+  # remove unicode characters of 1/4, 1/2, 3/4, all other unicode characters
+  df <- data.frame(lapply(df, function(x) {
+    stringr::str_replace_all(x, "\u00BC", "\\.25")
+  }))
+  df <- data.frame(lapply(df, function(x) {
+    stringr::str_replace_all(x, "\u00BD", "\\.5")
+  }))
+  df <- data.frame(lapply(df, function(x) {
+    stringr::str_replace_all(x, "\u00BE", "\\.75")
+  }))
+  df <- data.frame(lapply(df, function(x) {
+    stringr::str_replace_all(x, "\\-\\.", "\\-0\\.")
+  }))
+  df <- data.frame(lapply(df, function(x) {
+    iconv(x, "latin1", "ASCII", sub="")
+  }))
 
   # include event name and gender
   df <- df %>%

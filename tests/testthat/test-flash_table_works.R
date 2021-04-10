@@ -49,7 +49,7 @@ test_that("flash table horizontal works", {
   } else {
 
     # build standard
-    df_standard_horizontal <- data.frame(Place = rep(1, 3),
+    df_standard_horizontal <- data.frame(Place = rep("1", 3),
                                      Name = rep("Darrell Hill", 3),
                                      Event = rep("Shot Put", 3),
                                      Gender = rep("Men", 3),
@@ -72,5 +72,40 @@ test_that("flash table horizontal works", {
                       df_test)
   }
 })
+
+test_that("flash table tricky sprint, table rebuild", {
+
+  skip_on_cran() # due to risk of external resources failing
+
+  file <-
+    "https://flashresults.com/2016_Meets/Indoor/02-05_CharlieThomasInvite/001-1-03.htm"
+
+  data <- try(flash_parse_table(file), silent = TRUE)
+
+  if (any(grep("error", class(data)))) {
+    skip("Link to external data is broken")
+  } else {
+
+    # build standard
+    df_standard_tricky_sprint <- data.frame(Place = c("1", "2", "3", "4", "5", "6", "FS", "DNS"),
+                                         Name = c("Jennifer Madu", "Taylor Williams", "Justise Dayries", "Eboni Sutherland", "Jessica King", "Daresha Petitt", "Torie Robinson", "Sabrina Moore"),
+                                         Team = c("Texas A&M", "Clemson", "Baylor", "Rice", "Abilene Christian", "UTSA", "Clemson", "TCU"),
+                                         Result = c("7.52", "7.58", "7.64", "7.83", "8.07", "8.25", NA, NA),
+                                         Event = rep("60m", 8),
+                                         Gender = rep("Women", 8),
+                                         stringsAsFactors = FALSE)
+
+
+    # generate test df
+    df_test <- data %>%
+      flash_clean_events()
+
+
+    # test
+    expect_equivalent(df_standard_tricky_sprint,
+                      df_test)
+  }
+})
+
 
 # testthat::test_file("tests/testthat/test-flash_table_works.R")
