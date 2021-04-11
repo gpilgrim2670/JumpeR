@@ -67,7 +67,7 @@ flash_clean_vertical_events <- function(df, wide_format_vertical = wide_format_c
   # remove standard unit heights from Height
   if("Height" %in% names(df)){
     df <- df %>%
-      mutate(Height = str_replace_all(Height, "m\\.\\d{1,}\\.?", "m"))
+      mutate(Height = str_replace_all(Height, "m\\d{0,}\\-?\\.?\\d{0,}\\.?\\d{0,}", "m"))
   }
 
   # original version, uses tidyr
