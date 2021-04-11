@@ -5,6 +5,7 @@
 #' @author Gregory A. Pilgrim \email{gpilgrim2670@@gmail.com} and George M. Perry
 #'
 #' @importFrom stringr str_detect
+#' @importFrom stringr str_remove
 #' @importFrom rvest html_nodes
 #' @importFrom rvest html_attr
 #'
@@ -19,6 +20,10 @@ flash_event_links <- function(meet_home) {
 
   # meet_home <- "https://flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/"
 
+  # remove index.html if present
+  meet_home <- stringr::str_remove(meet_home, "index\\.html?$")
+
+  # read in page
   page_contents <- xml2::read_html(meet_home)
 
   # collect links

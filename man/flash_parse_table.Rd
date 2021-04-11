@@ -5,14 +5,16 @@
 \alias{get_results_table}
 \title{Collects results from a link to a Flash Results page}
 \usage{
-flash_parse_table(link, wide_format = FALSE)
+flash_parse_table(link, wide_format = FALSE, clean = FALSE)
 
-get_results_table(link, wide_format = FALSE)
+get_results_table(link, wide_format = FALSE, clean = FALSE)
 }
 \arguments{
 \item{link}{a link to an event landing page on flashresults.com}
 
 \item{wide_format}{should results be presented in wide format (defaults to \code{FALSE})}
+
+\item{clean}{should results be cleaned by \code{flash_clean_events}?  Default is \code{FALSE}.}
 }
 \value{
 returns a data frame of results scraped from \code{link}

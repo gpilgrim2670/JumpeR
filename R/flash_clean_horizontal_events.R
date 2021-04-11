@@ -23,10 +23,6 @@ flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_form
   # testing
   # url_TJ <- "https://flashresults.com/2017_Meets/Outdoor/06-22_USATF/029-1_compiledSeries.htm"
   # url_SP <- "https://flashresults.com/2015_Meets/Outdoor/05-28_NCAAEast/017-1_compiledSeries.htm"
-  #
-  # df <- flash_parse_table(url_TJ)
-
-# df <- df_1
 
   df <- df %>%
     data.frame() %>%
@@ -49,8 +45,6 @@ flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_form
     rownames(df) <- NULL # reshape sets row names, remove them
   }
 
-
-
   clean_horizontal_data <- df %>%
     dplyr::mutate(
       Flight = stringr::str_split_fixed(Name, "\\\n", 3)[, 3],
@@ -58,7 +52,7 @@ flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_form
       Name = stringr::str_split_fixed(Name, "\\\n", 3)[, 1]
     ) %>%
     dplyr::mutate(
-      Wind = stringr::str_split_fixed(Result, "\\\n", 3)[, 3],
+      Wind = stringr::str_extract(Result, "w\\:(\\+|\\-)?\\d\\.\\d"),
       Standard = stringr::str_split_fixed(Result, "\\\n", 3)[, 2],
       Result = stringr::str_split_fixed(Result, "\\\n", 3)[, 1]
     ) %>%

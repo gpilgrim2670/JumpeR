@@ -70,6 +70,26 @@ flash_clean_events <- function(df, wide_format_clean = FALSE){
     dplyr::mutate(Age = stringr::str_remove_all(Age, "\\[|\\]")) %>%
     dplyr::mutate(Team = stringr::str_trim(Team))
 
+  # Remove PB type strings
+  # remove PB type strings
+  df <- data.frame(lapply(df, function(x) {
+    remove_string <-
+      paste0(
+        c(
+          "#\\s*(?=\\d{1,4})[0-9]*",
+          "\\$",
+          "( Q )|( q )",
+          "=",
+          " PR$",
+          " SB$",
+          " PB$",
+          "\\[\\d{1,2}\\]"
+        ),
+        collapse = "|"
+      )
+    stringr::str_replace_all(x, remove_string, "")
+  }))
+
 
   # remove empty columns again because the cleaning functions sometimes insert them
   df <- Filter(function(x)

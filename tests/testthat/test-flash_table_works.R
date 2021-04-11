@@ -51,7 +51,7 @@ test_that("flash table horizontal works", {
                                          Name = rep("Darrell Hill", 3),
                                          Event = rep("Shot Put", 3),
                                          Gender = rep("Men", 3),
-                                         Round = c(1, 2, 3),
+                                         Round = c("1", "2", "3"),
                                          Result = c("18.06", "20.33", "19.51"),
                                          Flight = rep("4", 3),
                                          Team = rep("Penn State", 3),

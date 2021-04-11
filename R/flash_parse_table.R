@@ -23,6 +23,7 @@
 #'
 #' @param link a link to an event landing page on flashresults.com
 #' @param wide_format should results be presented in wide format (defaults to \code{FALSE})
+#' @param clean should results be cleaned by \code{flash_clean_events}?  Default is \code{FALSE}.
 #' @return returns a data frame of results scraped from \code{link}
 #'
 #' @examples \donttest{flash_parse_table("https://www.flashresults.com/2019_Meets/Outdoor/06-13_NBNO/067-4_compiled.htm")}
@@ -30,7 +31,7 @@
 #' @export
 
 
-flash_parse_table <- function(link, wide_format = FALSE) {
+flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
 
   # link <- "https://flashresults.com/2015_Meets/Outdoor/06-25_USATF/009-2-01.htm"
   # link <- "https://flashresults.com/2015_Meets/Outdoor/05-28_NCAAEast/005-1-03.htm"
@@ -227,7 +228,6 @@ flash_parse_table <- function(link, wide_format = FALSE) {
     iconv(x, "latin1", "ASCII", sub = "")
   }))
 
-
   # include event name and gender
   df <- df %>%
     dplyr::mutate(Event = event_name,
@@ -275,8 +275,10 @@ flash_parse_table <- function(link, wide_format = FALSE) {
   }
 
   # clean results
-  # df <- df %>%
-  #   flash_clean_events(wide_format_clean = wide_format)
+  if (clean == TRUE) {
+    df <- df %>%
+      flash_clean_events(wide_format_clean = wide_format)
+  }
 
   return(df)
 }
