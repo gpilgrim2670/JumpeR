@@ -69,6 +69,8 @@ utils::globalVariables(
     "Date",
     "where",
     "Input",
-    "Meet"
+    "Meet",
+    "Best",
+    "Height"
   )
 )

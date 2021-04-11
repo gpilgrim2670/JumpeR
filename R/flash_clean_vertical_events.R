@@ -31,7 +31,12 @@ flash_clean_vertical_events <- function(df, wide_format_vertical = wide_format_c
     df %>% # remove tibble class because it doesn't work well with reshape
     data.frame()
 
-  if (wide_format_vertical == FALSE) {
+  # clean up column names
+  names(df) <- str_replace(names(df), "Best\\.Jump", "Best")
+  names(df) <- str_replace(names(df), "Fl\\.\\.Pl\\.", "Flight_Place")
+
+  # convert to long format, requires columns like 3.31m etc.
+  if (all(wide_format_vertical == FALSE & any(stringr::str_detect(names(df), "[0-9]")))) {
     df <- df %>%
       reshape(
         direction = "long",
@@ -45,15 +50,21 @@ flash_clean_vertical_events <- function(df, wide_format_vertical = wide_format_c
     rownames(df) <- NULL # reshape sets row names, remove them
   }
 
+  # break out team names, which are sometimes included in Name
+  if("Team" %!in% names(df)){
   df <- df %>%
     dplyr::mutate(Team = stringr::str_split_fixed(Name, "\\\n", 2)[,2],
                   Name = stringr::str_split_fixed(Name, "\\\n", 2)[,1],)
-
-  if("Best" %in% names(df)){
-    df <- df %>%
-      mutate(Best = stringr::str_split_fixed(Best, "\\\n", 2)[,1])
   }
 
+  # remove standard unit heights from Best
+  if("Best" %in% names(df)){
+    df <- df %>%
+      mutate(Best = stringr::str_split_fixed(Best, "\\\n", 2)[,1],
+             Best = stringr::str_split_fixed(Best, "\\s", 2)[,1])
+  }
+
+  # remove standard unit heights from Height
   if("Height" %in% names(df)){
     df <- df %>%
       mutate(Height = str_replace_all(Height, "m\\.\\d{1,}\\.?", "m"))
