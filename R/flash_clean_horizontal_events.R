@@ -11,6 +11,7 @@
 #' @importFrom dplyr contains
 #' @importFrom stringr str_split_fixed
 #' @importFrom stringr str_remove
+#' @importFrom stringr str_extract
 #'
 #' @param df a data frame of horizontal event data from Flash Results
 #' @param wide_format_horizontal should df be presented in wide format (default is \code{FALSE})?
@@ -47,18 +48,20 @@ flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_form
 
   clean_horizontal_data <- df %>%
     dplyr::mutate(
-      Flight = stringr::str_split_fixed(Name, "\\\n", 3)[, 3],
+      # Flight = stringr::str_split_fixed(Name, "\\\n", 3)[, 3],
+      Flight = stringr::str_extract(Name, "(?<=Flight\\:\\s{1,3})\\d{1,}"),
       Team = stringr::str_split_fixed(Name, "\\\n", 3)[, 2],
       Name = stringr::str_split_fixed(Name, "\\\n", 3)[, 1]
     ) %>%
     dplyr::mutate(
-      Wind = stringr::str_extract(Result, "w\\:(\\+|\\-)?\\d\\.\\d"),
+      Wind = stringr::str_extract(Result, "(?<=w\\:)(\\+|\\-)?\\d\\.\\d"),
       Standard = stringr::str_split_fixed(Result, "\\\n", 3)[, 2],
       Result = stringr::str_split_fixed(Result, "\\\n", 3)[, 1]
     ) %>%
-    dplyr::mutate(Flight = stringr::str_remove(Flight, "Flight\\: ")) %>%
-    dplyr::mutate(Wind = stringr::str_remove(Wind, "\\\n"),
-                  Wind = stringr::str_remove(Wind, "w\\:")) %>%
+    # dplyr::mutate(Flight = stringr::str_remove(Flight, "Flight\\:\\s+")) %>%
+    # dplyr::mutate(Wind = stringr::str_remove(Wind, "\\\n"),
+    #               Wind = stringr::str_remove(Wind, "w\\:")
+    #               ) %>%
     dplyr::na_if("") %>%
     dplyr::select(-Standard)
 

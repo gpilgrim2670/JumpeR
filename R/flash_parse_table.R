@@ -114,7 +114,6 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
 
   }
 
-
   # if the previous code comes up empty
   # this will collect rawer contents of th (headers) and td (cells)
   # and attempt to build a matrix.
@@ -164,8 +163,6 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
       setdiff(blank_col, ifelse(length(reaction_time_col) > 0, min(reaction_time_col), 0)) # don't want to capture reaction time column (if it exists)
     blank_col <- setdiff(blank_col, ifelse(length(athlete_col) > 0, athlete_col, 0)) # don't want to capture athlete colum
   }
-
-
 
   df <- df %>%
     dplyr::rename(
