@@ -12,6 +12,7 @@
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_extract
 #' @importFrom stringr str_trim
+#' @importFrom stringr str_remove_all
 #' @importFrom purrr map
 #'
 #' @param df a data frame or list of data frames containing event data from Flash Results
@@ -63,10 +64,10 @@ flash_clean_events <- function(df, wide_format_clean = FALSE){
     dplyr::mutate(Age = dplyr::case_when(stringr::str_detect(Team, Age_String) == TRUE ~ stringr::str_extract(Team, Age_String),
                            TRUE ~ "NA")) %>%
     dplyr::mutate(Age = stringr::str_trim(Age)) %>%
-    dplyr::mutate(Age = stringr::str_remove(Age, "\\[|\\]")) %>%
     dplyr::na_if("NA") %>%
     dplyr::mutate(Team = dplyr::case_when(is.na(Age) == FALSE ~ stringr::str_remove(Team, Age_String),
                                           TRUE ~ Team)) %>%
+    dplyr::mutate(Age = stringr::str_remove_all(Age, "\\[|\\]")) %>%
     dplyr::mutate(Team = stringr::str_trim(Team))
 
 

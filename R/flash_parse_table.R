@@ -46,6 +46,7 @@ flash_parse_table <- function(link, wide_format = FALSE) {
   # link <- "https://flashresults.com/2015_Meets/Outdoor/05-28_NCAAEast/017-1_compiledSeries.htm"
   # link <- "https://flashresults.com/2016_Meets/Indoor/02-05_CharlieThomasInvite/001-1-03.htm"
   # link <- "https://flashresults.com/2015_Meets/Outdoor/05-28_NCAAEast/017-1_compiledSeries.htm"
+  # link <- "https://www.flashresults.com/2018_Meets/Outdoor/04-06_UVAQuad/014-1-01.htm"
 
   page_content <- xml2::read_html(link, options = c("DTDLOAD", "NOBLANKS"))
 
@@ -133,6 +134,14 @@ flash_parse_table <- function(link, wide_format = FALSE) {
   # Some horizontal events do not name the "Wind" or "Qualifying" (Q/q) column, so we find the blank column and then name it "Placeholder."
   # Some sprint events have an unnamed column for reaction time.  Need to match that.
 
+  if(all(str_detect(names(df)[names(df) != ""], "\\d"))){
+    colnames(df) <- paste(sep = '_', colnames(df), as.character(unlist(df[1,])))
+    colnames(df) <- stringr::str_remove(colnames(df), "^_")
+    colnames(df) <- stringr::str_remove(colnames(df), "_\\d.")
+    colnames(df) <- stringr::str_replace(colnames(df), "NA", "")
+    df <- df[-1, ]
+  }
+
   # athlete column
   athlete_col <-
     which(stringr::str_detect(as.vector(t(df)), "Athlete"))
@@ -149,10 +158,13 @@ flash_parse_table <- function(link, wide_format = FALSE) {
 
   # blank columns
   blank_col <- which(colnames(df) == "")
-  if (length(reaction_time_col) > 0) {
+  if (any(length(reaction_time_col) > 0 | length(athlete_col) > 0)) {
     blank_col <-
-      setdiff(blank_col, min(reaction_time_col)) # don't want to capture reaction time column (if it exists)
+      setdiff(blank_col, ifelse(length(reaction_time_col) > 0, min(reaction_time_col), 0)) # don't want to capture reaction time column (if it exists)
+    blank_col <- setdiff(blank_col, ifelse(length(athlete_col) > 0, athlete_col, 0)) # don't want to capture athlete colum
   }
+
+
 
   df <- df %>%
     dplyr::rename(
@@ -187,6 +199,18 @@ flash_parse_table <- function(link, wide_format = FALSE) {
     flash_gender_parse()
 
   # remove unicode characters of 1/4, 1/2, 3/4, all other unicode characters
+  df <- data.frame(lapply(df, function(x) { # unicode em dashes
+    stringr::str_replace_all(x, "\u0097", "-")
+  }))
+  df <- data.frame(lapply(df, function(x) { # unicode em dashes
+    stringr::str_replace_all(x, "\u2013", "-")
+  }))
+  colnames(df) <- data.frame(lapply(colnames(df), function(x) { # remove all non ASCII characters from column names
+    iconv(x, "latin1", "ASCII", sub = "")
+  }))
+  colnames(df) <- data.frame(lapply(colnames(df), function(x) { # remove remainder of standard meaasurement from height columns (e.g. 3.31m-10 to 3.31m)
+    stringr::str_replace_all(x, "m-\\d{1,3}", "m")
+  }))
   df <- data.frame(lapply(df, function(x) {
     stringr::str_replace_all(x, "\u00BC", "\\.25")
   }))
@@ -199,12 +223,10 @@ flash_parse_table <- function(link, wide_format = FALSE) {
   df <- data.frame(lapply(df, function(x) {
     stringr::str_replace_all(x, "\\-\\.", "\\-0\\.")
   }))
-  df <- data.frame(lapply(df, function(x) { # unicode em dashes
-    stringr::str_replace_all(x, "\u2013", "-")
-  }))
   df <- data.frame(lapply(df, function(x) { # remove all non ASCII characters
     iconv(x, "latin1", "ASCII", sub = "")
   }))
+
 
   # include event name and gender
   df <- df %>%
