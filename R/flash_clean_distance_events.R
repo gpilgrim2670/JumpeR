@@ -48,6 +48,8 @@ flash_clean_distance_events <- function(df, wide_format_distance = wide_format_c
                     Split_Distance = stringr::str_remove(Split_Distance, "^X"),
                     Split_Distance = stringr::str_remove(Split_Distance, "[m|M]\\.?$"))
 
+    rownames(df) <- NULL # reshape sets row names, remove them
+
     # old version, requires tidyr
     # clean_distance_data <- df %>%
     #   tidyr::pivot_longer(matches("[0-9]"), names_to = "SplitDistance", values_to = "SplitTime") %>%
