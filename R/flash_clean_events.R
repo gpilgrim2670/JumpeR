@@ -56,6 +56,7 @@ flash_clean_events <- function(df, wide_format_clean = FALSE){
       purrr::map(flash_clean_events_helper, wide_format_clean_helper = wide_format_clean) %>%
       dplyr::bind_rows() # reassemble df_split into one df
 
+
   }
 
   # Pull out ages
@@ -79,7 +80,11 @@ flash_clean_events <- function(df, wide_format_clean = FALSE){
           "#\\s*(?=\\d{1,4})[0-9]*",
           "\\$",
           "( Q )|( q )",
+          "((?<=\\d)Q )|((?<=\\d) q )",
           "=",
+          "(?<=\\d)PR$",
+          "(?<=\\d)SB$",
+          "(?<=\\d)PB$",
           " PR$",
           " SB$",
           " PB$",

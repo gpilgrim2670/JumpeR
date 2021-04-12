@@ -11,6 +11,7 @@
 #' @importFrom dplyr rename
 #' @importFrom dplyr contains
 #' @importFrom dplyr across
+#' @importFrom dplyr everything
 #' @importFrom stringr str_remove
 #' @importFrom stringr str_match
 #' @importFrom stringr str_detect
@@ -240,12 +241,16 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
       dplyr::mutate(Wind = as.character(wind_value))
   }
 
+  # keep all columns as characters for consistency's sake
+  df <- df %>%
+    dplyr::mutate(dplyr::across(dplyr::everything(), as.character))
+
 
   # keep times as characters for consistency's sake
-  if("Time" %in% names(df)){
-    df <- df %>%
-      dplyr::mutate(Time = as.character(Time))
-  }
+  # if("Time" %in% names(df)){
+  #   df <- df %>%
+  #     dplyr::mutate(Time = as.character(Time))
+  # }
 
   # regularize Name and Athlete columns
   if ("Athlete" %in% names(df)) {
