@@ -49,7 +49,7 @@ flash_clean_events <- function(df, wide_format_clean = FALSE){
 
   } else { # if there are two events in the data frame split by event and map flash_clean_events_helper
     df_split <- df %>%
-      dplyr::group_split(Event) %>%
+      dplyr::group_split(Event, Gender) %>%
       purrr::map(~ .x %>% dplyr::select(where(~ !(all(is.na(.)) | all(. == ""))))) # remove empty columns, helps make binding smoother in next step
 
     df <- df_split %>%
