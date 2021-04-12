@@ -9,6 +9,7 @@
 #' @importFrom dplyr everything
 #' @importFrom dplyr na_if
 #' @importFrom dplyr contains
+#' @importFrom dplyr filter
 #' @importFrom stringr str_split_fixed
 #' @importFrom stringr str_remove
 #' @importFrom stringr str_extract
@@ -25,17 +26,23 @@ flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_form
   # url_TJ <- "https://flashresults.com/2017_Meets/Outdoor/06-22_USATF/029-1_compiledSeries.htm"
   # url_SP <- "https://flashresults.com/2015_Meets/Outdoor/05-28_NCAAEast/017-1_compiledSeries.htm"
 
+
   df <- df %>%
     data.frame() %>%
     dplyr::select(Place, Name, dplyr::starts_with("R"), Event, Gender, dplyr::contains("Order"), dplyr::contains("Wind"))
 
   if (wide_format_horizontal == FALSE) {
 
+    varying_cols <- grep("^R", names(df))
+
+    # only attempt to convert to long format if there are actual round columns present
+    if(length(varying_cols) > 0) {
+
     # need this as a separate step because `varying` reaches for names(df) and those are changed by `select` above
     df <- df %>%
       reshape(
         direction = "long",
-        varying = grep("^R", names(df)),
+        varying = varying_cols,
         sep = "",
         timevar = "Round",
         ids = row.names(df),
@@ -44,6 +51,7 @@ flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_form
       dplyr::select(-id)
 
     rownames(df) <- NULL # reshape sets row names, remove them
+    }
   }
 
   clean_horizontal_data <- df %>%
@@ -63,6 +71,7 @@ flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_form
     #               Wind = stringr::str_remove(Wind, "w\\:")
     #               ) %>%
     dplyr::na_if("") %>%
+    dplyr::filter(is.na(Result) == FALSE) %>%
     dplyr::select(-Standard)
 
   # Drops all-NA wind column from throws and indoor meets

@@ -36,18 +36,29 @@ flash_clean_vertical_events <- function(df, wide_format_vertical = wide_format_c
   names(df) <- str_replace(names(df), "Fl\\.\\.Pl\\.", "Flight_Place")
 
   # convert to long format, requires columns like 3.31m etc.
-  if (all(wide_format_vertical == FALSE & any(stringr::str_detect(names(df), "[0-9]")))) {
+
+
+  # if (all(wide_format_vertical == FALSE & any(stringr::str_detect(names(df), "[0-9]")))) {
+  if (wide_format_vertical == FALSE) {
+
+    varying_cols <- grepl("[0-9]", names(df))
+
+    # only attempt to convert to long format if there are actual round columns present
+    if(length(varying_cols) > 0) {
+
     df <- df %>%
       reshape(
         direction = "long",
-        varying = grepl("[0-9]", names(df)),
+        varying = varying_cols,
         sep = "",
         timevar = "Height",
         ids = row.names(df)
       ) %>%
-      dplyr::select(dplyr::everything(), "Result" = "X",-id)
+      dplyr::select(dplyr::everything(), "Result" = "X",-id) %>%
+      dplyr::filter(is.na(Result) == FALSE) # remove rows without a result
 
     rownames(df) <- NULL # reshape sets row names, remove them
+    }
   }
 
   # break out team names, which are sometimes included in Name
