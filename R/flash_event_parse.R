@@ -15,6 +15,11 @@
 
 flash_event_parse <- function(text){
 
+  #### testing ####
+  # link <- "https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/022-1-01.htm"
+  # text <- xml2::read_html(link, options = c("DTDLOAD", "NOBLANKS")) %>%
+  #   rvest::html_text()
+
   # build list of regex for all event names
   all_events <-
     paste0(
@@ -29,15 +34,15 @@ flash_event_parse <- function(text){
         "Triple jump",
         "((Hep|Pen|Dec)(.*\\s))?High jump",
         "((Hep|Pen|Dec)(.*\\s))?Pole vault",
-        "((Hep|Pen|Dec)(.*\\s))?\\d{2,5}\\s*m(eter)?",
+        "\\d{1,5}.*walk",
+        "\\d000\\s*m\\sSteeplechase",
+        "((Hep|Pen|Dec)(.*\\s))?\\d{2,5}\\s*m(eter)?", # also captures regular running events like 400m etc.
         "\\d mile",
         "\\d?\\s?x?\\s?\\d{3,4} relay",
         "distance relay",
         "distance medley relay",
         "\\dx\\d{2,}\\s*m\\srelay", # for relays
-        "((Hep|Pen|Dec)(.*\\s))?\\d{2,3}\\s*m[:alpha:]*\\s*h[:alpha:]*",
-        "\\d000\\s*m\\sSteeplechase",
-        "walk"
+        "((Hep|Pen|Dec)(.*\\s))?\\d{2,3}\\s*m[:alpha:]*\\s*h[:alpha:]*"
       ),
       collapse = "|"
     )
@@ -60,8 +65,8 @@ flash_event_parse <- function(text){
     stringr::str_replace("(\\d)\\s\\M$", "\\1m") %>% # bring M next to digit as m
     stringr::str_replace("(\\d)\\s\\M ", "\\1m ") %>% # bring M next to digit as m
     stringr::str_replace("(\\d)\\s\\M(eter)? Hurdles$", "\\1m Hurdles") %>%
-    stringr::str_replace("1 Mile", "Mile") %>% # reformat mile event name
-    stringr::str_replace("(\\d)0000m$", "\\10000m Race Walk") # name race walks
+    stringr::str_replace("1 Mile", "Mile") # reformat mile event name
+    # stringr::str_replace("(\\d)0000m$", "\\10000m Race Walk") # name race walks
 
   return(event_name)
 }

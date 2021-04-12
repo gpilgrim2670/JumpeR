@@ -184,19 +184,6 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   # remove duplicated columns
   # df[!duplicated(as.list(df))]
 
-  # Add event and gender to the result table
-  # convert page content to a vector
-  page_content_vector <- page_content %>%
-    rvest::html_text()
-
-  # determine name of event
-  event_name <- page_content_vector %>%
-    flash_event_parse()
-
-  # determine gender of event
-  event_gender <- page_content_vector %>%
-    flash_gender_parse()
-
   # remove unicode characters of 1/4, 1/2, 3/4, all other unicode characters
   df <- data.frame(lapply(df, function(x) { # unicode em dashes
     stringr::str_replace_all(x, "\u0097", "-")
@@ -225,6 +212,19 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   df <- data.frame(lapply(df, function(x) { # remove all non ASCII characters
     iconv(x, "latin1", "ASCII", sub = "")
   }))
+
+  # Add event and gender to the result table
+  # convert page content to a vector
+  page_content_vector <- page_content %>%
+    rvest::html_text()
+
+  # determine name of event
+  event_name <- page_content_vector %>%
+    flash_event_parse()
+
+  # determine gender of event
+  event_gender <- page_content_vector %>%
+    flash_gender_parse()
 
   # include event name and gender
   df <- df %>%

@@ -23,6 +23,12 @@ flash_clean_distance_events <- function(df, wide_format_distance = wide_format_c
   # testing
   # url_1500 <- "https://flashresults.com/2015_Meets/Outdoor/05-28_NCAAEast/005-1-03.htm"
   # df <- flash_parse_table(url_1500)
+  # url_steeple <- "https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/022-1_compiled.htm"
+  # url_10000 <- "https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/013-1_compiled.htm"
+  # url_racewalk <- "https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/019-1_compiled.htm"
+  #
+  # df <- url_10000 %>%
+  #   flash_parse_table()
 
   df <- df %>%
     data.frame() %>%
@@ -33,22 +39,28 @@ flash_clean_distance_events <- function(df, wide_format_distance = wide_format_c
 
     varying_cols <- names(df)[grep("(^X\\d)|(^Lap)|(^L\\d)", names(df))] # determine names of varying columns
 
-    df <- df %>%
-      reshape(
-        direction = "long",
-        # varying = grep("^X\\d", names(df)),
-        varying = varying_cols,
-        sep = "",
-        timevar = "Split_Distance",
-        ids = row.names(df),
-        v.names = "Split_Time"
-      ) %>%
-      dplyr::select(-id) %>%
-      dplyr::mutate(Split_Distance = varying_cols[Split_Distance], # reshape converts varying cols to indexes for some reason, this is a workaround
-                    Split_Distance = stringr::str_remove(Split_Distance, "^X"),
-                    Split_Distance = stringr::str_remove(Split_Distance, "[m|M]\\.?$"))
+    # only attempt to convert to long format if there are actual split columns present
+    if(length(varying_cols) > 0) {
+      df <- df %>%
+        reshape(
+          direction = "long",
+          # varying = grep("^X\\d", names(df)),
+          varying = varying_cols,
+          sep = "",
+          timevar = "Split_Distance",
+          ids = row.names(df),
+          v.names = "Split_Time"
+        ) %>%
+        dplyr::select(-id) %>%
+        dplyr::mutate(
+          Split_Distance = varying_cols[Split_Distance],
+          # reshape converts varying cols to indexes for some reason, this is a workaround
+          Split_Distance = stringr::str_remove(Split_Distance, "^X"),
+          Split_Distance = stringr::str_remove(Split_Distance, "[m|M]\\.?$")
+        )
 
-    rownames(df) <- NULL # reshape sets row names, remove them
+      rownames(df) <- NULL # reshape sets row names, remove them
+    }
 
     # old version, requires tidyr
     # clean_distance_data <- df %>%
