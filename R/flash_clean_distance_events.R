@@ -74,6 +74,14 @@ flash_clean_distance_events <- function(df, wide_format_distance = wide_format_c
     dplyr::rename("Result" = "Time") %>%
     dplyr::mutate(dplyr::across(where(is.character), stringr::str_trim)) # remove whitespaces
 
+  if("Team" %in% names(clean_distance_data ) == FALSE){
+    clean_distance_data  <- clean_distance_data  %>%
+      dplyr::mutate(
+        Team = stringr::str_split_fixed(Name, "\\\n", 3)[, 2],
+        Name = stringr::str_split_fixed(Name, "\\\n", 3)[, 1]
+      )
+  }
+
   # drops all-NA columns
   clean_distance_data <- Filter(function(x)
     ! all(is.na(x)), clean_distance_data)

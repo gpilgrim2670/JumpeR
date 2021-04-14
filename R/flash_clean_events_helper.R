@@ -15,7 +15,7 @@ flash_clean_events_helper <-
   function(df_helper = df,
            wide_format_clean_helper = wide_format_clean) {
 
-    df_helper <- df
+    # df_helper <- df
 
     event_name_helper <- unique(df_helper$Event)
 

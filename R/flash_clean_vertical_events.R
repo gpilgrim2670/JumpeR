@@ -17,18 +17,22 @@
 
 flash_clean_vertical_events <- function(df, wide_format_vertical = wide_format_clean) {
 
+  #### testing ####
   # url_PV <- "https://flashresults.com/2015_Meets/Outdoor/06-25_USATF/025-1-01.htm"
   # url_2017_PV <- "https://flashresults.com/2017_Meets/Outdoor/06-22_USATF/026-1-01.htm"
   # url_2017_HJ <- "https://flashresults.com/2017_Meets/Outdoor/06-22_USATF/024-1-01.htm"
   # url_ncaa_PV <- "https://flashresults.com/2015_Meets/Outdoor/05-28_NCAAEast/033-1-01.htm"
   # df <- flash_parse_table(url_PV)
+  # df <- "https://www.flashresults.com/2021_Meets/Indoor/03-11_NCAA/033-6_compiled.htm" %>%
+  #   flash_parse_table()
+
+  #### begin actual function ####
 
   if (any(stringr::str_detect(df[1, ], "(^Place$)|(^Athlete$)|(^Order$)|(^Jump$)"), na.rm = TRUE)) {
     df <- df[-1,] # remove first row if it contains header information
   }
 
-  df <-
-    df %>% # remove tibble class because it doesn't work well with reshape
+  df <- df %>% # remove tibble class because it doesn't work well with reshape
     data.frame()
 
   # clean up column names
@@ -41,7 +45,7 @@ flash_clean_vertical_events <- function(df, wide_format_vertical = wide_format_c
   # if (all(wide_format_vertical == FALSE & any(stringr::str_detect(names(df), "[0-9]")))) {
   if (wide_format_vertical == FALSE) {
 
-    varying_cols <- grepl("[0-9]", names(df))
+    varying_cols <- names(df)[grepl("[0-9]", names(df))]
 
     # only attempt to convert to long format if there are actual round columns present
     if(length(varying_cols) > 0) {
