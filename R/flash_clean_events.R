@@ -9,6 +9,7 @@
 #' @importFrom dplyr bind_rows
 #' @importFrom dplyr case_when
 #' @importFrom dplyr na_if
+#' @importFrom dplyr rename
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_extract
 #' @importFrom stringr str_trim
@@ -57,6 +58,19 @@ flash_clean_events <- function(df, wide_format_clean = FALSE){
       dplyr::bind_rows() # reassemble df_split into one df
 
 
+  }
+
+  # rename Team/Name columns for relay
+  relay_strings <- paste0(c("x", "Relay", "Medley"), collapse = "|")
+
+  if(any(stringr::str_detect(df$Event, relay_strings))){
+    if("Name" %in% names(df) & "Team" %!in% names(df)){
+      df <- df %>%
+        dplyr::rename("Team" = "Name")
+    } else if("Name" %in% names(df) & "Team" %in% names(df)){
+      df <- df %>%
+        dplyr::select(-Name)
+    }
   }
 
   # Pull out ages

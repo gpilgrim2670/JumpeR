@@ -28,7 +28,7 @@ flash_clean_events_helper <-
                           "Hammer",
                           "Weight")
     distance_names <- c("^\\d?[5-9|0]\\d0m", "^\\d\\d\\d0m", "^\\d?[5-9|0]\\d0 M", "^\\d\\d\\d0 M", " \\d?[5-9|0]\\d0m", " \\d\\d\\d\\d0m", " \\d?[5-9|0]\\d0 M", " \\d\\d\\d0 M", "Mile", "Race Walk", "\\d{5}", "Distance")
-    sprint_names <- c("^[1-4]?[0-9]\\dm", "^[1-4]?[0-9]\\d M", " [1-4]?[0-9]\\dm", " [1-4]?[0-9]\\d M")
+    sprint_names <- c("^[1-4]?[0-9]\\dm", "^[1-4]?[0-9]\\d M", " [1-4]?[0-9]\\dm", " [1-4]?[0-9]\\d M", "Sprint")
     relay_names <- c("Relay", "relay")
 
     if (any(str_detect(event_name_helper, vertical_names)) == TRUE) {

@@ -38,7 +38,7 @@ flash_event_parse <- function(text){
         "\\d{1,5}.*walk",
         "\\d000\\s*m\\sSteeplechase",
         "distance relay",
-        "distance medley( relay)?",
+        "[:alpha:]+ medley( relay)?",
         "((Hep|Pen|Dec)(.*\\s))?\\d{2,5}\\s*m(eter)?", # also captures regular running events like 400m etc.
         "\\d?( Bowerman)? +mile(.*Bowerman)?(.*walk)?", # miles and racewalks as 2 Mile etc.
         "\\d?\\s?x?\\s?\\d{3,4} relay",

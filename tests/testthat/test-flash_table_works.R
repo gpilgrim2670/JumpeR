@@ -192,7 +192,7 @@ test_that("flash table distance medley", {
     # build standard
     df_standard_distance_medley <- data.frame(
       Place = rep("1", 4),
-      Name = rep("Arkansas", 4),
+      # Name = rep("Arkansas", 4),
       Team = rep("Arkansas", 4),
       Result = rep("10:51.89", 4),
       Event = rep("Distance Medley", 4),
