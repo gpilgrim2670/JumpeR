@@ -66,7 +66,8 @@ flash_event_parse <- function(text){
     stringr::str_replace("(\\d)\\s\\M$", "\\1m") %>% # bring M next to digit as m
     stringr::str_replace("(\\d)\\s\\M ", "\\1m ") %>% # bring M next to digit as m
     stringr::str_replace("(\\d)\\s\\M(eter)? Hurdles$", "\\1m Hurdles") %>%
-    stringr::str_replace("1 Mile", "Mile") # reformat mile event name
+    stringr::str_replace("1 Mile", "Mile") %>%  # reformat mile event name
+    stringr::str_remove("(Women )|(Men )|(Boys )|(Girls)|(Mixed )")
     # stringr::str_replace("(\\d)0000m$", "\\10000m Race Walk") # name race walks
 
   return(event_name)

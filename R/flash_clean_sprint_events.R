@@ -9,6 +9,7 @@
 #' @importFrom dplyr across
 #' @importFrom stringr str_trim
 #' @importFrom stringr str_remove
+#' @importFrom stringr str_split_fixed
 #'
 #' @param df a data frame of sprint event data from Flash Results
 #' @return a cleaned version of df
@@ -29,6 +30,14 @@ flash_clean_sprint_events <- function(df) {
     dplyr::mutate(Time = stringr::str_remove(Time, "Q|q")) %>%
     dplyr::rename("Result" = "Time") %>%
     dplyr::mutate(dplyr::across(where(is.character), stringr::str_trim)) # remove whitespaces
+
+  if("Team" %in% names(clean_sprint_data) == FALSE){
+    clean_sprint_data <- clean_sprint_data %>%
+    dplyr::mutate(
+      Team = stringr::str_split_fixed(Name, "\\\n", 3)[, 2],
+      Name = stringr::str_split_fixed(Name, "\\\n", 3)[, 1]
+    )
+  }
 
   return(clean_sprint_data)
 

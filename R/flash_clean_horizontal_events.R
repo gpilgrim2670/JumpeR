@@ -26,10 +26,19 @@ flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_form
   # url_TJ <- "https://flashresults.com/2017_Meets/Outdoor/06-22_USATF/029-1_compiledSeries.htm"
   # url_SP <- "https://flashresults.com/2015_Meets/Outdoor/05-28_NCAAEast/017-1_compiledSeries.htm"
 
-
   df <- df %>%
     data.frame() %>%
-    dplyr::select(Place, Name, dplyr::starts_with("R"), Event, Gender, dplyr::contains("Order"), dplyr::contains("Wind"))
+    dplyr::select(
+      Place,
+      Name,
+      dplyr::starts_with("R"),
+      Event,
+      Gender,
+      dplyr::contains("Order"),
+      dplyr::contains("Wind"),
+      dplyr::contains("Best"),
+      dplyr::contains("Points"), # for decathlon points
+    )
 
   if (wide_format_horizontal == FALSE) {
 
@@ -60,7 +69,10 @@ flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_form
       Flight = stringr::str_extract(Name, "(?<=Flight\\:\\s{1,3})\\d{1,}"),
       Team = stringr::str_split_fixed(Name, "\\\n", 3)[, 2],
       Name = stringr::str_split_fixed(Name, "\\\n", 3)[, 1]
-    ) %>%
+    )
+
+  if("Result" %in% names(clean_horizontal_data)){
+    clean_horizontal_data <- clean_horizontal_data %>%
     dplyr::mutate(
       Wind = stringr::str_extract(Result, "(?<=w\\:)(\\+|\\-)?\\d\\.\\d"),
       Standard = stringr::str_split_fixed(Result, "\\\n", 3)[, 2],
@@ -73,6 +85,12 @@ flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_form
     dplyr::na_if("") %>%
     dplyr::filter(is.na(Result) == FALSE) %>%
     dplyr::select(-Standard)
+  }
+
+  if("Best" %in% names(clean_horizontal_data)){
+    clean_horizontal_data <- clean_horizontal_data %>%
+      dplyr::mutate(Best = stringr::str_split_fixed(Best, "\\\n", 2)[, 1])
+  }
 
   # Drops all-NA wind column from throws and indoor meets
   clean_horizontal_data <- Filter(function(x)
