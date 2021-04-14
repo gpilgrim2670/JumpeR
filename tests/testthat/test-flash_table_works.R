@@ -176,4 +176,41 @@ test_that("flash table distance", {
   }
 })
 
+test_that("flash table distance medley", {
+
+  skip_on_cran() # due to risk of external resources failing
+
+  file <-
+    "https://flashresults.com/2015_Meets/Indoor/03-13_NCAA/026-1-01.htm"
+
+  data <- try(flash_parse_table(file), silent = TRUE)
+
+  if (any(grep("error", class(data)))) {
+    skip("Link to external data is broken")
+  } else {
+
+    # build standard
+    df_standard_distance_medley <- data.frame(
+      Place = rep("1", 4),
+      Name = rep("Arkansas", 4),
+      Team = rep("Arkansas", 4),
+      Result = rep("10:51.89", 4),
+      Event = rep("Distance Medley", 4),
+      Gender = rep("Women", 4),
+      Split_Distance = c("L1", "L2", "L3", "L4."),
+      Split_Time = c("3:22.87", "4:15.71", "6:23.00", "10:51.89"),
+      stringsAsFactors = FALSE
+    )
+
+    # generate test df
+    df_test <- data %>%
+      flash_clean_events() %>%
+      filter(Place == 1)
+
+    # test
+    expect_equivalent(df_standard_distance_medley,
+                      df_test)
+  }
+})
+
 # testthat::test_file("tests/testthat/test-flash_table_works.R")

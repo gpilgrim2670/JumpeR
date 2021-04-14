@@ -17,6 +17,7 @@ flash_event_parse <- function(text){
 
   #### testing ####
   # link <- "https://www.flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/022-1-01.htm"
+  # link <- "https://flashresults.com/2015_Meets/Indoor/03-13_NCAA/026-1-01.htm"
   # text <- xml2::read_html(link, options = c("DTDLOAD", "NOBLANKS")) %>%
   #   rvest::html_text()
 
@@ -36,11 +37,11 @@ flash_event_parse <- function(text){
         "((Hep|Pen|Dec)(.*\\s))?Pole vault",
         "\\d{1,5}.*walk",
         "\\d000\\s*m\\sSteeplechase",
+        "distance relay",
+        "distance medley( relay)?",
         "((Hep|Pen|Dec)(.*\\s))?\\d{2,5}\\s*m(eter)?", # also captures regular running events like 400m etc.
         "\\d?( Bowerman)? +mile(.*Bowerman)?(.*walk)?", # miles and racewalks as 2 Mile etc.
         "\\d?\\s?x?\\s?\\d{3,4} relay",
-        "distance relay",
-        "distance medley relay",
         "\\dx\\d{2,}\\s*m\\srelay", # for relays
         "((Hep|Pen|Dec)(.*\\s))?\\d{2,3}\\s*m[:alpha:]*\\s*h[:alpha:]*"
       ),
