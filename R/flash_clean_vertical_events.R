@@ -7,6 +7,9 @@
 #' @importFrom dplyr select
 #' @importFrom dplyr mutate
 #' @importFrom dplyr everything
+#' @importFrom dplyr starts_with
+#' @importFrom dplyr rename_with
+#' @importFrom stringr str_remove
 #' @importFrom stringr str_split_fixed
 #'
 #' @param df a data frame of vertical event data from Flash Results
@@ -64,6 +67,9 @@ flash_clean_vertical_events <- function(df, wide_format_vertical = wide_format_c
     rownames(df) <- NULL # reshape sets row names, remove them
     }
   }
+
+  df <- df %>%
+    dplyr::rename_with(cols = dplyr::starts_with("Best"), ~stringr::str_remove(., "(?<=(Best)).*"))
 
   # break out team names, which are sometimes included in Name
   if("Team" %!in% names(df)){

@@ -10,6 +10,8 @@
 #' @importFrom dplyr na_if
 #' @importFrom dplyr contains
 #' @importFrom dplyr filter
+#' @importFrom dplyr rename_with
+#' @importFrom dplyr starts_with
 #' @importFrom stringr str_split_fixed
 #' @importFrom stringr str_remove
 #' @importFrom stringr str_extract
@@ -64,6 +66,7 @@ flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_form
   }
 
   clean_horizontal_data <- df %>%
+    dplyr::rename_with(cols = dplyr::starts_with("Best"), ~stringr::str_remove(., "(?<=(Best)).*")) %>%
     dplyr::mutate(
       # Flight = stringr::str_split_fixed(Name, "\\\n", 3)[, 3],
       Flight = stringr::str_extract(Name, "(?<=Flight\\:\\s{1,3})\\d{1,}"),
@@ -89,7 +92,8 @@ flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_form
 
   if("Best" %in% names(clean_horizontal_data)){
     clean_horizontal_data <- clean_horizontal_data %>%
-      dplyr::mutate(Best = stringr::str_split_fixed(Best, "\\\n", 2)[, 1])
+      dplyr::mutate(Best = stringr::str_split_fixed(Best, "\\\n", 2)[, 1]) %>%
+      dplyr::mutate(Best = stringr::str_remove(Best, " \\(\\d{1,3}\\-\\d{1,2}\\.?\\d{0,2}")) # remove results in standard units
   }
 
   # Drops all-NA wind column from throws and indoor meets
