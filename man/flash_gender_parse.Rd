@@ -2,7 +2,7 @@
 % Please edit documentation in R/flash_gender_parse.R
 \name{flash_gender_parse}
 \alias{flash_gender_parse}
-\title{Pulls out event label from text of flash results html page}
+\title{Pulls out gender label from text of flash results html page}
 \usage{
 flash_gender_parse(text)
 }
@@ -13,7 +13,7 @@ flash_gender_parse(text)
 a one element list containing the gender of the event
 }
 \description{
-Locates an event label in text of results from a flash results html page for a given event.
+Locates an gender label in text of results from a flash results html page for a given event.
 }
 \seealso{
 \code{flash_gender_parse} is a helper function inside \code{\link{flash_parse_table}}

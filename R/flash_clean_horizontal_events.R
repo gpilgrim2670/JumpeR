@@ -40,6 +40,7 @@ flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_form
       dplyr::contains("Wind"),
       dplyr::contains("Best"),
       dplyr::contains("Points"), # for decathlon points
+      dplyr::contains("Date"),
     )
 
   if (wide_format_horizontal == FALSE) {

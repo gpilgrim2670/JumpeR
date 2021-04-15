@@ -49,6 +49,11 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   # link <- "https://flashresults.com/2016_Meets/Indoor/02-05_CharlieThomasInvite/001-1-03.htm"
   # link <- "https://flashresults.com/2015_Meets/Outdoor/05-28_NCAAEast/017-1_compiledSeries.htm"
   # link <- "https://www.flashresults.com/2018_Meets/Outdoor/04-06_UVAQuad/014-1-01.htm"
+  # link <- "https://www.flashresults.com/2021_Meets/Indoor/03-11_NCAA/033-6_compiled.htm"
+  # link <- "https://www.flashresults.com/2021_Meets/Indoor/03-11_NCAA/033-3_compiled.htm"
+  # link <- "https://www.flashresults.com/2021_Meets/Indoor/03-11_NCAA/033-3_compiled.htm"
+  # link <- "https://www.flashresults.com/2021_Meets/Indoor/03-11_NCAA/033-5_compiled.htm"
+  # link <- "https://www.flashresults.com/2015_Meets/Outdoor/05-01_Dogwood/012-1_compiled.htm"
 
   page_content <- xml2::read_html(link, options = c("DTDLOAD", "NOBLANKS"))
 
@@ -226,10 +231,15 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   event_gender <- page_content_vector %>%
     flash_gender_parse()
 
+  # determine date of event
+  event_date <- page_content_vector %>%
+    flash_date_parse()
+
   # include event name and gender
   df <- df %>%
     dplyr::mutate(Event = event_name,
-                  Gender = event_gender) %>%
+                  Gender = event_gender,
+                  Date = event_date) %>%
     # dplyr::select(-matches("Placeholder")) %>%
     dplyr::mutate(dplyr::across(where(is.character), stringr::str_trim)) %>%  # remove whitespaces
     dplyr::na_if("") %>%  # blank cells to NA
