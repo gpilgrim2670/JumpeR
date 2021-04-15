@@ -7,9 +7,12 @@
 #' @importFrom dplyr mutate
 #' @importFrom dplyr rename
 #' @importFrom dplyr across
+#' @importFrom dplyr na_if
 #' @importFrom stringr str_trim
 #' @importFrom stringr str_remove
 #' @importFrom stringr str_split_fixed
+#' @importFrom stringr str_extract
+#' @importFrom stringr str_detect
 #'
 #' @param df a data frame of sprint event data from Flash Results
 #' @return a cleaned version of df
@@ -29,7 +32,11 @@ flash_clean_sprint_events <- function(df) {
   clean_sprint_data <- df %>%
     dplyr::mutate(Time = stringr::str_remove(Time, "Q|q")) %>%
     dplyr::rename("Result" = "Time") %>%
-    dplyr::mutate(dplyr::across(where(is.character), stringr::str_trim)) # remove whitespaces
+    dplyr::mutate(Tiebreaker = dplyr::case_when(stringr::str_detect(Result, "\\(\\d{1,2}\\.\\d{3}\\)") == TRUE ~ stringr::str_extract(Result, "\\d{1,2}\\.\\d{3}"),
+                                                TRUE ~ "NA")) %>%
+    dplyr::mutate(Result = stringr::str_remove(Result, "\\(\\d{1,2}\\.\\d{3}\\)")) %>%
+    dplyr::na_if("NA") %>%
+    dplyr::mutate(dplyr::across(where(is.character), stringr::str_trim))  # remove whitespaces
 
   if("Team" %in% names(clean_sprint_data) == FALSE){
     clean_sprint_data <- clean_sprint_data %>%

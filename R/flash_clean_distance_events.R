@@ -9,6 +9,7 @@
 #' @importFrom dplyr across
 #' @importFrom dplyr rename
 #' @importFrom dplyr matches
+#' @importFrom dplyr na_if
 #' @importFrom stringr str_trim
 #' @importFrom stringr str_remove
 #'
@@ -72,6 +73,10 @@ flash_clean_distance_events <- function(df, wide_format_distance = wide_format_c
 
   clean_distance_data <- df %>%
     dplyr::rename("Result" = "Time") %>%
+    dplyr::mutate(Tiebreaker = dplyr::case_when(stringr::str_detect(Result, "\\(\\d{1,2}\\.\\d{3}\\)") == TRUE ~ stringr::str_extract(Result, "\\d{1,2}\\.\\d{3}"),
+                                                TRUE ~ "NA")) %>%
+    dplyr::na_if("NA") %>%
+    dplyr::mutate(Result = stringr::str_remove(Result, "\\(\\d{1,2}\\.\\d{3}\\)")) %>%
     dplyr::mutate(dplyr::across(where(is.character), stringr::str_trim)) # remove whitespaces
 
   if("Team" %in% names(clean_distance_data ) == FALSE){
