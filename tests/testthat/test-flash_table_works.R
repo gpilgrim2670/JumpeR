@@ -230,12 +230,12 @@ test_that("flash table Pent 800m", {
     # build standard
     df_standard_pent <- data.frame(
       Place = c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16"),
-      Name = c("Halley FOLSOM", "Sterling LESTER", "Jadin O'BRIEN", "Anna HALL", "Erin MARSH", "Kristine BLAZEVICA", "Mathilde REY", "Alix STILL", "Anna BUSH", "Jordan HIRSBRUNNER", "Annika WILLIAMS", "Nicola ADER", "Shayla BROUGHTON", "Allison GERADS", "Tyra GITTENS", "G'Auna EDWARDS" ),
+      Name = c("Halley FOLSOM", "Sterling LESTER", "Jadin O'BRIEN", "Anna HALL", "Erin MARSH", "Kristine BLAZEVICA", "Mathilde REY", "Alix STILL", "Anna BUSH", "Jordan HIRSBRUNNER", "Annika WILLIAMS", "Nicola ADER", "Shayla BROUGHTON", "Allison GERADS", "Tyra GITTENS", "G'Auna EDWARDS"),
       Result = c("2:10.86", "2:12.13", "2:13.13", "2:13.19", "2:17.53", "2:18.59", "2:18.63", "2:21.70", "2:22.65", "2:22.90", "2:24.59", "2:25.95", "2:26.37", "2:27.20", "2:28.22", "2:29.24"),
       Points = c("952", "934", "919", "918", "857", "843", "842", "801", "788", "785", "762", "745", "739", "728", "715", "702"),
       Event = rep("Pent 800m", 16),
       Gender = rep("Women", 16),
-      Team = c("BYU", "Florida", "Notre Dame", "Georgia", "Duke", "Texas", "Oregon", "Virginia", "Wake Forest", "Wisconsin", "Kentucky", "Nevada", "Miss State", "Minnesota", "Texas A&M", "Arkansas" ),
+      Team = c("BYU", "Florida", "Notre Dame", "Georgia", "Duke", "Texas", "Oregon", "Virginia", "Wake Forest", "Wisconsin", "Kentucky", "Nevada", "Miss State", "Minnesota", "Texas A&M", "Arkansas"),
       Age = c("SR", "JR", "FR", "SO", "SR", "FR", "SO", "JR", "SO", "SO", "SO", "SR", "SR", "JR", "JR", "JR"),
       stringsAsFactors = FALSE
     )
@@ -247,6 +247,45 @@ test_that("flash table Pent 800m", {
 
     # test
     expect_equivalent(df_standard_pent,
+                      df_test)
+  }
+})
+
+test_that("flash table 400m tiebreaker", {
+
+  # these results should contain a tiebreaker column
+
+  skip_on_cran() # due to risk of external resources failing
+
+  file <-
+    "https://www.flashresults.com/2015_Meets/Indoor/01-09_TamuHS/023-2_compiled.htm"
+
+  data <- try(flash_parse_table(file), silent = TRUE)
+
+  if (any(grep("error", class(data)))) {
+    skip("Link to external data is broken")
+  } else {
+
+    # build standard
+    df_standard_tiebreaker <- data.frame(
+      Place = c("1", "2", "3"),
+      Name = c("Howard Fields", "Drake Murphy", "Desmond Jefferson"),
+      Team = c("Wings", "Mainland Jaguars", "A Running Start TC"),
+      Result = c("48.50", "48.50", "49.09"),
+      Event = rep("400m", 3),
+      Gender = rep("Boys", 3),
+      Tiebreaker = c("48.491", "48.496", NA),
+      stringsAsFactors = FALSE
+    )
+
+    # generate test df
+    df_test <- data %>%
+      flash_clean_events() %>%
+      select(-`Heat..Pl.`) %>%
+      filter(as.numeric(Place) <= 3)
+
+    # test
+    expect_equivalent(df_standard_tiebreaker,
                       df_test)
   }
 })
