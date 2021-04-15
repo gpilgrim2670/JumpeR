@@ -204,7 +204,7 @@ test_that("flash table distance medley", {
       Event = rep("Distance Medley", 4),
       Gender = rep("Women", 4),
       Date = rep("Mar 15", 4),
-      Split_Distance = c("L1", "L2", "L3", "L4."),
+      Split_Distance = c("L1", "L2", "L3", "L4"),
       Split_Time = c("3:22.87", "4:15.71", "6:23.00", "10:51.89"),
       stringsAsFactors = FALSE
     )

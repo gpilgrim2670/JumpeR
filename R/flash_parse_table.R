@@ -54,6 +54,7 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   # link <- "https://www.flashresults.com/2021_Meets/Indoor/03-11_NCAA/033-3_compiled.htm"
   # link <- "https://www.flashresults.com/2021_Meets/Indoor/03-11_NCAA/033-5_compiled.htm"
   # link <- "https://www.flashresults.com/2015_Meets/Outdoor/05-01_Dogwood/012-1_compiled.htm"
+  # link <- "https://www.flashresults.com/2021_Meets/Indoor/03-11_NCAA/033-3_compiledSeries.htm"
 
   page_content <- xml2::read_html(link, options = c("DTDLOAD", "NOBLANKS"))
 
@@ -190,30 +191,39 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   # df[!duplicated(as.list(df))]
 
   # remove unicode characters of 1/4, 1/2, 3/4, all other unicode characters
-  df <- data.frame(lapply(df, function(x) { # unicode em dashes
-    stringr::str_replace_all(x, "\u0097", "-")
-  }))
-  df <- data.frame(lapply(df, function(x) { # unicode em dashes
-    stringr::str_replace_all(x, "\u2013", "-")
-  }))
   colnames(df) <- data.frame(lapply(colnames(df), function(x) { # remove all non ASCII characters from column names
     iconv(x, "latin1", "ASCII", sub = "")
   }))
-  colnames(df) <- data.frame(lapply(colnames(df), function(x) { # remove remainder of standard meaasurement from height columns (e.g. 3.31m-10 to 3.31m)
+
+  colnames(df) <- trimws(colnames(df)) # trim whitespaces in column names from removal of unicode characters
+
+  df <- data.frame(lapply(df, function(x) { # unicode em dashes
+    stringr::str_replace_all(x, "\u0097", "-")
+  }))
+
+  df <- data.frame(lapply(df, function(x) { # unicode em dashes
+    stringr::str_replace_all(x, "\u2013", "-")
+  }))
+
+  colnames(df) <- data.frame(lapply(colnames(df), function(x) { # remove remainder of standard measurement from height columns (e.g. 3.31m-10 to 3.31m)
     stringr::str_replace_all(x, "m-\\d{1,3}", "m")
   }))
+
   df <- data.frame(lapply(df, function(x) {
     stringr::str_replace_all(x, "\u00BC", "\\.25")
   }))
+
   df <- data.frame(lapply(df, function(x) {
     stringr::str_replace_all(x, "\u00BD", "\\.5")
   }))
   df <- data.frame(lapply(df, function(x) {
     stringr::str_replace_all(x, "\u00BE", "\\.75")
   }))
+
   df <- data.frame(lapply(df, function(x) {
     stringr::str_replace_all(x, "\\-\\.", "\\-0\\.")
   }))
+
   df <- data.frame(lapply(df, function(x) { # remove all non ASCII characters
     iconv(x, "latin1", "ASCII", sub = "")
   }))
