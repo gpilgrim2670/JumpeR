@@ -24,9 +24,11 @@
 
 flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_format_clean) {
 
-  # testing
+  #### testing ####
   # url_TJ <- "https://flashresults.com/2017_Meets/Outdoor/06-22_USATF/029-1_compiledSeries.htm"
   # url_SP <- "https://flashresults.com/2015_Meets/Outdoor/05-28_NCAAEast/017-1_compiledSeries.htm"
+  # df <- "https://www.flashresults.com/2021_Meets/Outdoor/04-16_VirginiaChallenge/035-1_compiledSeries.htm" %>%
+  #   flash_parse_table()
 
   df <- df %>%
     data.frame() %>%
@@ -79,6 +81,11 @@ flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_form
     clean_horizontal_data <- clean_horizontal_data %>%
     dplyr::mutate(
       Wind = stringr::str_extract(Result, "(?<=w\\:)(\\+|\\-)?\\d\\.\\d"),
+      # Wind = dplyr::case_when(is.na(Wind) == TRUE ~ stringr::str_extract(Result, "(?<=\\\n)(\\+|\\-).*$"), # sometimes wind isn't denoted with a w:
+      #                         TRUE ~ ""),
+      Wind = dplyr::case_when(is.na(Wind) == TRUE ~ stringr::str_extract(Result, "(?<=\\\n)(\\+|\\-)?\\d\\.\\d(\\[\\d{1,2}\\])?$"), # sometimes wind isn't denoted with a w:
+                              TRUE ~ ""),
+      Wind = str_remove(Wind, "\\[\\d{1,2}\\]"),
       Standard = stringr::str_split_fixed(Result, "\\\n", 3)[, 2],
       Result = stringr::str_split_fixed(Result, "\\\n", 3)[, 1]
     ) %>%
