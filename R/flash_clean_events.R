@@ -14,6 +14,7 @@
 #' @importFrom stringr str_extract
 #' @importFrom stringr str_trim
 #' @importFrom stringr str_remove_all
+#' @importFrom stringr str_split_fixed
 #' @importFrom purrr map
 #'
 #' @param df a data frame or list of data frames containing event data from Flash Results
@@ -71,6 +72,8 @@ flash_clean_events <- function(df, wide_format_clean = FALSE){
       df <- df %>%
         dplyr::select(-Name)
     }
+    df <- df %>%
+      dplyr::mutate(Team = stringr::str_split_fixed(Team, "\\\n", 2)[,1])
   }
 
   # Pull out ages
