@@ -26,14 +26,14 @@
 
 flash_clean_events <- function(df, wide_format_clean = FALSE){
 
+  #### testing ####
+  # wide_format_clean <- FALSE
+  # df <- "https://www.flashresults.com/2021_Meets/Outdoor/04-16_VirginiaChallenge/005-1-02.htm" %>%
+  #   flash_parse_table()
+
   if(is.logical(wide_format_clean) == FALSE){
     stop("wide-format clean must be either TRUE or FALSE")
   }
-
-  # tidy_table <- "table"
-  #
-  # df <- url_800 %>%
-  #   get_result_table()
 
   if("Event" %in% names(df) == FALSE){
     stop("df must contain a column named 'Event'")
@@ -74,7 +74,7 @@ flash_clean_events <- function(df, wide_format_clean = FALSE){
   }
 
   # Pull out ages
-  Age_String <- " \\[?SR\\]?$| \\[?JR\\]?$| \\[?SO\\]?$| \\[?FR\\]?$| ^M?W?[:digit:]{1,3}$"
+  Age_String <- " SR$| JR$| SO$| FR$|\\[SR\\]$|\\[JR\\]$|\\[SO\\]$|\\[FR\\]$| ^M?W?[:digit:]{1,3}$"
   df <- df %>%
     dplyr::mutate(Age = dplyr::case_when(stringr::str_detect(Team, Age_String) == TRUE ~ stringr::str_extract(Team, Age_String),
                            TRUE ~ "NA")) %>%

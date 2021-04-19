@@ -6,6 +6,7 @@
 #'
 #' @importFrom stringr str_match
 #' @importFrom stringr str_to_title
+#' @importFrom utils tail
 #'
 #' @param text raw text of an event page from Flash Results
 #' @return a one element list containing the date of the event
