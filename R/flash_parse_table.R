@@ -55,6 +55,7 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   # link <- "https://www.flashresults.com/2021_Meets/Indoor/03-11_NCAA/033-5_compiled.htm"
   # link <- "https://www.flashresults.com/2015_Meets/Outdoor/05-01_Dogwood/012-1_compiled.htm"
   # link <- "https://www.flashresults.com/2021_Meets/Indoor/03-11_NCAA/033-3_compiledSeries.htm"
+  # link <- "https://www.flashresults.com/2021_Meets/Outdoor/04-16_VirginiaChallenge/014-1-01.htm"
 
   page_content <- xml2::read_html(link, options = c("DTDLOAD", "NOBLANKS"))
 
@@ -151,7 +152,7 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
 
   # athlete column
   athlete_col <-
-    which(stringr::str_detect(as.vector(t(df)), "Athlete"))
+    which(stringr::str_detect(as.vector(t(df)), "^Athlete$"))
 
   # reaction time columns
   if (any(stringr::str_detect(as.vector(t(df)), "0\\.\\d{3}"), na.rm = TRUE) == TRUE) {
@@ -163,32 +164,21 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
     reaction_time_col <- numeric(0)
   }
 
+  # place column
+  place_col <- which(stringr::str_detect(as.vector(t(df)), "(^Pl$)|(^Place$)"))
+
+  # position column
+  position_col <- which(stringr::str_detect(as.vector(t(df)), "(^Pos$)|(^Position$)"))
+
   # blank columns
   blank_col <- which(colnames(df) == "")
-  if (any(length(reaction_time_col) > 0 | length(athlete_col) > 0)) {
+  if (any(length(reaction_time_col) > 0 | length(athlete_col) > 0 | length(place_col) > 0 | length(position_col) > 0)) {
     blank_col <-
       setdiff(blank_col, ifelse(length(reaction_time_col) > 0, min(reaction_time_col), 0)) # don't want to capture reaction time column (if it exists)
-    blank_col <- setdiff(blank_col, ifelse(length(athlete_col) > 0, athlete_col, 0)) # don't want to capture athlete colum
+    blank_col <- setdiff(blank_col, ifelse(length(athlete_col) > 0, athlete_col, 0)) # don't want to capture athlete column
+    blank_col <- setdiff(blank_col, ifelse(length(place_col) > 0, place_col, 0)) # don't want to capture place column
+    blank_col <- setdiff(blank_col, ifelse(length(position_col) > 0, position_col, 0)) # don't want to capture position column
   }
-
-  df <- df %>%
-    dplyr::rename(
-      # "Placeholder" = all_of(blank_col),
-           "Athlete" = dplyr::all_of(athlete_col),
-           "Reaction_Time" = reaction_time_col,
-           "Placeholder" = dplyr::all_of(blank_col)
-           ) %>%
-    dplyr::select(-dplyr::contains("Placeholder"))
-
-  # remove unnamed columns
-  df <- df[names(df) != ""]
-
-  # remove empty columns
-  df <- Filter(function(x)
-    !all(is.na(x)), df)
-
-  # remove duplicated columns
-  # df[!duplicated(as.list(df))]
 
   # remove unicode characters of 1/4, 1/2, 3/4, all other unicode characters
   colnames(df) <- data.frame(lapply(colnames(df), function(x) { # remove all non ASCII characters from column names
@@ -227,6 +217,27 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   df <- data.frame(lapply(df, function(x) { # remove all non ASCII characters
     iconv(x, "latin1", "ASCII", sub = "")
   }))
+
+  df <- df %>%
+    dplyr::rename(
+      # "Placeholder" = all_of(blank_col),
+           "Athlete" = dplyr::all_of(athlete_col),
+           "Reaction_Time" = dplyr::all_of(reaction_time_col),
+           "Place" = dplyr::all_of(place_col),
+           "Pos" = dplyr::all_of(position_col),
+           "Placeholder" = dplyr::all_of(blank_col)
+           ) %>%
+    dplyr::select(-dplyr::contains("Placeholder"))
+
+  # remove unnamed columns
+  df <- df[names(df) != ""]
+
+  # remove empty columns
+  df <- Filter(function(x)
+    !all(is.na(x)), df)
+
+  # remove duplicated columns
+  # df[!duplicated(as.list(df))]
 
   # Add event and gender to the result table
   # convert page content to a vector

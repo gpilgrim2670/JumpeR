@@ -82,6 +82,7 @@ flash_clean_events <- function(df, wide_format_clean = FALSE){
     dplyr::na_if("NA") %>%
     dplyr::mutate(Team = dplyr::case_when(is.na(Age) == FALSE ~ stringr::str_remove(Team, Age_String),
                                           TRUE ~ Team)) %>%
+    dplyr::mutate(Team = stringr::str_remove(Team, "&nbsp$")) %>%
     dplyr::mutate(Age = stringr::str_remove_all(Age, "\\[|\\]")) %>%
     dplyr::mutate(Team = stringr::str_trim(Team))
 
