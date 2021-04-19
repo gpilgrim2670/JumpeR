@@ -32,9 +32,10 @@ flash_clean_sprint_events <- function(df) {
   clean_sprint_data <- df %>%
     dplyr::mutate(Time = stringr::str_remove(Time, "Q|q")) %>%
     dplyr::rename("Result" = "Time") %>%
-    dplyr::mutate(Tiebreaker = dplyr::case_when(stringr::str_detect(Result, "\\(\\d{1,2}\\.\\d{3}\\)") == TRUE ~ stringr::str_extract(Result, "\\d{1,2}\\.\\d{3}"),
+    dplyr::mutate(Tiebreaker = dplyr::case_when(stringr::str_detect(Result, "\\(\\d{1,2}\\.\\d{3}\\)") == TRUE ~ stringr::str_extract(Result, "\\d{1,2}\\.\\d{3}"), # pull tiebreakers out of Results column
                                                 TRUE ~ "NA")) %>%
-    dplyr::mutate(Result = stringr::str_remove(Result, "\\(\\d{1,2}\\.\\d{3}\\)")) %>%
+    dplyr::mutate(Result = stringr::str_remove(Result, "\\(\\d{1,2}\\.\\d{3}\\)")) %>% # remove tiebreakers
+    dplyr::mutate(Result = stringr::str_remove(Result, "\\\n[:upper:]{1,2}")) %>% # remove PB, SB type strings
     dplyr::na_if("NA") %>%
     dplyr::mutate(dplyr::across(where(is.character), stringr::str_trim))  # remove whitespaces
 
