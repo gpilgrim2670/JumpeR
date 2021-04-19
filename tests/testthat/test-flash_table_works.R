@@ -298,4 +298,47 @@ test_that("flash table 400m tiebreaker", {
   }
 })
 
+test_that("flash table long jump, wind without w: marker", {
+
+  # these results should contain a tiebreaker column
+
+  skip_on_cran() # due to risk of external resources failing
+
+  file <-
+    "https://www.flashresults.com/2021_Meets/Outdoor/04-16_VirginiaChallenge/035-1_compiledSeries.htm"
+
+  data <- try(flash_parse_table(file), silent = TRUE)
+
+  if (any(grep("error", class(data)))) {
+    skip("Link to external data is broken")
+  } else {
+
+    # build standard
+    df_standard_wind <- data.frame(
+      Place = c("5", "12", "13"),
+      Name = c("Ezra MELLINGER", "Evan LEE", "Harry LORD" ),
+      Event = rep("Long Jump", 3),
+      Gender = rep("Men", 3),
+      Best = c("7.30m", "6.71m", "6.55m"),
+      Date = rep("Apr 17", 3),
+      Round = rep("1", 3),
+      Result = c("7.02", "6.57", "6.36"),
+      Team = rep("Duke", 3),
+      Wind = c("-0.7", "+0.1", "+1.3"),
+      Age = c("FR", "SR", "JR"),
+      stringsAsFactors = FALSE
+    )
+
+    # generate test df
+    df_test <- data %>%
+      flash_clean_events() %>%
+      filter(Team == "Duke") %>%
+      head(3)
+
+    # test
+    expect_equivalent(df_standard_wind,
+                      df_test)
+  }
+})
+
 # testthat::test_file("tests/testthat/test-flash_table_works.R")
