@@ -27,6 +27,7 @@
 flash_year_links <- function(flash_year) {
 
   # flash_year <- "https://www.flashresults.com/2019results.htm"
+  # flash_year <- "https://www.flashresults.com/2015results.htm"
 
   main <- xml2::read_html(flash_year)
 
@@ -39,7 +40,8 @@ flash_year_links <- function(flash_year) {
   main_links <- main %>%
     rvest::html_nodes("tr") %>%
     rvest::html_nodes("a") %>%
-    rvest::html_attr("href")
+    rvest::html_attr("href") %>%
+    {ifelse(str_detect(., "^/|^h"), ., paste0("/", .))}
 
   # main_table <- data.frame(main_table[[1]][,-2], stringsAsFactors = FALSE)
   main_table <-
@@ -81,7 +83,8 @@ flash_year_links <- function(flash_year) {
       stringr::str_detect(MeetLink, "http"),
       MeetLink,
       paste0("https://flashresults.com", MeetLink)
-    ))
+    )) %>%
+    dplyr::mutate(MeetLink = stringr::str_remove(MeetLink, "index\\.htm"))
 
   return(year_table)
 }
