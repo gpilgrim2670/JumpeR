@@ -112,6 +112,7 @@ test_that("flash parse works sprint", {
       ),
       DQ = rep(0, 15),
       Event = rep("Men 110 M Hurdles Prelims 6:00 PM 10 May 2019", 15),
+      Event_Date = rep(as.Date("2019-05-10"), 15),
       row.names = NULL,
       stringsAsFactors = FALSE
     )
@@ -261,7 +262,8 @@ test_that("flash parse works relay, team scores in results", {
           "DNF"
         ),
         DQ = c(rep(0, 9), 1),
-        Event = rep("Men 4x400 M Relay 2:55 PM 6 May 2018", 10)
+        Event = rep("Men 4x400 M Relay 2:55 PM 6 May 2018", 10),
+        Event_Date = rep(as.Date("2018-05-06"))
       )
 
     # generate test df
@@ -283,33 +285,42 @@ test_that("flash parse works relay, team scores in results", {
 
 #### test causes problems on debian builds, maybe due to pdftools issues - not sure ####
 # test_that("flash parse works sprint, diamond league with some birthdates", {
-#
 #   skip_on_cran() # due to risk of external resources failing
 #
 #   file <-
 #     "https://www.flashresults.com/2019_Meets/Outdoor/06-30_PreClassic/002-1.pdf"
 #
-# raw_data <- try(read_results(file), silent = TRUE)
+#   raw_data <- try(read_results(file), silent = TRUE)
 #
-# if(any(grep("error", class(raw_data)))){
-#   skip("Link to external data is broken")
-# } else {
+#   if (any(grep("error", class(raw_data)))) {
+#     skip("Link to external data is broken")
+#   } else {
 #     # generate standard
-#     df_standard <- data.frame(Place = as.character(seq(1, 6, 1)),
-#                               Name = c("Arian SMITH", "Marcellus MOORE", "Ryan MARTIN", "Ryan MULHOLLAND", "Lance BROOME", "Tyrese COOPER"),
-#                               Team = rep("USA", 6),
-#                               Finals_Result = c("10.41", "10.46", "10.56", "10.60", "10.63", "10.64"),
-#                               DQ = rep(0, 6),
-#                               Birthdate = c(NA, NA, "21-Sep-2001", NA, NA, "21-Mar-2000"),
-#                               Event = rep("Boys 100 M High School 12:46 30 Jun 2019", 6))
+#     df_standard <- data.frame(
+#       Place = as.character(seq(1, 6, 1)),
+#       Name = c(
+#         "Arian SMITH",
+#         "Marcellus MOORE",
+#         "Ryan MARTIN",
+#         "Ryan MULHOLLAND",
+#         "Lance BROOME",
+#         "Tyrese COOPER"
+#       ),
+#       Team = rep("USA", 6),
+#       Finals_Result = c("10.41", "10.46", "10.56", "10.60", "10.63", "10.64"),
+#       DQ = rep(0, 6),
+#       Birthdate = c(NA, NA, "21-Sep-2001", NA, NA, "21-Mar-2000"),
+#       Event = rep("Boys 100 M High School 12:46 30 Jun 2019", 6),
+#       Event_Date = rep("2019-06-30", 6)
+#     )
 #
 #     # generate test df
 #     df_test <- tf_parse(
-#         raw_data,
-#         flights = TRUE,
-#         flight_attempts = TRUE,
-#         relay_athletes = TRUE
-#       )
+#       raw_data,
+#       flights = TRUE,
+#       flight_attempts = TRUE,
+#       relay_athletes = TRUE
+#     )
 #
 #     # test
 #     expect_equivalent(df_standard,
@@ -358,19 +369,25 @@ test_that("flash parse works split_attempts single line", {
 #### this test works when called but not not work within devtools::check and I don't know why ####
 
 # test_that("flash parse works split_attempts double line", {
-#
-# skip_on_cran() # due to risk of external resources failing
+#   skip_on_cran() # due to risk of external resources failing
 #
 #   file <-
 #     "https://www.flashresults.com/2020_Meets/Indoor/02-21_VTChallenge/031-1.pdf"
 #
-# raw_data <- try(read_results(file), silent = TRUE)
+#   raw_data <- try(read_results(file), silent = TRUE)
 #
-# if(any(grep("error", class(raw_data)))){
-#   skip("Link to external data is broken")
-# } else {
+#   if (any(grep("error", class(raw_data)))) {
+#     skip("Link to external data is broken")
+#   } else {
 #     # generate standard
-#     df_standard_polevault_splits_double <- readRDS(system.file("extdata", "df_standard_polevault_splits_double.rds", package = "JumpeR"))
+#     df_standard_polevault_splits_double <-
+#       readRDS(
+#         system.file(
+#           "extdata",
+#           "df_standard_polevault_splits_double.rds",
+#           package = "JumpeR"
+#         )
+#       )
 #
 #     # generate test df
 #     df_test <- tf_parse(

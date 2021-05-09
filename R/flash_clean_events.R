@@ -122,6 +122,9 @@ flash_clean_events <- function(df, wide_format_clean = FALSE){
     dplyr::na_if("") %>%
     dplyr::na_if("-")
 
+  df <- df %>%
+    mutate(Event_Date = as.Date(Event_Date, format = "%b %d %Y"))
+
   return(df)
 
 }
