@@ -259,7 +259,10 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
 
   event_year <- stringr::str_extract(link, "20\\d\\d")
 
+  # converted to date fromat in flash_clean_events
+  if(event_date %in% c("Unknown", NA) == FALSE){
   event_date <- paste(event_date, event_year, sep = " ")
+  }
 
   # include event name and gender
   df <- df %>%
