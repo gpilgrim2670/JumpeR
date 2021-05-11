@@ -2,8 +2,6 @@
 #'
 #' Used to apply appropriate cleaning function based on event name
 #'
-#' @author Gregory A. Pilgrim \email{gpilgrim2670@@gmail.com} and George M. Perry
-#'
 #' @param df_helper a data frame of vertical event data from Flash Results
 #' @param wide_format_clean_helper should df be presented in wide format (default is \code{FALSE})?
 #' @return a cleaned version of df

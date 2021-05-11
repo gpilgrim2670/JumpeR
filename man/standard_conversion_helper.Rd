@@ -15,6 +15,3 @@ a character vector in feet-inches
 \description{
 Converts distances in meters to feet-inches
 }
-\author{
-Greg Pilgrim \email{gpilgrim2670@gmail.com}
-}

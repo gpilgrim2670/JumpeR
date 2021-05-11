@@ -18,6 +18,3 @@ Locates an date in text of results from a flash results html page for a given ev
 \seealso{
 \code{flash_date_parse} is a helper function inside \code{\link{flash_parse_table}}
 }
-\author{
-Greg Pilgrim \email{gpilgrim2670@gmail.com} George M. Perry
-}

@@ -18,6 +18,3 @@ Inside of \code{tf_parse} & \code{tf_parse}, removes flight columns that do not 
 \seealso{
 \code{remove_unneeded_flights} runs inside \code{\link{flash_parse}} & \code{\link{tf_parse}}
 }
-\author{
-Greg Pilgrim \email{gpilgrim2670@gmail.com}
-}

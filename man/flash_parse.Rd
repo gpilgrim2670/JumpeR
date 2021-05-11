@@ -21,14 +21,11 @@ flash_parse(
 \item{flash_split_attempts}{should flight_attempts columns be split into individual attempts}
 }
 \value{
-a dataframe of track and field results
+a data frame of track and field results
 }
 \description{
 Outputs list of strings to be processed by \code{tf_parse}
 }
 \seealso{
 \code{tf_parse} is meant to be preceded by \code{\link{read_results}}
-}
-\author{
-Greg Pilgrim \email{gpilgrim2670@gmail.com}
 }

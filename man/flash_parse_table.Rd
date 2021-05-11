@@ -26,6 +26,3 @@ Used in scraping flashresults.com.  Collects results given in html tables on a s
 \donttest{flash_parse_table("https://www.flashresults.com/2019_Meets/Outdoor/06-13_NBNO/067-4_compiled.htm")}
 
 }
-\author{
-Gregory A. Pilgrim \email{gpilgrim2670@gmail.com} and George M. Perry
-}

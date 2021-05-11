@@ -2,8 +2,6 @@
 #'
 #' Takes the output of \code{read_results} and, inside of \code{tf_parse}, extracts vertical jump attempts and associated row numbers
 #'
-#' @author Greg Pilgrim \email{gpilgrim2670@@gmail.com}
-#'
 #' @importFrom stringr str_detect
 #'
 #' @param df dataframe with jump attempt columns containing (X, O, PASS etc) and other columns

@@ -2,8 +2,6 @@
 #'
 #' Inside of \code{tf_parse} & \code{tf_parse}, removes flight columns that do not have an associated flight_attempts column
 #'
-#' @author Greg Pilgrim \email{gpilgrim2670@@gmail.com}
-#'
 #' @importFrom dplyr select
 #' @importFrom dplyr all_of
 #' @importFrom stringr str_remove

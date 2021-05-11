@@ -23,6 +23,3 @@ Used in scraping flashresults.com.  Collects detailed results (often called heat
 "https://flashresults.com/2015_Meets/Outdoor/06-25_USATF/008-3_compiled.htm")}
 
 }
-\author{
-Gregory A. Pilgrim \email{gpilgrim2670@gmail.com} and George M. Perry
-}

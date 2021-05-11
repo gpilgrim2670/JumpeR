@@ -2,8 +2,6 @@
 #'
 #' Used in scraping flashresults.com.  Collects detailed results (often called heat or flight results) from an associated event results landing page.  Detailed results often contain splits or attempts results.
 #'
-#' @author Gregory A. Pilgrim \email{gpilgrim2670@@gmail.com} and George M. Perry
-#'
 #' @importFrom purrr map
 #'
 #' @param link a link to an event landing page on flashresults.com

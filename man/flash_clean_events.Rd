@@ -23,6 +23,3 @@ Cleans event results pulled from Flash Results html tables.  Can present cleaned
 \seealso{
 \code{flash_clean_events} is a helper function inside \code{\link{flash_parse_table}}
 }
-\author{
-Gregory A. Pilgrim \email{gpilgrim2670@gmail.com} and George M. Perry
-}

@@ -2,8 +2,6 @@
 #'
 #' Given a dataframe with columns "Flight_1_Attempts" it will produce three rows, for each of the attempts in flight 1
 #'
-#' @author Greg Pilgrim \email{gpilgrim2670@@gmail.com}
-#'
 #' @importFrom stringr str_remove
 #' @importFrom stats ave
 #'

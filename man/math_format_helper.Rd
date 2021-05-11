@@ -15,6 +15,3 @@ a numeric value representing a time or distance.  Units are not included
 \description{
 Helper function for formatting mm:ss.th times as seconds
 }
-\author{
-Greg Pilgrim \email{gpilgrim2670@gmail.com}
-}

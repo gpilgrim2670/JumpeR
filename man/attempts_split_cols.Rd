@@ -24,6 +24,3 @@ Given a dataframe with columns "Flight_1_Attempts" it will produce three columns
 \seealso{
 \code{attempts_split_cols} is a helper function inside  \code{attempts_split}
 }
-\author{
-Greg Pilgrim \email{gpilgrim2670@gmail.com}
-}

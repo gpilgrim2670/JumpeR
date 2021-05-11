@@ -18,6 +18,3 @@ Used in scraping flashresults.com.  Collects detailed results (often called heat
 \seealso{
 \code{flash_extract_details_links_helper} is a helper function inside \code{\link{flash_extract_details_links}}
 }
-\author{
-Gregory A. Pilgrim \email{gpilgrim2670@gmail.com} and George M. Perry
-}

@@ -2,8 +2,6 @@
 #'
 #' Outputs list of strings to be processed by \code{tf_parse}
 #'
-#' @author Greg Pilgrim \email{gpilgrim2670@@gmail.com}
-#'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr filter
 #' @importFrom dplyr case_when
@@ -33,7 +31,7 @@
 #' @param flash_flight_attempts should tf_parse try to include outcomes for flights for vertical jumping events?  Defaults to \code{FALSE}
 #' @param flash_split_attempts should flight_attempts columns be split into individual attempts
 #'
-#' @return a dataframe of track and field results
+#' @return a data frame of track and field results
 #'
 #' @seealso \code{tf_parse} is meant to be preceded by \code{\link{read_results}}
 #'

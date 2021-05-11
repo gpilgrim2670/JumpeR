@@ -18,6 +18,3 @@ Takes the output of \code{read_results} and adds row numbers to it
 \seealso{
 \code{add_row_numbers} is a helper function inside \code{\link{swim_parse}}
 }
-\author{
-Greg Pilgrim \email{gpilgrim2670@gmail.com}
-}

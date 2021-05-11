@@ -2,8 +2,6 @@
 #'
 #' Used in scraping flashresults.com.  Collects meet names, dates, and locations along with a link the the associated results landing page.
 #'
-#' @author Gregory A. Pilgrim \email{gpilgrim2670@@gmail.com} and George M. Perry
-#'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr rename
 #' @importFrom dplyr select

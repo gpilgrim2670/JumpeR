@@ -1,7 +1,5 @@
 #' Converts distances in feet-inches to meters
 #'
-#' @author Greg Pilgrim \email{gpilgrim2670@@gmail.com}
-#'
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_split_fixed
 #'

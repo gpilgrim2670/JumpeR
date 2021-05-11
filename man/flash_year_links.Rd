@@ -22,6 +22,3 @@ Used in scraping flashresults.com.  Collects meet names, dates, and locations al
 \donttest{flash_year_links("https://flashresults.com/2015results.htm")}
 
 }
-\author{
-Gregory A. Pilgrim \email{gpilgrim2670@gmail.com} and George M. Perry
-}

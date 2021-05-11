@@ -18,6 +18,3 @@ Locates an gender label in text of results from a flash results html page for a 
 \seealso{
 \code{flash_gender_parse} is a helper function inside \code{\link{flash_parse_table}}
 }
-\author{
-Greg Pilgrim \email{gpilgrim2670@gmail.com}
-}

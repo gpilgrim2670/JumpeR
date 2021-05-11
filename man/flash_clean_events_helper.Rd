@@ -23,6 +23,3 @@ Used to apply appropriate cleaning function based on event name
 \seealso{
 \code{flash_clean_events_helper} is a helper function inside \code{\link{flash_clean_events}}
 }
-\author{
-Gregory A. Pilgrim \email{gpilgrim2670@gmail.com} and George M. Perry
-}

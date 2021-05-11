@@ -15,6 +15,3 @@ a numeric value representing a number of meters.  Units are not included
 \description{
 Converts distances in feet-inches to meters
 }
-\author{
-Greg Pilgrim \email{gpilgrim2670@gmail.com}
-}

@@ -18,6 +18,3 @@ Takes the output of \code{read_results} and, inside of \code{tf_parse}, extracts
 \seealso{
 \code{flights_parse_flash} runs inside \code{\link{flash_parse}} on the output of \code{\link{read_results}} with row numbers from \code{\link{add_row_numbers}}
 }
-\author{
-Greg Pilgrim \email{gpilgrim2670@gmail.com}
-}

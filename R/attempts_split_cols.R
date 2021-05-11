@@ -2,8 +2,6 @@
 #'
 #' Given a dataframe with columns "Flight_1_Attempts" it will produce three columns, for each of the attempts in flight 1 (Flight_1_Attempt_1, Flight_1_Attempt_2 etc.)
 #'
-#' @author Greg Pilgrim \email{gpilgrim2670@@gmail.com}
-#'
 #' @importFrom dplyr mutate
 #' @importFrom stringr str_split_fixed
 #'

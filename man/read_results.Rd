@@ -24,6 +24,3 @@ Outputs list of strings to be processed by \code{tf_parse}
 \seealso{
 \code{read_results} is meant to be followed by \code{\link{tf_parse}}
 }
-\author{
-Greg Pilgrim \email{gpilgrim2670@gmail.com}
-}

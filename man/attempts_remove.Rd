@@ -18,6 +18,3 @@ Takes the output of \code{read_results} and, inside of \code{tf_parse}, extracts
 \seealso{
 \code{attempts_remove} runs inside \code{\link{flash_parse}}
 }
-\author{
-Greg Pilgrim \email{gpilgrim2670@gmail.com}
-}

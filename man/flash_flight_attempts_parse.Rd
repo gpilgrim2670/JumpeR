@@ -10,14 +10,11 @@ flash_flight_attempts_parse(text)
 \item{text}{output of \code{read_results} with row numbers appended by \code{add_row_numbers}}
 }
 \value{
-returns a dataframe with split times and row numbers
+returns a data frame with split times and row numbers
 }
 \description{
 Takes the output of \code{read_results} and, inside of \code{tf_parse}, extracts vertical jump flight attempts (XXO etc) and associated row numbers
 }
 \seealso{
 \code{flash_flight_attempts_parse} runs inside \code{\link{flash_parse}} on the output of \code{\link{read_results}} with row numbers from \code{\link{add_row_numbers}}
-}
-\author{
-Greg Pilgrim \email{gpilgrim2670@gmail.com}
 }

@@ -2,8 +2,6 @@
 #'
 #' Used in scraping flashresults.com.  Collects results given in html tables on a specified page into a data frame.
 #'
-#' @author Gregory A. Pilgrim \email{gpilgrim2670@@gmail.com} and George M. Perry
-#'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr select
 #' @importFrom dplyr na_if

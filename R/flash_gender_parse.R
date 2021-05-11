@@ -2,8 +2,6 @@
 #'
 #' Locates an gender label in text of results from a flash results html page for a given event.
 #'
-#' @author Greg Pilgrim \email{gpilgrim2670@@gmail.com}
-#'
 #' @importFrom stringr str_match
 #' @importFrom stringr str_to_title
 #'

@@ -22,6 +22,3 @@ Given a dataframe with columns "Flight_1_Attempts" it will produce three rows, f
 \seealso{
 \code{attempts_split_long_helper} is a helper function inside  \code{attempts_split_long}
 }
-\author{
-Greg Pilgrim \email{gpilgrim2670@gmail.com}
-}

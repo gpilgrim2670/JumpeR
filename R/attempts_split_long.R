@@ -1,8 +1,6 @@
 #' Creates new rows of split attempts strings (long format change)
 #'
-#' Given a dataframe with columns "Flight_1_Attempts" it will create three new rows, one for each of the attempts in flight 1
-#'
-#' @author Greg Pilgrim \email{gpilgrim2670@@gmail.com}
+#' Given a data frame with columns "Flight_1_Attempts" it will create three new rows, one for each of the attempts in flight 1
 #'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr bind_rows
@@ -11,7 +9,7 @@
 #' @importFrom purrr map
 #'
 #' @param data_to_split output from \code{read_results} followed by \code{add_row_numbers}
-#' @return returns a dataframe with Flight_X_Attempts columns split into individual attempts as rows
+#' @return returns a data frame with Flight_X_Attempts columns split into individual attempts as rows
 #'
 #' @export
 #'

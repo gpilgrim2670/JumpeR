@@ -1,8 +1,6 @@
 #' Formatting feet-inches lengths as meters
 #'
-#' Takes a character string (or list) representing a length in feet-inches format (e.g. "12-07.45") and converts it to a distance in meters ("3.85m")
-#'
-#' @author Greg Pilgrim \email{gpilgrim2670@@gmail.com}
+#' Takes a character string (or list) representing a length in feet-inches format (e.g. "12-07.45") and converts it to a distance in meters ("3.85m").
 #'
 #' @importFrom purrr map_chr
 #'

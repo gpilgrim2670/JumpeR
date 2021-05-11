@@ -2,8 +2,6 @@
 #'
 #' Cleans results pulled from Flash Results html tables for sprint events.  Sprint events are generally those with lengths of less than 400m.  Can present cleaned data in wide or long format.
 #'
-#' @author Gregory A. Pilgrim \email{gpilgrim2670@@gmail.com} and George M. Perry
-#'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr rename
 #' @importFrom dplyr across
