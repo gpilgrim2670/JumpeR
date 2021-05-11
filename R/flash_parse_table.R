@@ -57,6 +57,9 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   # link <- "https://www.flashresults.com/2021_Meets/Indoor/03-11_NCAA/033-3_compiledSeries.htm"
   # link <- "https://www.flashresults.com/2021_Meets/Outdoor/04-16_VirginiaChallenge/014-1-01.htm"
   # link <- "https://flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/004-1-03.htm"
+  # link <- "https://flashresults.com/2017_Meets/Indoor/01-13_AggieTeam/003-1-05.htm"
+  # link <- "https://www.flashresults.com/2017_Meets/Outdoor/04-29_VirginiaGrandPrix/025-1-01.htm"
+  # link <- "https://flashresults.com/2016_Meets/Outdoor/05-10_BigSouth/012-1_compiled.htm"
 
   page_content <- xml2::read_html(link, options = c("DTDLOAD", "NOBLANKS"))
 
@@ -171,14 +174,18 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   # position column
   position_col <- which(stringr::str_detect(as.vector(t(df)), "(^Pos$)|(^Position$)"))
 
+  # age column
+  age_col <- which(stringr::str_detect(as.vector(t(df)), "(^SR$)|(^JR$)|(^SO$)|(^FR$)"))[1]
+
   # blank columns
   blank_col <- which(colnames(df) == "")
-  if (any(length(reaction_time_col) > 0 | length(athlete_col) > 0 | length(place_col) > 0 | length(position_col) > 0)) {
+  if (any(length(reaction_time_col) > 0 | length(athlete_col) > 0 | length(place_col) > 0 | length(position_col) > 0 | length(age_col) > 0)) {
     blank_col <-
       setdiff(blank_col, ifelse(length(reaction_time_col) > 0, min(reaction_time_col), 0)) # don't want to capture reaction time column (if it exists)
     blank_col <- setdiff(blank_col, ifelse(length(athlete_col) > 0, athlete_col, 0)) # don't want to capture athlete column
     blank_col <- setdiff(blank_col, ifelse(length(place_col) > 0, place_col, 0)) # don't want to capture place column
     blank_col <- setdiff(blank_col, ifelse(length(position_col) > 0, position_col, 0)) # don't want to capture position column
+    blank_col <- setdiff(blank_col, ifelse(length(age_col) > 0, age_col, 0)) # don't want to capture position column
   }
 
   # remove unicode characters of 1/4, 1/2, 3/4, all other unicode characters
@@ -218,6 +225,11 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   df <- data.frame(lapply(df, function(x) { # remove all non ASCII characters
     iconv(x, "latin1", "ASCII", sub = "")
   }))
+
+  if (is.na(age_col) == FALSE) {
+    df <- df %>%
+      dplyr::rename("Age" = dplyr::all_of(age_col))
+  }
 
   df <- df %>%
     dplyr::rename(

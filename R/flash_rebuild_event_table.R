@@ -22,6 +22,8 @@ flash_rebuild_event_table <- function(event_url_rebuild) {
   #### testing ####
   # event_url_rebuild <-
   #   "https://flashresults.com/2016_Meets/Indoor/02-05_CharlieThomasInvite/001-1-03.htm"
+  # event_url_rebuild <-
+  #   "https://flashresults.com/2017_Meets/Indoor/01-13_AggieTeam/003-1-05.htm"
 
   #### actual function ####
   event_table <- event_url_rebuild %>%
@@ -113,6 +115,9 @@ flash_rebuild_event_table <- function(event_url_rebuild) {
       df
     )))), names(df)) %>%
     dplyr::na_if("NA")
+
+  # remove column named only with new line character
+  df <- df[names(df) %in% c("\n") == FALSE]
 
   return(df)
 }

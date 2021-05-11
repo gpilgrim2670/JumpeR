@@ -77,6 +77,7 @@ flash_clean_events <- function(df, wide_format_clean = FALSE){
   }
 
   # Pull out ages
+  if("Age" %in% names(df) == FALSE){
   Age_String <- " SR$| JR$| SO$| FR$|\\[SR\\]$|\\[JR\\]$|\\[SO\\]$|\\[FR\\]$| ^M?W?[:digit:]{1,3}$"
   df <- df %>%
     dplyr::mutate(Age = dplyr::case_when(stringr::str_detect(Team, Age_String) == TRUE ~ stringr::str_extract(Team, Age_String),
@@ -88,8 +89,8 @@ flash_clean_events <- function(df, wide_format_clean = FALSE){
     dplyr::mutate(Team = stringr::str_remove(Team, "&nbsp$")) %>%
     dplyr::mutate(Age = stringr::str_remove_all(Age, "\\[|\\]")) %>%
     dplyr::mutate(Team = stringr::str_trim(Team))
+  }
 
-  # Remove PB type strings
   # remove PB type strings
   df <- data.frame(lapply(df, function(x) {
     remove_string <-

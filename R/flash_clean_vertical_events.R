@@ -28,6 +28,8 @@ flash_clean_vertical_events <- function(df, wide_format_vertical = wide_format_c
   # df <- flash_parse_table(url_PV)
   # df <- "https://www.flashresults.com/2021_Meets/Indoor/03-11_NCAA/033-6_compiled.htm" %>%
   #   flash_parse_table()
+  # df <- "https://flashresults.com/2017_Meets/Indoor/01-13_AggieTeam/011-1-01.htm" %>%
+  #   flash_parse_table()
 
   #### begin actual function ####
 
@@ -61,7 +63,7 @@ flash_clean_vertical_events <- function(df, wide_format_vertical = wide_format_c
         timevar = "Height",
         ids = row.names(df)
       ) %>%
-      dplyr::select(dplyr::everything(), "Result" = "X",-id) %>%
+      dplyr::select(dplyr::everything(), "Result" = "X", -id) %>%
       dplyr::filter(is.na(Result) == FALSE) # remove rows without a result
 
     rownames(df) <- NULL # reshape sets row names, remove them
