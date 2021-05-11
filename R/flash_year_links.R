@@ -13,6 +13,7 @@
 #' @importFrom stringr str_split_fixed
 #' @importFrom stringr str_remove
 #' @importFrom stringr str_match
+#' @importFrom stringr str_extract
 #' @importFrom rvest html_nodes
 #' @importFrom rvest html_table
 #' @importFrom rvest html_attr
@@ -30,6 +31,9 @@ flash_year_links <- function(flash_year) {
   # flash_year <- "https://www.flashresults.com/2015results.htm"
 
   main <- xml2::read_html(flash_year)
+
+  # extract meet year
+  meet_year <- stringr::str_extract(flash_year, "20\\d\\d")
 
   # table of meet name, date, location
   main_table <- main %>%
@@ -55,20 +59,21 @@ flash_year_links <- function(flash_year) {
 
   main_table <- main_table %>%
     dplyr::mutate(Meet = stringr::str_split_fixed(Input, "\n", 3)[, 1]) %>%
-    dplyr::mutate(Date = stringr::str_split_fixed(Input, "\n", 3)[, 2]) %>%
+    dplyr::mutate(Meet_Date = stringr::str_split_fixed(Input, "\n", 3)[, 2],
+                  Meet_Date = paste(Meet_Date, meet_year, sep = " ")) %>%
     dplyr::mutate(Location = stringr::str_split_fixed(Input, "\n", 3)[, 3]) %>%
-    dplyr::mutate(Location = dplyr::case_when(stringr::str_detect(Location, "^$") == TRUE ~ str_split_fixed(Date, "-", 3)[,3],
+    dplyr::mutate(Location = dplyr::case_when(stringr::str_detect(Location, "^$") == TRUE ~ str_split_fixed(Meet_Date, "-", 3)[,3],
                                               TRUE ~ Location)) %>%
     dplyr::select(-Input) %>%
-    # tidyr::separate(Input, into = c("Meet", "Date", "Location"), sep = "\\n") %>% # JumpeR doesn't have tidyr dependency
+    # tidyr::separate(Input, into = c("Meet", "Meet_Date", "Location"), sep = "\\n") %>% # JumpeR doesn't have tidyr dependency
     dplyr::mutate(Meet = stringr::str_remove(Meet, "\\s-(.*)")) %>%
     dplyr::mutate(Location = ifelse(
       is.na(Location),
-      stringr::str_match(Date, "[^\\-]+$"),
+      stringr::str_match(Meet_Date, "[^\\-]+$"),
       Location
     )) %>%
-    dplyr::mutate(Date = stringr::str_remove(Date, "[^\\d]+$")) %>%
-    dplyr::mutate(Date = stringr::str_remove(Date, "^[^(A-Z)]*")) %>%
+    dplyr::mutate(Meet_Date = stringr::str_remove(Meet_Date, "[^\\d]+$")) %>%
+    dplyr::mutate(Meet_Date = stringr::str_remove(Meet_Date, "^[^(A-Z)]*")) %>%
     dplyr::mutate(Location = stringr::str_remove(Location, "^[^(A-Z)]*")) %>%
     dplyr::mutate(dplyr::across(where(is.character), stringr::str_trim)) # remove whitespaces
 
@@ -77,14 +82,14 @@ flash_year_links <- function(flash_year) {
 
   # add http to links that need it
   year_table <- year_table %>%
-    dplyr::rename("MeetLink" = 4) %>%
-    dplyr::filter(stringr::str_detect(MeetLink, "xc") == FALSE) %>%
-    dplyr::mutate(MeetLink = ifelse(
-      stringr::str_detect(MeetLink, "http"),
-      MeetLink,
-      paste0("https://flashresults.com", MeetLink)
+    dplyr::rename("Meet_Link" = 4) %>%
+    dplyr::filter(stringr::str_detect(Meet_Link, "xc") == FALSE) %>%
+    dplyr::mutate(Meet_Link = ifelse(
+      stringr::str_detect(Meet_Link, "http"),
+      Meet_Link,
+      paste0("https://flashresults.com", Meet_Link)
     )) %>%
-    dplyr::mutate(MeetLink = stringr::str_remove(MeetLink, "index\\.htm"))
+    dplyr::mutate(Meet_Link = stringr::str_remove(Meet_Link, "index\\.htm"))
 
   return(year_table)
 }

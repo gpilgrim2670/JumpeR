@@ -20,7 +20,7 @@ test_that("flash table sprint works", {
                                      Reaction_time = c("0.191", "0.189", "0.178", "0.185", "0.220", NA),
                                      Event = rep("200m", 6),
                                      Gender = rep("Men", 6),
-                                     Date = rep("Jul 28", 6),
+                                     Date = rep(as.Date("2019-07-28"), 6),
                                      Wind = rep("-1.1", 6),
                                      stringsAsFactors = FALSE)
 
@@ -53,7 +53,7 @@ test_that("flash table horizontal works", {
                                          Event = rep("Shot Put", 3),
                                          Gender = rep("Men", 3),
                                          Best = rep("20.33m", 3),
-                                         Date = rep("May 30", 3),
+                                         Date = rep(as.Date("2015-05-30"), 3),
                                          Round = c("1", "2", "3"),
                                          Result = c("18.06", "20.33", "19.51"),
                                          Flight = rep("4", 3),
@@ -92,7 +92,7 @@ test_that("flash table tricky sprint, table rebuild", {
                                          Result = c("7.52", "7.58", "7.64", "7.83", "8.07", "8.25", NA, NA),
                                          Event = rep("60m", 8),
                                          Gender = rep("Women", 8),
-                                         Date = rep("Feb 06", 8),
+                                         Date = rep(as.Date("2016-02-06"), 8),
                                          stringsAsFactors = FALSE)
 
     # generate test df
@@ -125,7 +125,7 @@ test_that("flash table pole vault", {
                                  Best = c("3.91m", "3.31m", "3.16m", "3.16m", "NH", "3.91m", "3.31m", "3.16m", "3.16m", "NH", "3.91m", "3.31m", "3.16m", "3.16m", "NH", "3.91m", "3.31m", "3.16m", "3.16m", "NH", "3.91m", "3.31m", "3.16m", "3.16m", "NH", "3.91m", "3.31m", "3.16m", "3.16m", "NH", "3.91m", "3.31m", "3.16m", "3.16m", "NH"),
                                  Event = rep("Pole Vault", 35),
                                  Gender = rep("Women", 35),
-                                 Date = rep("Apr 06", 35),
+                                 Date = rep(as.Date("2018-04-06"), 35),
                                  Height = c("3.16m", "3.16m", "3.16m", "3.16m", "3.16m", "3.31m", "3.31m", "3.31m", "3.31m", "3.31m", "3.46m", "3.46m", "3.46m", "3.46m", "3.46m", "3.61m", "3.61m", "3.61m", "3.61m", "3.61m", "3.76m", "3.76m", "3.76m", "3.76m", "3.76m", "3.91m", "3.91m", "3.91m", "3.91m", "3.91m", "4.01m", "4.01m", "4.01m", "4.01m", "4.01m"),
                                  Result = c("---", "O", "XO", "XXO", "---", "---", "O", "XXX", "XXX", "---", "---", "XXX", NA, NA, "---", "O", NA, NA, NA, "---", "O", NA, NA, NA, "---", "O", NA, NA, NA, "---", "XXX", NA, NA, NA, "XXX"),
                                  Team = c("Virginia", "Bucknell", "Bucknell", "Virginia", "Virginia", "Virginia", "Bucknell", "Bucknell", "Virginia", "Virginia", "Virginia", "Bucknell", "Bucknell", "Virginia", "Virginia", "Virginia", "Bucknell", "Bucknell", "Virginia", "Virginia", "Virginia", "Bucknell", "Bucknell", "Virginia", "Virginia", "Virginia", "Bucknell", "Bucknell", "Virginia", "Virginia", "Virginia", "Bucknell", "Bucknell", "Virginia", "Virginia"),
@@ -166,7 +166,7 @@ test_that("flash table distance", {
       Result = c("3:46.70", "3:47.14", "3:47.33", "3:47.53", "3:47.79", "3:48.45", "3:49.70", "3:50.10", "3:50.88", "3:51.76", "3:53.52", "3:54.54", "3:58.31", "4:20.37", NA, NA, NA, "3:46.70", "3:47.14", "3:47.33", "3:47.53", "3:47.79", "3:48.45", "3:49.70", "3:50.10", "3:50.88", "3:51.76", "3:53.52", "3:54.54", "3:58.31", "4:20.37", NA, NA, NA, "3:46.70", "3:47.14", "3:47.33", "3:47.53", "3:47.79", "3:48.45", "3:49.70", "3:50.10", "3:50.88", "3:51.76", "3:53.52", "3:54.54", "3:58.31", "4:20.37", NA, NA, NA, "3:46.70", "3:47.14", "3:47.33", "3:47.53", "3:47.79", "3:48.45", "3:49.70", "3:50.10", "3:50.88", "3:51.76", "3:53.52", "3:54.54", "3:58.31", "4:20.37", NA, NA, NA),
       Event = rep("1500m", 68),
       Gender = rep("Men", 68),
-      Date = rep("Apr 29", 68),
+      Date = rep(as.Date("2017-04-29"), 68),
       Split_Distance = c(rep("300", 17), rep("700", 17), rep("1100", 17), rep("1500", 17)),
       Split_Time = c("44.81", "44.40", "44.70", "44.16", "44.96", "45.28", "44.03", "45.19", "44.51", "45.06", "45.49", "44.29", "45.73", "46.00", "43.92", NA, NA, "1:46.73", "1:46.11", "1:46.53", "1:45.85", "1:46.71", "1:46.32", "1:45.75", "1:46.94", "1:46.62", "1:47.00", "1:47.25", "1:46.09", "1:48.16", "1:53.18", "1:45.58", NA, NA, "2:49.10", "2:48.28", "2:48.36", "2:48.23", "2:49.43", "2:48.88", "2:48.06", "2:49.62", "2:51.65", "2:49.98", "2:51.14", "2:49.41", "2:53.86", "3:06.30", NA, NA, NA, "3:46.70", "3:47.14", "3:47.33", "3:47.53", "3:47.79", "3:48.45", "3:49.70", "3:50.10", "3:50.88", "3:51.76", "3:53.52", "3:54.54", "3:58.31", "4:20.37", NA, NA, NA),
       stringsAsFactors = FALSE
@@ -203,7 +203,7 @@ test_that("flash table distance medley", {
       Result = rep("10:51.89", 4),
       Event = rep("Distance Medley", 4),
       Gender = rep("Women", 4),
-      Date = rep("Mar 15", 4),
+      Date = rep(as.Date("2015-03-15"), 4),
       Split_Distance = c("L1", "L2", "L3", "L4"),
       Split_Time = c("3:22.87", "4:15.71", "6:23.00", "10:51.89"),
       stringsAsFactors = FALSE
@@ -241,7 +241,7 @@ test_that("flash table Pent 800m", {
       Points = c("952", "934", "919", "918", "857", "843", "842", "801", "788", "785", "762", "745", "739", "728", "715", "702"),
       Event = rep("Pent 800m", 16),
       Gender = rep("Women", 16),
-      Date = rep("Mar 12", 16),
+      Date = rep(as.Date("2021-03-12"), 16),
       Team = c("BYU", "Florida", "Notre Dame", "Georgia", "Duke", "Texas", "Oregon", "Virginia", "Wake Forest", "Wisconsin", "Kentucky", "Nevada", "Miss State", "Minnesota", "Texas A&M", "Arkansas"),
       Age = c("SR", "JR", "FR", "SO", "SR", "FR", "SO", "JR", "SO", "SO", "SO", "SR", "SR", "JR", "JR", "JR"),
       stringsAsFactors = FALSE
@@ -281,7 +281,7 @@ test_that("flash table 400m tiebreaker", {
       Result = c("48.50", "48.50", "49.09"),
       Event = rep("400m", 3),
       Gender = rep("Boys", 3),
-      Date = rep("Jan 10", 3),
+      Date = rep(as.Date("2015-01-10"), 3),
       Tiebreaker = c("48.491", "48.496", NA),
       stringsAsFactors = FALSE
     )
@@ -320,7 +320,7 @@ test_that("flash table long jump, wind without w: marker", {
       Event = rep("Long Jump", 3),
       Gender = rep("Men", 3),
       Best = c("7.30m", "6.71m", "6.55m"),
-      Date = rep("Apr 17", 3),
+      Date = rep(as.Date("2021-04-17"), 3),
       Round = rep("1", 3),
       Result = c("7.02", "6.57", "6.36"),
       Team = rep("Duke", 3),

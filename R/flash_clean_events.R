@@ -122,6 +122,11 @@ flash_clean_events <- function(df, wide_format_clean = FALSE){
     dplyr::na_if("") %>%
     dplyr::na_if("-")
 
+  if(unique(df$Event_Date) %in% c("Unknown", NA) == FALSE){
+  df <- df %>%
+    mutate(Event_Date = as.Date(Event_Date, format = "%b %d %Y"))
+  }
+
   return(df)
 
 }

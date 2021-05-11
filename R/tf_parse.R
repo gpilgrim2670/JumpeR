@@ -920,7 +920,6 @@ tf_parse <-
     #### remove unneeded columns ####
     data <- data %>%
     dplyr::select(which(SwimmeR::`%!in%`(names(.), c("Row_Numb", "Exhibition", "Points", "Heat"))))
-    # dplyr::select(which(SwimmeR::`%!in%`(names(.), c("Row_Numb", "Exhibition", "Points", "Heat", "Tiebreaker"))))
 
     return(data)
 }

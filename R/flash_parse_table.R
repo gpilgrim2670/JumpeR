@@ -56,6 +56,7 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   # link <- "https://www.flashresults.com/2015_Meets/Outdoor/05-01_Dogwood/012-1_compiled.htm"
   # link <- "https://www.flashresults.com/2021_Meets/Indoor/03-11_NCAA/033-3_compiledSeries.htm"
   # link <- "https://www.flashresults.com/2021_Meets/Outdoor/04-16_VirginiaChallenge/014-1-01.htm"
+  # link <- "https://flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/004-1-03.htm"
 
   page_content <- xml2::read_html(link, options = c("DTDLOAD", "NOBLANKS"))
 
@@ -256,11 +257,18 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   event_date <- page_content_vector %>%
     flash_date_parse()
 
+  event_year <- stringr::str_extract(link, "20\\d\\d")
+
+  # converted to date fromat in flash_clean_events
+  if(event_date %in% c("Unknown", NA) == FALSE){
+  event_date <- paste(event_date, event_year, sep = " ")
+  }
+
   # include event name and gender
   df <- df %>%
     dplyr::mutate(Event = event_name,
                   Gender = event_gender,
-                  Date = event_date) %>%
+                  Event_Date = event_date) %>%
     # dplyr::select(-matches("Placeholder")) %>%
     dplyr::mutate(dplyr::across(where(is.character), stringr::str_trim)) %>%  # remove whitespaces
     dplyr::na_if("") %>%  # blank cells to NA

@@ -54,12 +54,25 @@ flash_parse <-
     #   add_row_numbers()
     # flash_file <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/04-12_TamuInvite/014-1.pdf") %>%
     #   add_row_numbers()
+    # flash_file <- read_results("https://www.flashresults.com/2019_Meets/Outdoor/06-30_PreClassic/002-1.pdf") %>%
+    #   add_row_numbers()
 
     #### Begin actual function ####
 
     #### Pulls out event labels from text ####
     events <- event_parse(flash_file) %>%
       dplyr::mutate(Event = stringr::str_remove(Event, " Women$| Men$"))
+
+    #### Pulls out event date ####
+    Date_String <- paste(paste0("\\d{1,2}\\s", month.abb, "\\s20\\d{2}"), collapse = "|")
+
+    event_date <- str_extract(flash_file, Date_String)
+    event_date <- event_date[is.na(event_date) == FALSE]
+    event_date <- event_date[1] # in case there are birthdates
+
+    if(length(event_date) > 0){
+      event_date <- as.Date(event_date, format = "%d %b %Y")
+    }
 
     #### set up strings ####
     Name_String <-
@@ -1350,7 +1363,6 @@ flash_parse <-
           dplyr::select(colnames(.)[stringr::str_detect(names(.), "^Flight", negate = TRUE)], sort(colnames(.)[stringr::str_detect(names(.), "^Flight")]))
       }
 
-
       #### clean up unneeded columns ####
       flash_data <- flash_data %>%
         dplyr::arrange(Row_Numb) %>%
@@ -1361,6 +1373,10 @@ flash_parse <-
         flash_data <- remove_unneeded_flights(flash_data) %>%
           dplyr::na_if("")
       }
+
+      # add in date
+      flash_data <- flash_data %>%
+        dplyr::mutate(Event_Date = event_date)
 
       #### remove empty columns (all values are NA) ####
       flash_data <- Filter(function(x)
