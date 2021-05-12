@@ -13,11 +13,10 @@ flash_event_parse(text)
 a one element list containing the name of the event
 }
 \description{
-Locates an event label in text of results from a flash results html page for a given event.
+Locates an event label in text of results from a flash results html page for
+a given event.
 }
 \seealso{
-\code{flash_event_parse} is a helper function inside \code{\link{flash_parse_table}}
-}
-\author{
-Gregory A. Pilgrim \email{gpilgrim2670@gmail.com} and George M. Perry
+\code{flash_event_parse} is a helper function inside
+\code{\link{flash_parse_table}}
 }

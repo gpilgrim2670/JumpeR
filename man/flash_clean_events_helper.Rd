@@ -12,7 +12,8 @@ flash_clean_events_helper(
 \arguments{
 \item{df_helper}{a data frame of vertical event data from Flash Results}
 
-\item{wide_format_clean_helper}{should df be presented in wide format (default is \code{FALSE})?}
+\item{wide_format_clean_helper}{should df be presented in wide format
+(default is \code{FALSE})?}
 }
 \value{
 a cleaned version of df
@@ -21,5 +22,6 @@ a cleaned version of df
 Used to apply appropriate cleaning function based on event name
 }
 \seealso{
-\code{flash_clean_events_helper} is a helper function inside \code{\link{flash_clean_events}}
+\code{flash_clean_events_helper} is a helper function inside
+\code{\link{flash_clean_events}}
 }

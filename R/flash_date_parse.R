@@ -1,6 +1,7 @@
 #' Pulls out date from text of flash results html page
 #'
-#' Locates an date in text of results from a flash results html page for a given event.
+#' Locates an date in text of results from a flash results html page for a given
+#' event.
 #'
 #' @importFrom stringr str_match
 #' @importFrom stringr str_to_title
@@ -9,7 +10,8 @@
 #' @param text raw text of an event page from Flash Results
 #' @return a one element list containing the date of the event
 #'
-#' @seealso \code{flash_date_parse} is a helper function inside \code{\link{flash_parse_table}}
+#' @seealso \code{flash_date_parse} is a helper function inside
+#'   \code{\link{flash_parse_table}}
 
 flash_date_parse <- function(text){
 

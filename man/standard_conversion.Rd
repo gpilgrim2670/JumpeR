@@ -7,14 +7,14 @@
 standard_conversion(x)
 }
 \arguments{
-\item{x}{A character vector of distance(s) in meters format ("3.85m") , to be converted to meters ("12-07.45")}
+\item{x}{A character vector of distance(s) in meters format ("3.85m") , to be
+converted to meters ("12-07.45")}
 }
 \value{
-returns the value of the string \code{x} which represents a distance in feet-inches
+returns the value of the string \code{x} which represents a distance
+in feet-inches
 }
 \description{
-Takes a character string (or list) representing a length in meters format (e.g. "3.85m") and converts it to a distance in feet-inches ("12-07.45")
-}
-\author{
-Greg Pilgrim \email{gpilgrim2670@gmail.com}
+Takes a character string (or list) representing a length in meters format
+(e.g. "3.85m") and converts it to a distance in feet-inches ("12-07.45")
 }

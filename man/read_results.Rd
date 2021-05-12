@@ -2,17 +2,21 @@
 % Please edit documentation in R/read_results.R
 \name{read_results}
 \alias{read_results}
-\title{Reads track and field results into a list of strings in preparation for parsing with \code{tf_parse}}
+\title{Reads track and field results into a list of strings in preparation for
+parsing with \code{tf_parse}}
 \usage{
 read_results(file, node = "pre")
 }
 \arguments{
-\item{file}{a .pdf or .html file (could be a url) where containing swimming track and field results.  pdfs with multiple columns will not work.}
+\item{file}{a .pdf or .html file (could be a url) where containing swimming
+track and field results.  pdfs with multiple columns will not work.}
 
-\item{node}{a CSS node where html results are stored.  Required for html results.  Default is "pre", which nearly always works.}
+\item{node}{a CSS node where html results are stored.  Required for html
+results.  Default is "pre", which nearly always works.}
 }
 \value{
-returns a list of strings containing the information from \code{file}.  Should then be parsed with \code{tf_parse}
+returns a list of strings containing the information from
+\code{file}.  Should then be parsed with \code{tf_parse}
 }
 \description{
 Outputs list of strings to be processed by \code{tf_parse}
@@ -22,5 +26,6 @@ Outputs list of strings to be processed by \code{tf_parse}
 
 }
 \seealso{
-\code{read_results} is meant to be followed by \code{\link{tf_parse}}
+\code{read_results} is meant to be followed by
+\code{\link{tf_parse}}
 }

@@ -7,13 +7,15 @@
 attempts_remove(df)
 }
 \arguments{
-\item{df}{dataframe with jump attempt columns containing (X, O, PASS etc) and other columns}
+\item{df}{dataframe with jump attempt columns containing (X, O, PASS etc) and
+other columns}
 }
 \value{
 returns a dataframe with the attempt columns removed
 }
 \description{
-Takes the output of \code{read_results} and, inside of \code{tf_parse}, extracts vertical jump attempts and associated row numbers
+Takes the output of \code{read_results} and, inside of \code{tf_parse},
+extracts vertical jump attempts and associated row numbers
 }
 \seealso{
 \code{attempts_remove} runs inside \code{\link{flash_parse}}

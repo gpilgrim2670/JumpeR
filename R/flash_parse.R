@@ -1,4 +1,5 @@
-#' Reads track and field results into a list of strings in preparation for parsing with \code{tf_parse}
+#' Reads track and field results into a list of strings in preparation for
+#' parsing with \code{tf_parse}
 #'
 #' Outputs list of strings to be processed by \code{tf_parse}
 #'
@@ -26,14 +27,20 @@
 #' @importFrom stats setNames
 #' @importFrom SwimmeR `%!in%`
 #'
-#' @param flash_file a .pdf or .html file (could be a url) where containing track and field results.  Must be formatted in a "normal" fashion - see vignette
-#' @param flash_flights should tf_parse try to include flights for jumping/throwing events?  Defaults to \code{FALSE}
-#' @param flash_flight_attempts should tf_parse try to include outcomes for flights for vertical jumping events?  Defaults to \code{FALSE}
-#' @param flash_split_attempts should flight_attempts columns be split into individual attempts
+#' @param flash_file a .pdf or .html file (could be a url) where containing
+#'   track and field results.  Must be formatted in a "normal" fashion - see
+#'   vignette
+#' @param flash_flights should tf_parse try to include flights for
+#'   jumping/throwing events?  Defaults to \code{FALSE}
+#' @param flash_flight_attempts should tf_parse try to include outcomes for
+#'   flights for vertical jumping events?  Defaults to \code{FALSE}
+#' @param flash_split_attempts should flight_attempts columns be split into
+#'   individual attempts
 #'
 #' @return a data frame of track and field results
 #'
-#' @seealso \code{tf_parse} is meant to be preceded by \code{\link{read_results}}
+#' @seealso \code{tf_parse} is meant to be preceded by
+#'   \code{\link{read_results}}
 #'
 #' @export
 

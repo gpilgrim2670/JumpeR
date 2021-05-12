@@ -3,7 +3,8 @@
 \name{flash_extract_details_links}
 \alias{flash_extract_details_links}
 \alias{extract_details_links}
-\title{Collects links to all detailed results links from a given event link on Flash Results}
+\title{Collects links to all detailed results links from a given event link on Flash
+Results}
 \usage{
 flash_extract_details_links(link)
 
@@ -16,7 +17,9 @@ extract_details_links(link)
 returns list of links to corresponding detailed event result pages
 }
 \description{
-Used in scraping flashresults.com.  Collects detailed results (often called heat or flight results) from an associated event results landing page.  Detailed results often contain splits or attempts results.
+Used in scraping flashresults.com.  Collects detailed results (often called
+heat or flight results) from an associated event results landing page.
+Detailed results often contain splits or attempts results.
 }
 \examples{
 \donttest{flash_extract_details_links(

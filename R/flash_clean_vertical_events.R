@@ -1,6 +1,7 @@
 #' Cleans vertical events
 #'
-#' Cleans vertical event results pulled from Flash Results html tables.  Can present cleaned data in wide or long format.
+#' Cleans vertical event results pulled from Flash Results html tables.  Can
+#' present cleaned data in wide or long format.
 #'
 #' @importFrom dplyr select
 #' @importFrom dplyr mutate
@@ -11,10 +12,12 @@
 #' @importFrom stringr str_split_fixed
 #'
 #' @param df a data frame of vertical event data from Flash Results
-#' @param wide_format_vertical should df be presented in wide format (default is \code{FALSE})?
+#' @param wide_format_vertical should df be presented in wide format (default is
+#'   \code{FALSE})?
 #' @return a cleaned version of df
 #'
-#' @seealso \code{flash_clean_vertical_events} is a helper function inside \code{\link{flash_parse_table}}
+#' @seealso \code{flash_clean_vertical_events} is a helper function inside
+#'   \code{\link{flash_parse_table}}
 
 flash_clean_vertical_events <- function(df, wide_format_vertical = wide_format_clean) {
 

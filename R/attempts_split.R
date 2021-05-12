@@ -1,8 +1,8 @@
 #' Creates new columns of split attempts strings
 #'
-#' Given a dataframe with columns "Flight_1_Attempts" it will output three columns, for each of the attempts in flight 1 (Flight_1_Attempt_1, Flight_1_Attempt_2 etc.)
-#'
-#' @author Greg Pilgrim \email{gpilgrim2670@@gmail.com}
+#' Given a data frame with columns "Flight_1_Attempts" it will output three
+#' columns, for each of the attempts in flight 1 (Flight_1_Attempt_1,
+#' Flight_1_Attempt_2 etc.)
 #'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr left_join
@@ -15,10 +15,13 @@
 #' @importFrom purrr map
 #' @importFrom purrr reduce
 #'
-#' @param data_to_split output from \code{read_results} followed by \code{add_row_numbers}
-#' @return returns a dataframe with Flight_X_Attempts columns split into individual attempts inside \code{tf_parse}
-
-#' @seealso \code{attempts_split} is a helper function inside \code{\link{tf_parse}}
+#' @param data_to_split output from \code{read_results} followed by
+#'   \code{add_row_numbers}
+#' @return returns a data frame with Flight_X_Attempts columns split into
+#'   individual attempts inside \code{tf_parse}
+#'
+#' @seealso \code{attempts_split} is a helper function inside
+#'   \code{\link{tf_parse}}
 
 attempts_split <- function(data_to_split){
 

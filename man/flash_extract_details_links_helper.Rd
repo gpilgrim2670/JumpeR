@@ -2,7 +2,8 @@
 % Please edit documentation in R/flash_extract_details_links_helper.R
 \name{flash_extract_details_links_helper}
 \alias{flash_extract_details_links_helper}
-\title{Collects links to all detailed results links from a given event link on Flash Results}
+\title{Collects links to all detailed results links from a given event link on Flash
+Results}
 \usage{
 flash_extract_details_links_helper(link_helper = link)
 }
@@ -13,8 +14,11 @@ flash_extract_details_links_helper(link_helper = link)
 returns list of links to corresponding detailed event result pages
 }
 \description{
-Used in scraping flashresults.com.  Collects detailed results (often called heat or flight results) from an associated event results landing page.  Detailed results often contain splits or attempts results.
+Used in scraping flashresults.com.  Collects detailed results (often called
+heat or flight results) from an associated event results landing page.
+Detailed results often contain splits or attempts results.
 }
 \seealso{
-\code{flash_extract_details_links_helper} is a helper function inside \code{\link{flash_extract_details_links}}
+\code{flash_extract_details_links_helper} is a helper function inside
+\code{\link{flash_extract_details_links}}
 }

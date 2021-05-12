@@ -2,7 +2,8 @@
 % Please edit documentation in R/tf_parse.R
 \name{tf_parse}
 \alias{tf_parse}
-\title{Reads track and field results into a list of strings in preparation for parsing with \code{tf_parse}}
+\title{Reads track and field results into a list of strings in preparation for
+parsing with \code{tf_parse}}
 \usage{
 tf_parse(
   file,
@@ -16,21 +17,41 @@ tf_parse(
 )
 }
 \arguments{
-\item{file}{a .pdf or .html file (could be a url) where containing track and field results.  Must be formatted in a "normal" fashion - see vignette}
+\item{file}{a .pdf or .html file (could be a url) where containing track and
+field results.  Must be formatted in a "normal" fashion - see vignette}
 
-\item{avoid}{a list of strings.  Rows in \code{file} containing these strings will not be included. For example "Record:", often used to label records, could be passed to \code{avoid}.  The default is \code{avoid_default}, which contains many strings similar to "Record:".  Users can supply their own lists to \code{avoid}.}
+\item{avoid}{a list of strings.  Rows in \code{file} containing these strings
+will not be included. For example "Record:", often used to label records,
+could be passed to \code{avoid}.  The default is \code{avoid_default},
+which contains many strings similar to "Record:".  Users can supply their
+own lists to \code{avoid}.}
 
-\item{typo}{a list of strings that are typos in the original results.  \code{tf_parse} is particularly sensitive to accidental double spaces, so "Central  High School", with two spaces between "Central" and "High" is a problem, which can be fixed.  Pass "Central  High School" to \code{typo}.}
+\item{typo}{a list of strings that are typos in the original results.
+\code{tf_parse} is particularly sensitive to accidental double spaces, so
+"Central  High School", with two spaces between "Central" and "High" is a
+problem, which can be fixed.  Pass "Central  High School" to \code{typo}.}
 
-\item{replacement}{a list of fixes for the strings in \code{typo}.  Here one could pass "Central High School" (one space between "Central" and "High") to fix the issue described in \code{typo}}
+\item{replacement}{a list of fixes for the strings in \code{typo}.  Here one
+could pass "Central High School" (one space between "Central" and "High")
+to fix the issue described in \code{typo}}
 
-\item{relay_athletes}{should \code{tf_parse} try to include the names of relay athletes for relay events?  Names will be listed in new columns "Relay-Athlete_1", "Relay_Athlete_2" etc.  Defaults to \code{FALSE}.}
+\item{relay_athletes}{should \code{tf_parse} try to include the names of
+relay athletes for relay events?  Names will be listed in new columns
+"Relay-Athlete_1", "Relay_Athlete_2" etc.  Defaults to \code{FALSE}.}
 
-\item{flights}{should \code{tf_parse} try to include flights for jumping/throwing events?  Please note this will add a significant number of columns to the resulting dataframe.  Defaults to \code{FALSE}.}
+\item{flights}{should \code{tf_parse} try to include flights for
+jumping/throwing events?  Please note this will add a significant number of
+columns to the resulting dataframe.  Defaults to \code{FALSE}.}
 
-\item{flight_attempts}{should \code{tf_parse} try to include flights results (i.e. "PASS", "X", "O") for high jump and pole value events?  Please note this will add a significant number of columns to the resulting dataframe.  Defaults to \code{FALSE}}
+\item{flight_attempts}{should \code{tf_parse} try to include flights results
+(i.e. "PASS", "X", "O") for high jump and pole value events?  Please note
+this will add a significant number of columns to the resulting dataframe.
+Defaults to \code{FALSE}}
 
-\item{split_attempts}{should \code{tf_parse} split attempts from each flight into separate columns?  For example "XXO" would result in three columns, one for "X', another for the second "X" and third for "O".  There will be a lot of columns.  Defaults to \code{FALSE}}
+\item{split_attempts}{should \code{tf_parse} split attempts from each flight
+into separate columns?  For example "XXO" would result in three columns,
+one for "X', another for the second "X" and third for "O".  There will be a
+lot of columns.  Defaults to \code{FALSE}}
 }
 \value{
 a data frame of track and field results
@@ -48,5 +69,6 @@ split_attempts = TRUE)
 
 }
 \seealso{
-\code{tf_parse} is meant to be preceded by \code{\link{read_results}}
+\code{tf_parse} is meant to be preceded by
+\code{\link{read_results}}
 }

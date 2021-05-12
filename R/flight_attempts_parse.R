@@ -1,6 +1,7 @@
 #' Collects results of high jump & pole vault attempts within \code{tf_parse}
 #'
-#' Takes the output of \code{read_results} and, inside of \code{tf_parse}, extracts jump/throw attempts and associated row numbers.
+#' Takes the output of \code{read_results} and, inside of \code{tf_parse},
+#' extracts jump/throw attempts and associated row numbers.
 #'
 #' @importFrom dplyr bind_rows
 #' @importFrom dplyr rename_at
@@ -14,10 +15,13 @@
 #' @importFrom purrr map_lgl
 #' @importFrom purrr map
 #'
-#' @param text output of \code{read_results} with row numbers appended by \code{add_row_numbers}
+#' @param text output of \code{read_results} with row numbers appended by
+#'   \code{add_row_numbers}
 #' @return returns a data frame with split times and row numbers
 #'
-#' @seealso \code{flight_attempts_parse} runs inside \code{\link{tf_parse}} on the output of \code{\link{read_results}} with row numbers from \code{\link{add_row_numbers}}
+#' @seealso \code{flight_attempts_parse} runs inside \code{\link{tf_parse}} on
+#'   the output of \code{\link{read_results}} with row numbers from
+#'   \code{\link{add_row_numbers}}
 
 flight_attempts_parse <- function(text) {
 

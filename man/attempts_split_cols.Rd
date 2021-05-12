@@ -16,11 +16,15 @@ attempts_split_cols(i, data, new_cols, old_cols)
 \item{old_cols}{a list of old columns to split}
 }
 \value{
-returns a dataframe with Flight_X_Attempts columns split into individual attempts inside \code{tf_parse}
+returns a dataframe with Flight_X_Attempts columns split into
+individual attempts inside \code{tf_parse}
 }
 \description{
-Given a dataframe with columns "Flight_1_Attempts" it will produce three columns, for each of the attempts in flight 1 (Flight_1_Attempt_1, Flight_1_Attempt_2 etc.)
+Given a dataframe with columns "Flight_1_Attempts" it will produce three
+columns, for each of the attempts in flight 1 (Flight_1_Attempt_1,
+Flight_1_Attempt_2 etc.)
 }
 \seealso{
-\code{attempts_split_cols} is a helper function inside  \code{attempts_split}
+\code{attempts_split_cols} is a helper function inside
+\code{attempts_split}
 }

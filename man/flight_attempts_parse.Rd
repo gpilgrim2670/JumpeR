@@ -7,14 +7,18 @@
 flight_attempts_parse(text)
 }
 \arguments{
-\item{text}{output of \code{read_results} with row numbers appended by \code{add_row_numbers}}
+\item{text}{output of \code{read_results} with row numbers appended by
+\code{add_row_numbers}}
 }
 \value{
 returns a data frame with split times and row numbers
 }
 \description{
-Takes the output of \code{read_results} and, inside of \code{tf_parse}, extracts jump/throw attempts and associated row numbers.
+Takes the output of \code{read_results} and, inside of \code{tf_parse},
+extracts jump/throw attempts and associated row numbers.
 }
 \seealso{
-\code{flight_attempts_parse} runs inside \code{\link{tf_parse}} on the output of \code{\link{read_results}} with row numbers from \code{\link{add_row_numbers}}
+\code{flight_attempts_parse} runs inside \code{\link{tf_parse}} on
+the output of \code{\link{read_results}} with row numbers from
+\code{\link{add_row_numbers}}
 }

@@ -1,6 +1,8 @@
 #' Cleans distance events
 #'
-#' Cleans distance event results pulled from Flash Results html tables.  Distance events are generally those with lengths of 400m or greater.  Can present cleaned data in wide or long format.
+#' Cleans distance event results pulled from Flash Results html tables.
+#' Distance events are generally those with lengths of 400m or greater.  Can
+#' present cleaned data in wide or long format.
 #'
 #' @importFrom dplyr select
 #' @importFrom dplyr mutate
@@ -12,10 +14,12 @@
 #' @importFrom stringr str_remove
 #'
 #' @param df a data frame of distance event data from Flash Results
-#' @param wide_format_distance should df be presented in wide format (default is \code{FALSE})?
+#' @param wide_format_distance should df be presented in wide format (default is
+#'   \code{FALSE})?
 #' @return a cleaned version of df
 #'
-#' @seealso \code{flash_clean_distance_events} is a helper function inside \code{\link{flash_parse_table}}
+#' @seealso \code{flash_clean_distance_events} is a helper function inside
+#'   \code{\link{flash_parse_table}}
 
 flash_clean_distance_events <- function(df, wide_format_distance = wide_format_clean) {
 

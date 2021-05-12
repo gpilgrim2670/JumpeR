@@ -7,17 +7,19 @@
 attempts_split(data_to_split)
 }
 \arguments{
-\item{data_to_split}{output from \code{read_results} followed by \code{add_row_numbers}}
+\item{data_to_split}{output from \code{read_results} followed by
+\code{add_row_numbers}}
 }
 \value{
-returns a dataframe with Flight_X_Attempts columns split into individual attempts inside \code{tf_parse}
+returns a data frame with Flight_X_Attempts columns split into
+individual attempts inside \code{tf_parse}
 }
 \description{
-Given a dataframe with columns "Flight_1_Attempts" it will output three columns, for each of the attempts in flight 1 (Flight_1_Attempt_1, Flight_1_Attempt_2 etc.)
+Given a data frame with columns "Flight_1_Attempts" it will output three
+columns, for each of the attempts in flight 1 (Flight_1_Attempt_1,
+Flight_1_Attempt_2 etc.)
 }
 \seealso{
-\code{attempts_split} is a helper function inside \code{\link{tf_parse}}
-}
-\author{
-Greg Pilgrim \email{gpilgrim2670@gmail.com}
+\code{attempts_split} is a helper function inside
+\code{\link{tf_parse}}
 }

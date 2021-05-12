@@ -7,14 +7,18 @@
 flash_flights_parse(text)
 }
 \arguments{
-\item{text}{output of \code{read_results} with row numbers appended by \code{add_row_numbers}}
+\item{text}{output of \code{read_results} with row numbers appended by
+\code{add_row_numbers}}
 }
 \value{
-returns a dataframe with split times and row numbers
+returns a data frame with split times and row numbers
 }
 \description{
-Takes the output of \code{read_results} and, inside of \code{tf_parse}, extracts jump/throw attempts and associated row numbers
+Takes the output of \code{read_results} and, inside of \code{tf_parse},
+extracts jump/throw attempts and associated row numbers
 }
 \seealso{
-\code{flights_parse_flash} runs inside \code{\link{flash_parse}} on the output of \code{\link{read_results}} with row numbers from \code{\link{add_row_numbers}}
+\code{flights_parse_flash} runs inside \code{\link{flash_parse}} on
+the output of \code{\link{read_results}} with row numbers from
+\code{\link{add_row_numbers}}
 }

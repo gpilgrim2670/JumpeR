@@ -14,11 +14,14 @@ attempts_split_long_helper(i, data, old_cols)
 \item{old_cols}{a list of old columns to split}
 }
 \value{
-returns a dataframe with Flight_X_Attempts columns split into individual rows
+returns a data frame with Flight_X_Attempts columns split into
+individual rows
 }
 \description{
-Given a dataframe with columns "Flight_1_Attempts" it will produce three rows, for each of the attempts in flight 1
+Given a data frame with columns "Flight_1_Attempts" it will produce three
+rows, for each of the attempts in flight 1
 }
 \seealso{
-\code{attempts_split_long_helper} is a helper function inside  \code{attempts_split_long}
+\code{attempts_split_long_helper} is a helper function inside
+\code{attempts_split_long}
 }

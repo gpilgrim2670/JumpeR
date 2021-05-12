@@ -13,8 +13,10 @@ flash_date_parse(text)
 a one element list containing the date of the event
 }
 \description{
-Locates an date in text of results from a flash results html page for a given event.
+Locates an date in text of results from a flash results html page for a given
+event.
 }
 \seealso{
-\code{flash_date_parse} is a helper function inside \code{\link{flash_parse_table}}
+\code{flash_date_parse} is a helper function inside
+\code{\link{flash_parse_table}}
 }

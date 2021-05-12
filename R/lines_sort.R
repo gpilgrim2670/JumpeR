@@ -1,6 +1,8 @@
 #' Sorts and collects lines by performance and row number
 #'
-#' Collects all lines, (for example containing splits or relay swimmers) associated with a particular performance into a data frame with the appropriate row number for that performance.
+#' Collects all lines, (for example containing splits or relay swimmers)
+#' associated with a particular performance into a data frame with the
+#' appropriate row number for that performance.
 #'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr lag
@@ -11,11 +13,12 @@
 #' @importFrom dplyr arrange
 #' @importFrom stats reshape
 #'
-#' @param x a list of character strings including performances, with row numbers added by \code{add_row_numbers}
+#' @param x a list of character strings including performances, with row numbers
+#'   added by \code{add_row_numbers}
 #' @param min_row the lowest row number
-#' @return a data frame with \code{Row_Numb} as the first column.  Other columns are performance elements, like splits or relay swimmers, both in order of occurrence left to right
-#'
-#' @seealso \code{lines_sort} is a helper function inside \code{splits_parse} and \code{swim_parse_ISL}
+#' @return a data frame with \code{Row_Numb} as the first column.  Other columns
+#'   are performance elements, like splits or relay swimmers, both in order of
+#'   occurrence left to right
 
 lines_sort <- function(x, min_row = minimum_row) {
   min_row <- as.numeric(min_row)

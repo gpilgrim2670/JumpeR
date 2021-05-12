@@ -1,6 +1,7 @@
 #' Collects all meet links from a given year on Flash Results
 #'
-#' Used in scraping flashresults.com.  Collects meet names, dates, and locations along with a link the the associated results landing page.
+#' Used in scraping flashresults.com.  Collects meet names, dates, and locations
+#' along with a link the the associated results landing page.
 #'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr rename
@@ -17,7 +18,8 @@
 #' @importFrom rvest html_attr
 #'
 #' @param flash_year a link to a year landing page on flashresults.com
-#' @return returns a data frame with meet names, dates, locations, and links to flash results
+#' @return returns a data frame with meet names, dates, locations, and links to
+#'   flash results
 #'
 #' @examples \donttest{flash_year_links("https://flashresults.com/2015results.htm")}
 #'

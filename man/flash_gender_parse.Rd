@@ -13,8 +13,10 @@ flash_gender_parse(text)
 a one element list containing the gender of the event
 }
 \description{
-Locates an gender label in text of results from a flash results html page for a given event.
+Locates an gender label in text of results from a flash results html page for
+a given event.
 }
 \seealso{
-\code{flash_gender_parse} is a helper function inside \code{\link{flash_parse_table}}
+\code{flash_gender_parse} is a helper function inside
+\code{\link{flash_parse_table}}
 }

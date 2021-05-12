@@ -1,6 +1,9 @@
-#' Rebuilds tables that \code{rvest::html_table} can't parse inside of \code{\link{flash_parse_table}}
+#' Rebuilds tables that \code{rvest::html_table} can't parse inside of
+#' \code{\link{flash_parse_table}}
 #'
-#' Extracts individual \code{td} and \code{th} elements from html tables on Flash Results that cannot be parsed by code{rvest::html_table} (due to formatting issues in the html code)
+#' Extracts individual \code{td} and \code{th} elements from html tables on
+#' Flash Results that cannot be parsed by code{rvest::html_table} (due to
+#' formatting issues in the html code)
 #'
 #' @importFrom dplyr na_if
 #' @importFrom stringr str_remove
@@ -14,7 +17,8 @@
 #' @param event_url_rebuild a link to an event page on flashresults.com
 #' @return returns a data frame of event results
 #'
-#' @seealso \code{rebuild_event_table} is a helper function inside \code{\link{flash_parse_table}}
+#' @seealso \code{rebuild_event_table} is a helper function inside
+#'   \code{\link{flash_parse_table}}
 
 flash_rebuild_event_table <- function(event_url_rebuild) {
   #### testing ####

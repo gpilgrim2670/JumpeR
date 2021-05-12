@@ -13,10 +13,12 @@ year_links(flash_year)
 \item{flash_year}{a link to a year landing page on flashresults.com}
 }
 \value{
-returns a data frame with meet names, dates, locations, and links to flash results
+returns a data frame with meet names, dates, locations, and links to
+flash results
 }
 \description{
-Used in scraping flashresults.com.  Collects meet names, dates, and locations along with a link the the associated results landing page.
+Used in scraping flashresults.com.  Collects meet names, dates, and locations
+along with a link the the associated results landing page.
 }
 \examples{
 \donttest{flash_year_links("https://flashresults.com/2015results.htm")}

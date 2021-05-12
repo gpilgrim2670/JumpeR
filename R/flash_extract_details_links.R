@@ -1,6 +1,9 @@
-#' Collects links to all detailed results links from a given event link on Flash Results
+#' Collects links to all detailed results links from a given event link on Flash
+#' Results
 #'
-#' Used in scraping flashresults.com.  Collects detailed results (often called heat or flight results) from an associated event results landing page.  Detailed results often contain splits or attempts results.
+#' Used in scraping flashresults.com.  Collects detailed results (often called
+#' heat or flight results) from an associated event results landing page.
+#' Detailed results often contain splits or attempts results.
 #'
 #' @importFrom purrr map
 #'

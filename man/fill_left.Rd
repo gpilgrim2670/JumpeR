@@ -10,10 +10,12 @@ fill_left(df)
 \item{df}{a data frame having some NA values}
 }
 \value{
-a data frame where all values have been pushed left, replacing NAs, and all columns containing only \code{NA} values have been removed
+a data frame where all values have been pushed left, replacing NAs,
+and all columns containing only \code{NA} values have been removed
 }
 \description{
-Moves non-NA data left into NA spaces, then removes all columns that contain only NA values
+Moves non-NA data left into NA spaces, then removes all columns that contain
+only NA values
 }
 \seealso{
 \code{fill_left} is a helper function inside \code{lines_sort}

@@ -12,14 +12,17 @@ vertical_events(df, wide_format_vertical = wide_format_clean)
 \arguments{
 \item{df}{a data frame of vertical event data from Flash Results}
 
-\item{wide_format_vertical}{should df be presented in wide format (default is \code{FALSE})?}
+\item{wide_format_vertical}{should df be presented in wide format (default is
+\code{FALSE})?}
 }
 \value{
 a cleaned version of df
 }
 \description{
-Cleans vertical event results pulled from Flash Results html tables.  Can present cleaned data in wide or long format.
+Cleans vertical event results pulled from Flash Results html tables.  Can
+present cleaned data in wide or long format.
 }
 \seealso{
-\code{flash_clean_vertical_events} is a helper function inside \code{\link{flash_parse_table}}
+\code{flash_clean_vertical_events} is a helper function inside
+\code{\link{flash_parse_table}}
 }

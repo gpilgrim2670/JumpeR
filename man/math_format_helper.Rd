@@ -7,10 +7,12 @@
 math_format_helper(x)
 }
 \arguments{
-\item{x}{A character vector of time(s) in track format (e.g. 1:35.93) to be converted to seconds (95.93)}
+\item{x}{A character vector of time(s) in track format (e.g. 1:35.93) to be
+converted to seconds (95.93)}
 }
 \value{
-a numeric value representing a time or distance.  Units are not included
+a numeric value representing a time or distance.  Units are not
+included
 }
 \description{
 Helper function for formatting mm:ss.th times as seconds

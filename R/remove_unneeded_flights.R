@@ -1,16 +1,20 @@
 #' Removes unneeded flights columns within \code{tf_parse}
 #'
-#' Inside of \code{tf_parse} & \code{tf_parse}, removes flight columns that do not have an associated flight_attempts column
+#' Inside of \code{tf_parse} & \code{tf_parse}, removes flight columns that do
+#' not have an associated flight_attempts column
 #'
 #' @importFrom dplyr select
 #' @importFrom dplyr all_of
 #' @importFrom stringr str_remove
 #' @importFrom stringr str_subset
 #'
-#' @param x dataframe with columns called both "Flight_X" and "Flight_X_Results" where X is a number
-#' @return returns a dataframe where Flight_X columns that do not have a corresponding Flight_X_Results have been removed
+#' @param x dataframe with columns called both "Flight_X" and "Flight_X_Results"
+#'   where X is a number
+#' @return returns a dataframe where Flight_X columns that do not have a
+#'   corresponding Flight_X_Results have been removed
 #'
-#' @seealso \code{remove_unneeded_flights} runs inside \code{\link{flash_parse}} & \code{\link{tf_parse}}
+#' @seealso \code{remove_unneeded_flights} runs inside \code{\link{flash_parse}}
+#'   & \code{\link{tf_parse}}
 
 remove_unneeded_flights <- function(x) {
 

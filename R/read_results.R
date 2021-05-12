@@ -1,4 +1,5 @@
-#' Reads track and field results into a list of strings in preparation for parsing with \code{tf_parse}
+#' Reads track and field results into a list of strings in preparation for
+#' parsing with \code{tf_parse}
 #'
 #' Outputs list of strings to be processed by \code{tf_parse}
 #'
@@ -7,13 +8,17 @@
 #' @importFrom rvest html_text
 #' @importFrom pdftools pdf_text
 #'
-#' @param file a .pdf or .html file (could be a url) where containing swimming track and field results.  pdfs with multiple columns will not work.
-#' @param node a CSS node where html results are stored.  Required for html results.  Default is "pre", which nearly always works.
-#' @return returns a list of strings containing the information from \code{file}.  Should then be parsed with \code{tf_parse}
+#' @param file a .pdf or .html file (could be a url) where containing swimming
+#'   track and field results.  pdfs with multiple columns will not work.
+#' @param node a CSS node where html results are stored.  Required for html
+#'   results.  Default is "pre", which nearly always works.
+#' @return returns a list of strings containing the information from
+#'   \code{file}.  Should then be parsed with \code{tf_parse}
 #'
 #' @examples \donttest{read_results("https://www.flashresults.com/2018_Meets/Outdoor/05-05_A10/015-1.pdf")}
 #'
-#' @seealso \code{read_results} is meant to be followed by \code{\link{tf_parse}}
+#' @seealso \code{read_results} is meant to be followed by
+#'   \code{\link{tf_parse}}
 #'
 #' @export
 

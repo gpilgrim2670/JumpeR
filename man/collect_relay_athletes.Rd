@@ -10,7 +10,8 @@ collect_relay_athletes(x)
 \item{x}{output from \code{read_results} followed by \code{add_row_numbers}}
 }
 \value{
-returns a data frame of relay athletes and the associated performance row number
+returns a data frame of relay athletes and the associated performance
+row number
 }
 \description{
 Collects relay athletes as a data frame within \code{tf_parse}

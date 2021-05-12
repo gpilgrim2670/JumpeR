@@ -1,8 +1,7 @@
 #' Pulls out event label from text of flash results html page
 #'
-#' Locates an event label in text of results from a flash results html page for a given event.
-#'
-#' @author Gregory A. Pilgrim \email{gpilgrim2670@@gmail.com} and George M. Perry
+#' Locates an event label in text of results from a flash results html page for
+#' a given event.
 #'
 #' @importFrom stringr str_match
 #' @importFrom stringr str_replace
@@ -11,7 +10,8 @@
 #' @param text raw text of an event page from Flash Results
 #' @return a one element list containing the name of the event
 #'
-#' @seealso \code{flash_event_parse} is a helper function inside \code{\link{flash_parse_table}}
+#' @seealso \code{flash_event_parse} is a helper function inside
+#'   \code{\link{flash_parse_table}}
 
 flash_event_parse <- function(text){
 

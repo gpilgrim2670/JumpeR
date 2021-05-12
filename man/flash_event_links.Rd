@@ -16,12 +16,14 @@ meet_links(meet_home)
 returns a list of links to individual events from a given meet
 }
 \description{
-Used in scraping flashresults.com.  Collects event result links from a meet landing page
+Used in scraping flashresults.com.  Collects event result links from a meet
+landing page
 }
 \examples{
 \donttest{flash_event_links("https://flashresults.com/2019_Meets/Outdoor/07-25_USATF_CIS/")}
 
 }
 \author{
-Gregory A. Pilgrim \email{gpilgrim2670@gmail.com} and George M. Perry
+Gregory A. Pilgrim \email{gpilgrim2670@gmail.com} and George M.
+Perry
 }

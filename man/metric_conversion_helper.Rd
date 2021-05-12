@@ -7,10 +7,12 @@
 metric_conversion_helper(x)
 }
 \arguments{
-\item{x}{A character vector of distance(s) to be converted from feet-inches to meters}
+\item{x}{A character vector of distance(s) to be converted from feet-inches
+to meters}
 }
 \value{
-a numeric value representing a number of meters.  Units are not included
+a numeric value representing a number of meters.  Units are not
+included
 }
 \description{
 Converts distances in feet-inches to meters

@@ -12,14 +12,18 @@ distance_events(df, wide_format_distance = wide_format_clean)
 \arguments{
 \item{df}{a data frame of distance event data from Flash Results}
 
-\item{wide_format_distance}{should df be presented in wide format (default is \code{FALSE})?}
+\item{wide_format_distance}{should df be presented in wide format (default is
+\code{FALSE})?}
 }
 \value{
 a cleaned version of df
 }
 \description{
-Cleans distance event results pulled from Flash Results html tables.  Distance events are generally those with lengths of 400m or greater.  Can present cleaned data in wide or long format.
+Cleans distance event results pulled from Flash Results html tables.
+Distance events are generally those with lengths of 400m or greater.  Can
+present cleaned data in wide or long format.
 }
 \seealso{
-\code{flash_clean_distance_events} is a helper function inside \code{\link{flash_parse_table}}
+\code{flash_clean_distance_events} is a helper function inside
+\code{\link{flash_parse_table}}
 }

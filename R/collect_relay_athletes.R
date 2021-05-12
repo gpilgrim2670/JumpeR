@@ -14,10 +14,10 @@
 #' @importFrom purrr map
 #'
 #' @param x output from \code{read_results} followed by \code{add_row_numbers}
-#' @return returns a data frame of relay athletes and the associated performance row number
+#' @return returns a data frame of relay athletes and the associated performance
+#'   row number
 #'
 #' @seealso \code{collect_relay_athletes_data} runs inside of \code{tf_parse}
-#'
 
 collect_relay_athletes <- function(x){
 

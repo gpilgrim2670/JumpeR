@@ -10,16 +10,20 @@ flash_clean_events(df, wide_format_clean = FALSE)
 clean_results(df, wide_format_clean = FALSE)
 }
 \arguments{
-\item{df}{a data frame or list of data frames containing event data from Flash Results}
+\item{df}{a data frame or list of data frames containing event data from
+Flash Results}
 
-\item{wide_format_clean}{should df be presented in wide format (default is \code{FALSE})?}
+\item{wide_format_clean}{should df be presented in wide format (default is
+\code{FALSE})?}
 }
 \value{
 a cleaned version of df
 }
 \description{
-Cleans event results pulled from Flash Results html tables.  Can present cleaned data in wide or long format.
+Cleans event results pulled from Flash Results html tables.  Can present
+cleaned data in wide or long format.
 }
 \seealso{
-\code{flash_clean_events} is a helper function inside \code{\link{flash_parse_table}}
+\code{flash_clean_events} is a helper function inside
+\code{\link{flash_parse_table}}
 }

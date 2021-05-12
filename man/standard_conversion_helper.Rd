@@ -7,7 +7,8 @@
 standard_conversion_helper(x)
 }
 \arguments{
-\item{x}{A character vector of distance(s) to be converted from meters to feet-inches}
+\item{x}{A character vector of distance(s) to be converted from meters to
+feet-inches}
 }
 \value{
 a character vector in feet-inches

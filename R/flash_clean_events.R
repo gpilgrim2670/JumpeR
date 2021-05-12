@@ -1,6 +1,7 @@
 #' Cleans event data
 #'
-#' Cleans event results pulled from Flash Results html tables.  Can present cleaned data in wide or long format.
+#' Cleans event results pulled from Flash Results html tables.  Can present
+#' cleaned data in wide or long format.
 #'
 #' @importFrom dplyr select
 #' @importFrom dplyr group_split
@@ -15,11 +16,14 @@
 #' @importFrom stringr str_split_fixed
 #' @importFrom purrr map
 #'
-#' @param df a data frame or list of data frames containing event data from Flash Results
-#' @param wide_format_clean should df be presented in wide format (default is \code{FALSE})?
+#' @param df a data frame or list of data frames containing event data from
+#'   Flash Results
+#' @param wide_format_clean should df be presented in wide format (default is
+#'   \code{FALSE})?
 #' @return a cleaned version of df
 #'
-#' @seealso \code{flash_clean_events} is a helper function inside \code{\link{flash_parse_table}}
+#' @seealso \code{flash_clean_events} is a helper function inside
+#'   \code{\link{flash_parse_table}}
 #'
 #' @export
 

@@ -1,6 +1,7 @@
 #' Creates new columns for splitting attempts strings in long format
 #'
-#' Given a dataframe with columns "Flight_1_Attempts" it will produce three rows, for each of the attempts in flight 1
+#' Given a data frame with columns "Flight_1_Attempts" it will produce three
+#' rows, for each of the attempts in flight 1
 #'
 #' @importFrom stringr str_remove
 #' @importFrom stats ave
@@ -8,9 +9,11 @@
 #' @param i output from \code{read_results} followed by \code{add_row_numbers}
 #' @param data output from \code{tf_parse}
 #' @param old_cols a list of old columns to split
-#' @return returns a dataframe with Flight_X_Attempts columns split into individual rows
+#' @return returns a data frame with Flight_X_Attempts columns split into
+#'   individual rows
 #'
-#' @seealso \code{attempts_split_long_helper} is a helper function inside  \code{attempts_split_long}
+#' @seealso \code{attempts_split_long_helper} is a helper function inside
+#'   \code{attempts_split_long}
 
 attempts_split_long_helper <- function(i, data, old_cols) {
   # old_cols <- cols_to_split

@@ -3,8 +3,10 @@
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_split_fixed
 #'
-#' @param x A character vector of time(s) in track format (e.g. 1:35.93) to be converted to seconds (95.93)
-#' @return a numeric value representing a time or distance.  Units are not included
+#' @param x A character vector of time(s) in track format (e.g. 1:35.93) to be
+#'   converted to seconds (95.93)
+#' @return a numeric value representing a time or distance.  Units are not
+#'   included
 
 
 math_format_helper <- function(x) {

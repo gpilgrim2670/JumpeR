@@ -1,16 +1,20 @@
-#' Collects links to all detailed results links from a given event link on Flash Results
+#'Collects links to all detailed results links from a given event link on Flash
+#'Results
 #'
-#' Used in scraping flashresults.com.  Collects detailed results (often called heat or flight results) from an associated event results landing page.  Detailed results often contain splits or attempts results.
+#'Used in scraping flashresults.com.  Collects detailed results (often called
+#'heat or flight results) from an associated event results landing page.
+#'Detailed results often contain splits or attempts results.
 #'
-#' @importFrom stringr str_remove
-#' @importFrom stringr str_detect
-#' @importFrom rvest html_nodes
-#' @importFrom rvest html_attr
+#'@importFrom stringr str_remove
+#'@importFrom stringr str_detect
+#'@importFrom rvest html_nodes
+#'@importFrom rvest html_attr
 #'
-#' @param link_helper a link to an event landing page on flashresults.com
-#' @return returns list of links to corresponding detailed event result pages
+#'@param link_helper a link to an event landing page on flashresults.com
+#'@return returns list of links to corresponding detailed event result pages
 #'
-#'@seealso \code{flash_extract_details_links_helper} is a helper function inside \code{\link{flash_extract_details_links}}
+#'@seealso \code{flash_extract_details_links_helper} is a helper function inside
+#'  \code{\link{flash_extract_details_links}}
 
 flash_extract_details_links_helper <- function(link_helper = link) {
 

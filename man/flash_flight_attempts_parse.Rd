@@ -2,19 +2,24 @@
 % Please edit documentation in R/flash_flight_attempts_parse.R
 \name{flash_flight_attempts_parse}
 \alias{flash_flight_attempts_parse}
-\title{Collects results of high jump & pole vault flight attempts within \code{tf_parse}}
+\title{Collects results of high jump & pole vault flight attempts within
+\code{tf_parse}}
 \usage{
 flash_flight_attempts_parse(text)
 }
 \arguments{
-\item{text}{output of \code{read_results} with row numbers appended by \code{add_row_numbers}}
+\item{text}{output of \code{read_results} with row numbers appended by
+\code{add_row_numbers}}
 }
 \value{
 returns a data frame with split times and row numbers
 }
 \description{
-Takes the output of \code{read_results} and, inside of \code{tf_parse}, extracts vertical jump flight attempts (XXO etc) and associated row numbers
+Takes the output of \code{read_results} and, inside of \code{tf_parse},
+extracts vertical jump flight attempts (XXO etc) and associated row numbers
 }
 \seealso{
-\code{flash_flight_attempts_parse} runs inside \code{\link{flash_parse}} on the output of \code{\link{read_results}} with row numbers from \code{\link{add_row_numbers}}
+\code{flash_flight_attempts_parse} runs inside
+\code{\link{flash_parse}} on the output of \code{\link{read_results}} with
+row numbers from \code{\link{add_row_numbers}}
 }

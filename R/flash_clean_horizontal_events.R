@@ -1,6 +1,7 @@
 #' Cleans horizontal events
 #'
-#' Cleans horizontal event results pulled from Flash Results html tables.  Can present cleaned data in wide or long format.
+#' Cleans horizontal event results pulled from Flash Results html tables.  Can
+#' present cleaned data in wide or long format.
 #'
 #' @importFrom dplyr select
 #' @importFrom dplyr mutate
@@ -15,10 +16,12 @@
 #' @importFrom stringr str_extract
 #'
 #' @param df a data frame of horizontal event data from Flash Results
-#' @param wide_format_horizontal should df be presented in wide format (default is \code{FALSE})?
+#' @param wide_format_horizontal should df be presented in wide format (default
+#'   is \code{FALSE})?
 #' @return a cleaned version of df
 #'
-#' @seealso \code{flash_clean_horizontal_events} is a helper function inside \code{\link{flash_parse_table}}
+#' @seealso \code{flash_clean_horizontal_events} is a helper function inside
+#'   \code{\link{flash_parse_table}}
 
 flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_format_clean) {
 

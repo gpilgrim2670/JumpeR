@@ -7,13 +7,16 @@
 attempts_split_long(data_to_split)
 }
 \arguments{
-\item{data_to_split}{output from \code{read_results} followed by \code{add_row_numbers}}
+\item{data_to_split}{output from \code{read_results} followed by
+\code{add_row_numbers}}
 }
 \value{
-returns a data frame with Flight_X_Attempts columns split into individual attempts as rows
+returns a data frame with Flight_X_Attempts columns split into
+individual attempts as rows
 }
 \description{
-Given a data frame with columns "Flight_1_Attempts" it will create three new rows, one for each of the attempts in flight 1
+Given a data frame with columns "Flight_1_Attempts" it will create three new
+rows, one for each of the attempts in flight 1
 }
 \examples{
 \donttest{df <- tf_parse(
