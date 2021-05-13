@@ -77,7 +77,8 @@ flash_year_links <- function(flash_year) {
       Meet_Date = paste(Meet_Date, meet_year, sep = " "),
       Meet_Date = stringr::str_replace(Meet_Date, "--", "-")
     ) %>%
-    dplyr::mutate(Location = stringr::str_extract_all(Input, "(?<=\\d\\s\\-\\s).*", simplify = TRUE)) %>%
+    dplyr::mutate(Location = stringr::str_extract_all(Input, "(?<=\\d\\s?\\-\\s).*", simplify = TRUE)) %>%
+    # View()
     dplyr::select(-Input) %>%
     dplyr::mutate(dplyr::across(where(is.character), stringr::str_trim)) # remove white spaces
 
