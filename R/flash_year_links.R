@@ -6,13 +6,13 @@
 #' @importFrom dplyr mutate
 #' @importFrom dplyr rename
 #' @importFrom dplyr select
-#' @importFrom dplyr bind_cols
-#' @importFrom dplyr case_when
+#' @importFrom dplyr rowwise
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_split_fixed
 #' @importFrom stringr str_remove
-#' @importFrom stringr str_match
+#' @importFrom stringr str_remove_all
 #' @importFrom stringr str_extract
+#' @importFrom stringr str_extract_all
 #' @importFrom rvest html_nodes
 #' @importFrom rvest html_table
 #' @importFrom rvest html_attr
@@ -27,7 +27,11 @@
 
 flash_year_links <- function(flash_year) {
 
+  # flash_year <- "https://www.flashresults.com/2020results.htm"
   # flash_year <- "https://www.flashresults.com/2019results.htm"
+  # flash_year <- "https://www.flashresults.com/2018results.htm"
+  # flash_year <- "https://www.flashresults.com/2017results.htm"
+  # flash_year <- "https://www.flashresults.com/2016results.htm"
   # flash_year <- "https://www.flashresults.com/2015results.htm"
 
   main <- xml2::read_html(flash_year)
@@ -45,7 +49,7 @@ flash_year_links <- function(flash_year) {
     rvest::html_nodes("tr") %>%
     rvest::html_nodes("a") %>%
     rvest::html_attr("href") %>%
-    {ifelse(str_detect(., "^/|^h"), ., paste0("/", .))}
+    {ifelse(stringr::str_detect(., "^/|^h"), ., paste0("/", .))}
 
   # main_table <- data.frame(main_table[[1]][,-2], stringsAsFactors = FALSE)
   main_table <-
@@ -58,31 +62,31 @@ flash_year_links <- function(flash_year) {
     dplyr::filter(stringr::str_detect(Input, "Results"))
 
   main_table <- main_table %>%
-    dplyr::mutate(Meet = stringr::str_split_fixed(Input, "\n", 3)[, 1]) %>%
-    dplyr::mutate(Meet_Date = stringr::str_split_fixed(Input, "\n", 3)[, 2],
-                  Meet_Date = paste(Meet_Date, meet_year, sep = " ")) %>%
-    dplyr::mutate(Location = stringr::str_split_fixed(Input, "\n", 3)[, 3]) %>%
-    dplyr::mutate(Location = dplyr::case_when(stringr::str_detect(Location, "^$") == TRUE ~ str_split_fixed(Meet_Date, "-", 3)[,3],
-                                              TRUE ~ Location)) %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(Meet = stringr::str_split_fixed(Input, "\n", 3)[, 1],
+                  Meet = stringr::str_remove(Meet, "\\s--\\sResults")) %>%
+    dplyr::mutate(Input = stringr::str_replace_all(Input, "\\s{2,}", " ")) %>%
+    dplyr::mutate(
+      Meet_Date = stringr::str_extract_all(Input, paste0(
+        "(",
+        paste(month.name, collapse = "|"),
+        ")",
+        "\\s\\d{1,2}-?\\d?\\d?"
+      )),
+      Meet_Date = paste(Meet_Date, collapse = "-"), # collects together meets that span multiple months, Feb 27-March 1 etc.
+      Meet_Date = paste(Meet_Date, meet_year, sep = " "),
+      Meet_Date = stringr::str_replace(Meet_Date, "--", "-")
+    ) %>%
+    dplyr::mutate(Location = stringr::str_extract_all(Input, "(?<=\\d\\s\\-\\s).*", simplify = TRUE)) %>%
     dplyr::select(-Input) %>%
-    # tidyr::separate(Input, into = c("Meet", "Meet_Date", "Location"), sep = "\\n") %>% # JumpeR doesn't have tidyr dependency
-    dplyr::mutate(Meet = stringr::str_remove(Meet, "\\s-(.*)")) %>%
-    dplyr::mutate(Location = ifelse(
-      is.na(Location),
-      stringr::str_match(Meet_Date, "[^\\-]+$"),
-      Location
-    )) %>%
-    dplyr::mutate(Meet_Date = stringr::str_remove(Meet_Date, "[^\\d]+$")) %>%
-    dplyr::mutate(Meet_Date = stringr::str_remove(Meet_Date, "^[^(A-Z)]*")) %>%
-    dplyr::mutate(Location = stringr::str_remove(Location, "^[^(A-Z)]*")) %>%
-    dplyr::mutate(dplyr::across(where(is.character), stringr::str_trim)) # remove whitespaces
+    dplyr::mutate(dplyr::across(where(is.character), stringr::str_trim)) # remove white spaces
 
   # bind table and links together
-  year_table <- dplyr::bind_cols(main_table, main_links)
+  year_table <- cbind(main_table, main_links)
 
   # add http to links that need it
   year_table <- year_table %>%
-    dplyr::rename("Meet_Link" = 4) %>%
+    dplyr::rename("Meet_Link" = main_links) %>%
     dplyr::filter(stringr::str_detect(Meet_Link, "xc") == FALSE) %>%
     dplyr::mutate(Meet_Link = ifelse(
       stringr::str_detect(Meet_Link, "http"),
