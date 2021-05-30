@@ -58,6 +58,8 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   # link <- "https://flashresults.com/2017_Meets/Indoor/01-13_AggieTeam/003-1-05.htm"
   # link <- "https://www.flashresults.com/2017_Meets/Outdoor/04-29_VirginiaGrandPrix/025-1-01.htm"
   # link <- "https://flashresults.com/2016_Meets/Outdoor/05-10_BigSouth/012-1_compiled.htm"
+  # link <- "https://flashresults.com/2016_Meets/Outdoor/07-29_SummerSeries/009-1_compiled.htm"
+  # link <- "https://www.flashresults.com/2021_Meets/Outdoor/04-16_VirginiaChallenge/035-1_compiledSeries.htm"
 
   page_content <- xml2::read_html(link, options = c("DTDLOAD", "NOBLANKS"))
 
@@ -69,7 +71,7 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
     xml2::xml_remove()
 
   #fill = TRUE seems to get all tables in, but reads '-' as u0097 on vertical jumps
-  list_of_tables <- rvest::html_table(page_content, fill = TRUE, header = TRUE)
+  list_of_tables <- rvest::html_table(page_content, fill = TRUE, header = TRUE, convert = FALSE)
 
   # table components
   get_atts <- lapply(list_of_tables, attributes)
@@ -175,16 +177,47 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   # age column
   age_col <- which(stringr::str_detect(as.vector(t(df)), "(^SR$)|(^JR$)|(^SO$)|(^FR$)"))[1]
 
+  # wind column
+  wind_col <- which(stringr::str_detect(as.vector(t(df)), "^(\\+|-)?\\d\\.\\d$"))[1]
+
   # blank columns
   blank_col <- which(colnames(df) == "")
-  if (any(length(reaction_time_col) > 0 | length(athlete_col) > 0 | length(place_col) > 0 | length(position_col) > 0 | length(age_col) > 0)) {
+  # if (any(length(reaction_time_col) > 0 | length(athlete_col) > 0 | length(place_col) > 0 | length(position_col) > 0 | length(age_col) > 0 | length(wind_col) > 0)) {
+  if (sum(length(reaction_time_col), length(athlete_col), length(place_col), length(position_col), length(age_col), length(wind_col), na.rm = TRUE) > 0) {
     blank_col <-
       setdiff(blank_col, ifelse(length(reaction_time_col) > 0, min(reaction_time_col), 0)) # don't want to capture reaction time column (if it exists)
     blank_col <- setdiff(blank_col, ifelse(length(athlete_col) > 0, athlete_col, 0)) # don't want to capture athlete column
     blank_col <- setdiff(blank_col, ifelse(length(place_col) > 0, place_col, 0)) # don't want to capture place column
     blank_col <- setdiff(blank_col, ifelse(length(position_col) > 0, position_col, 0)) # don't want to capture position column
-    blank_col <- setdiff(blank_col, ifelse(length(age_col) > 0, age_col, 0)) # don't want to capture position column
+    blank_col <- setdiff(blank_col, ifelse(length(age_col) > 0, age_col, 0)) # don't want to capture age column
+    blank_col <- setdiff(blank_col, ifelse(length(wind_col) > 0, wind_col, 0)) # don't want to capture wind column
   }
+
+  if (is.na(age_col) == FALSE) {
+    df <- df %>%
+      dplyr::rename("Age" = dplyr::all_of(age_col),
+                    "Placeholder" = dplyr::all_of(blank_col))
+  }
+
+  if (is.na(wind_col) == FALSE) {
+    df <- df %>%
+      dplyr::rename("Wind" = dplyr::all_of(wind_col),
+                    "Placeholder" = dplyr::all_of(blank_col))
+  }
+
+  df <- df %>%
+    dplyr::rename(
+      # "Placeholder" = all_of(blank_col),
+      "Athlete" = dplyr::all_of(athlete_col),
+      "Reaction_Time" = dplyr::all_of(reaction_time_col),
+      "Place" = dplyr::all_of(place_col),
+      "Pos" = dplyr::all_of(position_col),
+      "Placeholder" = dplyr::all_of(blank_col)
+    ) %>%
+    dplyr::select(-dplyr::contains("Placeholder"))
+
+  # remove unnamed columns
+  df <- df[names(df) != ""]
 
   # remove unicode characters of 1/4, 1/2, 3/4, all other unicode characters
   colnames(df) <- data.frame(lapply(colnames(df), function(x) { # remove all non ASCII characters from column names
@@ -224,24 +257,24 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
     iconv(x, "latin1", "ASCII", sub = "")
   }))
 
-  if (is.na(age_col) == FALSE) {
-    df <- df %>%
-      dplyr::rename("Age" = dplyr::all_of(age_col))
-  }
-
-  df <- df %>%
-    dplyr::rename(
-      # "Placeholder" = all_of(blank_col),
-           "Athlete" = dplyr::all_of(athlete_col),
-           "Reaction_Time" = dplyr::all_of(reaction_time_col),
-           "Place" = dplyr::all_of(place_col),
-           "Pos" = dplyr::all_of(position_col),
-           "Placeholder" = dplyr::all_of(blank_col)
-           ) %>%
-    dplyr::select(-dplyr::contains("Placeholder"))
-
-  # remove unnamed columns
-  df <- df[names(df) != ""]
+  # if (is.na(age_col) == FALSE) {
+  #   df <- df %>%
+  #     dplyr::rename("Age" = dplyr::all_of(age_col))
+  # }
+  #
+  # df <- df %>%
+  #   dplyr::rename(
+  #     # "Placeholder" = all_of(blank_col),
+  #          "Athlete" = dplyr::all_of(athlete_col),
+  #          "Reaction_Time" = dplyr::all_of(reaction_time_col),
+  #          "Place" = dplyr::all_of(place_col),
+  #          "Pos" = dplyr::all_of(position_col),
+  #          "Placeholder" = dplyr::all_of(blank_col)
+  #          ) %>%
+  #   dplyr::select(-dplyr::contains("Placeholder"))
+  #
+  # # remove unnamed columns
+  # df <- df[names(df) != ""]
 
   # remove empty columns
   df <- Filter(function(x)
@@ -285,7 +318,7 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
     dplyr::na_if("-")
 
   # include wind (if present in separate table)
-  if(is.na(wind_value) == FALSE){
+  if(all(is.na(wind_value) == FALSE & "Wind" %in% names(df) == FALSE)){
     df <- df %>%
       dplyr::mutate(Wind = as.character(wind_value))
   }
