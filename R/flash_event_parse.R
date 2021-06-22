@@ -46,8 +46,8 @@ flash_event_parse <- function(text){
         "[:alpha:]+ medley( relay)?",
         "\\d?\\s?x?\\s?\\d{3,4} (meter )?relay",
         "\\dx\\d{2,}\\s*m\\srelay", # for relays
-        "((Hep|Pen|Dec)(.*\\s))?\\d{2,5}\\s*m(eter)?", # also captures regular running events like 400m etc.
-        "\\d?( Bowerman)? +mile(.*Bowerman)?(.*walk)?", # miles and racewalks as 2 Mile etc.
+        "((Hep|Pen|Dec)(.*\\s))?\\d{2,5}\\s*m(eter)?(\\shurdles)?", # also captures regular running events like 400m etc.
+        "\\d? +mile(.*walk)?", # miles and racewalks as 2 Mile etc.
         "((Hep|Pen|Dec)(.*\\s))?\\d{2,3}\\s*m[:alpha:]*\\s*h[:alpha:]*"
       ),
       collapse = "|"
