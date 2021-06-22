@@ -301,8 +301,6 @@ test_that("flash table 400m tiebreaker", {
 
 test_that("flash table long jump, wind without w: marker", {
 
-  # these results should contain a tiebreaker column
-
   skip_on_cran() # due to risk of external resources failing
 
   file <-
@@ -342,4 +340,42 @@ test_that("flash table long jump, wind without w: marker", {
   }
 })
 
-# testthat::test_file("tests/testthat/test-flash_table_works.R")
+test_that("flash table DMR, several record strings", {
+
+  skip_on_cran() # due to risk of external resources failing
+
+  file <-
+    "https://flashresults.com/2021_Meets/Indoor/02-25_SEC/030-1-01.htm"
+
+  data <- try(flash_parse_table(file), silent = TRUE)
+
+  if (any(grep("error", class(data)))) {
+    skip("Link to external data is broken")
+  } else {
+
+    # build standard
+    df_standard_wind <- data.frame(
+      Place = rep("1", 4),
+      Pos = rep("9", 4),
+      Team = rep("OLE MISS", 4),
+      Result = rep("9:29.35", 4),
+      Event = rep("Dmr", 4),
+      Gender = rep("Men", 4),
+      Event_Date = rep(as.Date("2021-02-27"), 4),
+      Split_Distance = c("L1", "L2", "L3", "L4"),
+      Split_Time = c("2:57.08", "3:45.60", "5:34.67", "9:29.35"),
+      stringsAsFactors = FALSE
+    )
+
+    # generate test df
+    df_test <- data %>%
+      flash_clean_events() %>%
+      filter(Team == "OLE MISS")
+
+    # test
+    expect_equivalent(df_standard_wind,
+                      df_test)
+  }
+})
+
+# testthat::test_file("tests/testthat/test-flash_table.R")

@@ -21,6 +21,7 @@ flash_event_parse <- function(text){
   # text <- xml2::read_html(link, options = c("DTDLOAD", "NOBLANKS")) %>%
   #   rvest::html_text()
   # link <- "https://flashresults.com/2016_Meets/Outdoor/05-10_BigSouth/012-1_compiled.htm"
+  # link <- "https://flashresults.com/2021_Meets/Indoor/02-25_SEC/030-1-01.htm"
   # text <- xml2::read_html(link, options = c("DTDLOAD", "NOBLANKS")) %>%
   #   rvest::html_text()
 
@@ -41,6 +42,7 @@ flash_event_parse <- function(text){
         "\\d{1,5}.*walk",
         "\\d000\\s*m\\sSteeplechase",
         "distance relay",
+        "DMR",
         "[:alpha:]+ medley( relay)?",
         "\\d?\\s?x?\\s?\\d{3,4} (meter )?relay",
         "\\dx\\d{2,}\\s*m\\srelay", # for relays

@@ -64,7 +64,7 @@ flash_clean_events <- function(df, wide_format_clean = FALSE){
   }
 
   # rename Team/Name columns for relay
-  relay_strings <- paste0(c("x", "Relay", "Medley"), collapse = "|")
+  relay_strings <- paste0(c("x", "Relay", "Medley", "DMR", "Dmr"), collapse = "|")
 
   if(any(stringr::str_detect(df$Event, relay_strings))){
     if("Name" %in% names(df) & "Team" %!in% names(df)){
@@ -103,9 +103,14 @@ flash_clean_events <- function(df, wide_format_clean = FALSE){
           "( Q )|( q )",
           "((?<=\\d)Q )|((?<=\\d) q )",
           "=",
-          "(?<=\\d)PR$",
-          "(?<=\\d)SB$",
-          "(?<=\\d)PB$",
+          "(?<=\\d)[:upper:]{1,4}$",
+          # "(?<=\\d)PR$",
+          # "(?<=\\d)PRMR$",
+          # "(?<=\\d)SB$",
+          # "(?<=\\d)SBMR$",
+          # "(?<=\\d)PB$",
+          # "(?<=\\d)PBMR$",
+          # "(?<=\\d)MR$",
           " PR$",
           " SB$",
           " PB$",
