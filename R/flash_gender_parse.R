@@ -14,8 +14,16 @@
 
 flash_gender_parse <- function(text) {
 
+  #### testing ####
+  # link <- "https://www.flashresults.com/2021_Meets/Indoor/03-11_NCAA/017-2-01.htm"
+  # text <- xml2::read_html(link, options = c("DTDLOAD", "NOBLANKS")) %>%
+  #   rvest::html_text()
+
+
+  #### actual function ####
+
   # build list of regex for all T&F event genders
-  genders <- paste0("(?i)", c("men", "women", "boys", "girls", "mixed"), collapse = "|")
+  genders <- paste0("(?i)", c("(?<=\\s)men", "women", "boys", "girls", "mixed"), collapse = "|")
 
   # find event gender in text
   event_gender <- stringr::str_match(text, genders)
