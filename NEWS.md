@@ -1,3 +1,10 @@
+# JumpeR 0.2.1 June 23rd, 2021
+
+* Further integration of tools for scraping flashresults.com
+* Sprint splits for flash results
+* Wide format split renaming for flash results
+* Minor bug fixes
+
 # JumpeR 0.2.0 March 30th, 2021
 
 * Integration of tools for scraping flashresults.com

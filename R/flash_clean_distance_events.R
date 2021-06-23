@@ -47,33 +47,12 @@ flash_clean_distance_events <- function(df, wide_format_distance = wide_format_c
 
       df <- flash_pivot_longer(df, varying = varying_cols)
 
-      # df <- df %>%
-      #   reshape(
-      #     direction = "long",
-      #     # varying = grep("^X\\d", names(df)),
-      #     varying = varying_cols,
-      #     sep = "",
-      #     timevar = "Split_Distance",
-      #     ids = row.names(df),
-      #     v.names = "Split_Time"
-      #   ) %>%
-      #   dplyr::select(-id) %>%
-      #   dplyr::mutate(
-      #     Split_Distance = varying_cols[Split_Distance],
-      #     # reshape converts varying cols to indexes for some reason, this is a workaround
-      #     Split_Distance = stringr::str_remove(Split_Distance, "^X"),
-      #     Split_Distance = stringr::str_remove(Split_Distance, "[m|M]\\.?$")
-      #   )
-      #
-      # rownames(df) <- NULL # reshape sets row names, remove them
     }
 
-    # old version, requires tidyr
-    # clean_distance_data <- df %>%
-    #   tidyr::pivot_longer(matches("[0-9]"), names_to = "SplitDistance", values_to = "SplitTime") %>%
-    #   mutate(Time = str_remove(Time, "Q"), SplitTime = str_remove(SplitTime, "\\[(.*)\\]")) %>%
-    #   rename("Result" = "Time")
-
+  } else {
+    df <- df %>%
+      flash_col_names() %>%
+      dplyr::mutate(dplyr::across(dplyr::matches("Split_"), ~stringr::str_remove(.x, " ?\\[(.*)\\]")))
   }
 
   clean_distance_data <- df %>%

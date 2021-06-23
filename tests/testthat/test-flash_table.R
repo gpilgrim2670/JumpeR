@@ -354,7 +354,7 @@ test_that("flash table DMR, several record strings", {
   } else {
 
     # build standard
-    df_standard_wind <- data.frame(
+    df_standard <- data.frame(
       Place = rep("1", 4),
       Pos = rep("9", 4),
       Team = rep("OLE MISS", 4),
@@ -373,9 +373,50 @@ test_that("flash table DMR, several record strings", {
       filter(Team == "OLE MISS")
 
     # test
-    expect_equivalent(df_standard_wind,
+    expect_equivalent(df_standard,
                       df_test)
   }
 })
+
+test_that("flash table sprint with splits, keep wide format", {
+
+  skip_on_cran() # due to risk of external resources failing
+
+  file <-
+    "https://www.flashresults.com/2021_Meets/Indoor/03-11_NCAA/017-2-01.htm"
+
+  data <- try(flash_parse_table(file), silent = TRUE)
+
+  if (any(grep("error", class(data)))) {
+    skip("Link to external data is broken")
+  } else {
+
+    # build standard
+    df_standard <- data.frame(
+      Place = as.character(seq(1, 8, 1)),
+      Pos = as.character(c(3, 4, 5, 7, 8, 6, 2, 1)),
+      Name = c("Kemba NELSON", "Twanisha TERRY", "Kiara GRANT", "Tamara CLARK", "Alfreda STEELE", "Joella LLOYD", "Jada BAYLARK", "Halle HAZZARD"),
+      Result = c("7.05", "7.14", "7.16", "7.18", "7.22", "7.23", "7.23", "7.27"),
+      Reaction_Time = c("0.179", "0.153", "0.168", "0.179", "0.219", "0.216", "0.172", "0.151"),
+      Split_30m = c("4.13", "4.17", "4.16", "4.21", "4.28", "4.23", "4.22", "4.24"),
+      Split_60m = c("7.05", "7.14", "7.16", "7.18", "7.22", "7.23", "7.23", "7.27"),
+      Event = rep("60m", 8),
+      Gender = rep("Women", 8),
+      Event_Date = rep(as.Date("2021-03-14"), 8),
+      Team = c("Oregon", "USC", "Norfolk State", "Alabama", "Miami (Fla.)", "Tennessee", "Arkansas", "Virginia"),
+      Age = c("JR", "SR", "JR", "SR", "SR", "SO", "SR", "SR"),
+      stringsAsFactors = FALSE
+    )
+
+    # generate test df
+    df_test <- data %>%
+      flash_clean_events(wide_format_clean = TRUE)
+
+    # test
+    expect_equivalent(df_standard,
+                      df_test)
+  }
+})
+
 
 # testthat::test_file("tests/testthat/test-flash_table.R")

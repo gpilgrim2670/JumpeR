@@ -15,6 +15,8 @@
 #' @importFrom stringr str_detect
 #'
 #' @param df a data frame of sprint event data from Flash Results
+#' @param wide_format_sprint should df be presented in wide format (default is
+#'   \code{FALSE})?
 #' @return a cleaned version of df
 #'
 #' @seealso \code{flash_clean_sprint_events} is a helper function inside
@@ -44,27 +46,11 @@ flash_clean_sprint_events <- function(df, wide_format_sprint) {
     if (length(varying_cols) > 0) {
 
       df <- flash_pivot_longer(df, varying = varying_cols)
-
-      # df <- df %>%
-      #   reshape(
-      #     direction = "long",
-      #     # varying = grep("^X\\d", names(df)),
-      #     varying = varying_cols,
-      #     sep = "",
-      #     timevar = "Split_Distance",
-      #     ids = row.names(df),
-      #     v.names = "Split_Time"
-      #   ) %>%
-      #   dplyr::select(-id) %>%
-      #   dplyr::mutate(
-      #     Split_Distance = varying_cols[Split_Distance],
-      #     # reshape converts varying cols to indexes for some reason, this is a workaround
-      #     Split_Distance = stringr::str_remove(Split_Distance, "^X"),
-      #     Split_Distance = stringr::str_remove(Split_Distance, "[m|M]\\.?$")
-      #   )
-      #
-      # rownames(df) <- NULL # reshape sets row names, remove them
     }
+  } else {
+    df <- df %>%
+      flash_col_names() %>%
+      dplyr::mutate(dplyr::across(dplyr::matches("Split_"), ~stringr::str_remove(.x, " ?\\[(.*)\\]")))
   }
 
   # begin actual function
