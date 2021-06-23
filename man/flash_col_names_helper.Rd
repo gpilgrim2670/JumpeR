@@ -7,13 +7,11 @@
 flash_col_names_helper(old_names)
 }
 \arguments{
-\item{old_names}{a list of column names to be reformated}
+\item{old_names}{a list of column names to be reformatted}
 }
 \value{
 a list of strings containing corrected split column names
 }
 \description{
-Split columns have many different naming conventions within Flash Results.
-This function attempts to enforce one convention, "Split_XXX" where XXX are
-digits representing distance in meters
+Helper Function for regularizing column names from Flash Results
 }

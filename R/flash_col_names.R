@@ -29,21 +29,16 @@ flash_col_names <- function(df) {
 
 #' Helper Function for regularizing column names from Flash Results
 #'
-#' Split columns have many different naming conventions within Flash Results.
-#' This function attempts to enforce one convention, "Split_XXX" where XXX are
-#' digits representing distance in meters
-#'
-#'
 #' @importFrom stringr str_extract
 #'
-#' @param old_names a list of column names to be reformated
+#' @param old_names a list of column names to be reformatted
 #'
 #' @return a list of strings containing corrected split column names
 
 
 flash_col_names_helper <- function(old_names){
 
-  distances <- str_extract(old_names, "\\d+m")
+  distances <- stringr::str_extract(old_names, "\\d+m")
   new_names <- paste0("Split_", distances)
 
   return(new_names)
