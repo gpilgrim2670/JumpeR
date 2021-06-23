@@ -15,9 +15,6 @@
 #'   splits)
 #' @return a version of df with split column values as `Split_Time` and split
 #'   column names as `Split_Distance`
-#'
-#' @export
-
 
 flash_pivot_longer <- function(df, varying){
   df <- df %>%
