@@ -44,25 +44,28 @@ flash_clean_distance_events <- function(df, wide_format_distance = wide_format_c
 
     # only attempt to convert to long format if there are actual split columns present
     if(length(varying_cols) > 0) {
-      df <- df %>%
-        reshape(
-          direction = "long",
-          # varying = grep("^X\\d", names(df)),
-          varying = varying_cols,
-          sep = "",
-          timevar = "Split_Distance",
-          ids = row.names(df),
-          v.names = "Split_Time"
-        ) %>%
-        dplyr::select(-id) %>%
-        dplyr::mutate(
-          Split_Distance = varying_cols[Split_Distance],
-          # reshape converts varying cols to indexes for some reason, this is a workaround
-          Split_Distance = stringr::str_remove(Split_Distance, "^X"),
-          Split_Distance = stringr::str_remove(Split_Distance, "[m|M]\\.?$")
-        )
 
-      rownames(df) <- NULL # reshape sets row names, remove them
+      df <- flash_pivot_longer(df, varying = varying_cols)
+
+      # df <- df %>%
+      #   reshape(
+      #     direction = "long",
+      #     # varying = grep("^X\\d", names(df)),
+      #     varying = varying_cols,
+      #     sep = "",
+      #     timevar = "Split_Distance",
+      #     ids = row.names(df),
+      #     v.names = "Split_Time"
+      #   ) %>%
+      #   dplyr::select(-id) %>%
+      #   dplyr::mutate(
+      #     Split_Distance = varying_cols[Split_Distance],
+      #     # reshape converts varying cols to indexes for some reason, this is a workaround
+      #     Split_Distance = stringr::str_remove(Split_Distance, "^X"),
+      #     Split_Distance = stringr::str_remove(Split_Distance, "[m|M]\\.?$")
+      #   )
+      #
+      # rownames(df) <- NULL # reshape sets row names, remove them
     }
 
     # old version, requires tidyr
@@ -75,14 +78,18 @@ flash_clean_distance_events <- function(df, wide_format_distance = wide_format_c
 
   clean_distance_data <- df %>%
     dplyr::rename("Result" = "Time") %>%
-    dplyr::mutate(Tiebreaker = dplyr::case_when(stringr::str_detect(Result, "\\(\\d{1,2}\\.\\d{3}\\)") == TRUE ~ stringr::str_extract(Result, "\\d{1,2}\\.\\d{3}"),
-                                                TRUE ~ "NA")) %>%
+    dplyr::mutate(
+      Tiebreaker = dplyr::case_when(
+        stringr::str_detect(Result, "\\(\\d{1,2}\\.\\d{3}\\)") == TRUE ~ stringr::str_extract(Result, "\\d{1,2}\\.\\d{3}"),
+        TRUE ~ "NA"
+      )
+    ) %>%
     dplyr::na_if("NA") %>%
     dplyr::mutate(Result = stringr::str_remove(Result, "\\(\\d{1,2}\\.\\d{3}\\)")) %>%
     dplyr::mutate(Result = stringr::str_remove(Result, "\\\n[:upper:]{1,2}")) %>%
     dplyr::mutate(dplyr::across(where(is.character), stringr::str_trim)) # remove whitespaces
 
-  if("Team" %in% names(clean_distance_data ) == FALSE){
+  if ("Team" %in% names(clean_distance_data) == FALSE) {
     clean_distance_data  <- clean_distance_data  %>%
       dplyr::mutate(
         Team = stringr::str_split_fixed(Name, "\\\n", 3)[, 2],

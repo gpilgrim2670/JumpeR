@@ -103,7 +103,7 @@ flash_clean_events <- function(df, wide_format_clean = FALSE){
           "( Q )|( q )",
           "((?<=\\d)Q )|((?<=\\d) q )",
           "=",
-          "(?<=\\d)[:upper:]{1,4}$",
+          "(?<=\\d)[:upper:]{1,6}$",
           # "(?<=\\d)PR$",
           # "(?<=\\d)PRMR$",
           # "(?<=\\d)SB$",

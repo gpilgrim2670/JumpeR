@@ -21,13 +21,51 @@
 #'   \code{\link{flash_parse_table}}
 
 
-flash_clean_sprint_events <- function(df) {
+flash_clean_sprint_events <- function(df, wide_format_sprint) {
 
   # testing
   # url_200semis <- "https://flashresults.com/2017_Meets/Outdoor/06-22_USATF/004-2-02.htm"
   # url_2017_200 <- "https://flashresults.com/2015_Meets/Outdoor/06-25_USATF/004-3-01.htm"
   # df <- url_200semis %>%
   #   flash_parse_table()
+
+  if (wide_format_sprint == FALSE) {
+
+    df <- df %>%
+      data.frame() %>%
+      dplyr::mutate(Time = stringr::str_remove(Time, "[Q|q]")) %>%
+      dplyr::mutate(dplyr::across(dplyr::matches("[0-9]"), ~stringr::str_remove(.x, " ?\\[(.*)\\]")))
+
+
+    varying_cols <-
+      names(df)[grep("(^X\\d)|(^Lap)|(^L\\d)", names(df))] # determine names of varying columns
+
+    # only attempt to convert to long format if there are actual split columns present
+    if (length(varying_cols) > 0) {
+
+      df <- flash_pivot_longer(df, varying = varying_cols)
+
+      # df <- df %>%
+      #   reshape(
+      #     direction = "long",
+      #     # varying = grep("^X\\d", names(df)),
+      #     varying = varying_cols,
+      #     sep = "",
+      #     timevar = "Split_Distance",
+      #     ids = row.names(df),
+      #     v.names = "Split_Time"
+      #   ) %>%
+      #   dplyr::select(-id) %>%
+      #   dplyr::mutate(
+      #     Split_Distance = varying_cols[Split_Distance],
+      #     # reshape converts varying cols to indexes for some reason, this is a workaround
+      #     Split_Distance = stringr::str_remove(Split_Distance, "^X"),
+      #     Split_Distance = stringr::str_remove(Split_Distance, "[m|M]\\.?$")
+      #   )
+      #
+      # rownames(df) <- NULL # reshape sets row names, remove them
+    }
+  }
 
   # begin actual function
   clean_sprint_data <- df %>%
