@@ -30,6 +30,7 @@ flash_col_names <- function(df) {
 #' Helper Function for regularizing column names from Flash Results
 #'
 #' @importFrom stringr str_extract
+#' @importFrom stringr str_remove
 #'
 #' @param old_names a list of column names to be reformatted
 #'
@@ -39,7 +40,9 @@ flash_col_names <- function(df) {
 flash_col_names_helper <- function(old_names){
 
   distances <- stringr::str_extract(old_names, "\\d+m")
+  distances <- stringr::str_remove(distances, "m")
   new_names <- paste0("Split_", distances)
+
 
   return(new_names)
 
