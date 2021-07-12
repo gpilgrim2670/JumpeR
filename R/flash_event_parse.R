@@ -46,7 +46,7 @@ flash_event_parse <- function(text){
         "[:alpha:]+ medley( relay)?",
         "\\d?\\s?x?\\s?\\d{3,4} (meter )?relay",
         "\\dx\\d{2,}\\s*m\\srelay", # for relays
-        "((Hep|Pen|Dec)(.*\\s))?\\d{2,5}\\s*m(eter)?(\\shurdles)?", # also captures regular running events like 400m etc.
+        "((Hep|Pen|Dec)(.*\\s))?\\d{2,5}\\s*[m|M](eter)?(\\shurdles)?", # also captures regular running events like 400m etc.
         "\\d? +mile(.*walk)?", # miles and racewalks as 2 Mile etc.
         "((Hep|Pen|Dec)(.*\\s))?\\d{2,3}\\s*m[:alpha:]*\\s*h[:alpha:]*"
       ),
@@ -68,10 +68,10 @@ flash_event_parse <- function(text){
   # clean event name
   event_name <- event_name %>%
     stringr::str_to_title() %>%  # capitalizes every word and also m/M
-    stringr::str_replace("(\\d)\\s\\M$", "\\1m") %>% # bring M next to digit as m
-    stringr::str_replace("(\\d)\\s\\M ", "\\1m ") %>% # bring M next to digit as m
-    stringr::str_replace("(\\d)\\s\\M(eter)? Hurdles$", "\\1m Hurdles") %>%
-    stringr::str_replace("(\\d)\\s\\M(eter)? Relay$", "\\1m Relay") %>%
+    stringr::str_replace("(\\d)\\s[M|m]$", "\\1m") %>% # bring M next to digit as m
+    stringr::str_replace("(\\d)\\s[M|m] ", "\\1m ") %>% # bring M next to digit as m
+    stringr::str_replace("(\\d)\\s[M|m](eter)? Hurdles$", "\\1m Hurdles") %>%
+    stringr::str_replace("(\\d)\\s[M|m](eter)? Relay$", "\\1m Relay") %>%
     stringr::str_replace("1 Mile", "Mile") %>%  # reformat mile event name
     stringr::str_remove("(Women )|(Men )|(Boys )|(Girls)|(Mixed )")
     # stringr::str_replace("(\\d)0000m$", "\\10000m Race Walk") # name race walks
