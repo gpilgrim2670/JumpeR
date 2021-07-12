@@ -67,7 +67,8 @@ flash_clean_events_helper <-
       df_helper <- df_helper %>%
         flash_clean_sprint_events(wide_format_sprint = wide_format_clean_helper)
     } else if (any(str_detect(event_name_helper, relay_names)) == TRUE) {
-      df_helper <- df_helper
+      df_helper <- df_helper %>%
+        flash_clean_relay_events(wide_format_relay = wide_format_clean_helper)
     } else {
       warning(
         paste0(

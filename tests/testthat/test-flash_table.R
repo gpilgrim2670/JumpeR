@@ -418,5 +418,77 @@ test_that("flash table sprint with splits, keep wide format", {
   }
 })
 
+test_that("flash table relay with splits", {
+
+  skip_on_cran() # due to risk of external resources failing
+
+  file <-
+    "https://www.flashresults.com/2018_Meets/Outdoor/04-13_JohnMcDonnell/012-1-01.htm"
+
+  data <- try(flash_parse_table(file), silent = TRUE)
+
+  if (any(grep("error", class(data)))) {
+    skip("Link to external data is broken")
+  } else {
+
+    # build standard
+    df_standard <-
+      structure(
+        list(
+          Place = c("1", "2", "1", "2", "1", "2"),
+          Lane = c("6",
+                   "5", "6", "5", "6", "5"),
+          Team = c(
+            "OKLAHOMA STATE",
+            "OKLAHOMA STATE \"B\"",
+            "OKLAHOMA STATE",
+            "OKLAHOMA STATE \"B\"",
+            "OKLAHOMA STATE",
+            "OKLAHOMA STATE \"B\""
+          ),
+          Result = c(
+            "3:55.36",
+            "3:55.38",
+            "3:55.36",
+            "3:55.38",
+            "3:55.36",
+            "3:55.38"
+          ),
+          Event = c(
+            "4x400m Relay",
+            "4x400m Relay",
+            "4x400m Relay",
+            "4x400m Relay",
+            "4x400m Relay",
+            "4x400m Relay"
+          ),
+          Gender = c("Women",
+                     "Women", "Women", "Women", "Women", "Women"),
+          Event_Date = structure(c(17635,
+                                   17635, 17635, 17635, 17635, 17635), class = "Date"),
+          Split_Distance = c("L1...L2",
+                             "L1...L2", "L3", "L3", "L4", "L4"),
+          Split_Time = c(
+            "1:58.29",
+            "1:57.18",
+            "2:54.14",
+            "2:54.05",
+            "3:55.36",
+            "3:55.38"
+          )
+        ),
+        row.names = c(NA,-6L),
+        class = "data.frame"
+      )
+    # generate test df
+    df_test <- data %>%
+      flash_clean_events()
+
+    # test
+    expect_equivalent(df_standard,
+                      df_test)
+  }
+})
+
 
 # testthat::test_file("tests/testthat/test-flash_table.R")
