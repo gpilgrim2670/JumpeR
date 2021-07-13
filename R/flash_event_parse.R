@@ -68,10 +68,11 @@ flash_event_parse <- function(text){
   # clean event name
   event_name <- event_name %>%
     stringr::str_to_title() %>%  # capitalizes every word and also m/M
-    stringr::str_replace("(\\d)\\s[M|m]$", "\\1m") %>% # bring M next to digit as m
-    stringr::str_replace("(\\d)\\s[M|m] ", "\\1m ") %>% # bring M next to digit as m
+    stringr::str_replace("(\\d)\\sM$", "\\1m") %>% # bring M next to digit as m
+    stringr::str_replace("(\\d)\\sM ", "\\1m ") %>% # bring M next to digit as m
     stringr::str_replace("(\\d)\\s[M|m](eter)? Hurdles$", "\\1m Hurdles") %>%
     stringr::str_replace("(\\d)\\s[M|m](eter)? Relay$", "\\1m Relay") %>%
+    stringr::str_replace("(\\d)\\s[M|m](eter)", "\\1m ") %>% # bring Meter next to digit as m
     stringr::str_replace("1 Mile", "Mile") %>%  # reformat mile event name
     stringr::str_remove("(Women )|(Men )|(Boys )|(Girls)|(Mixed )") %>%
     stringr::str_replace("Distance Medley", "Dmr")
