@@ -48,6 +48,7 @@ flash_event_parse <- function(text){
         "[:alpha:]+ medley( relay)?",
         "\\d?\\s?x?\\s?\\d{3,4} (meter)?\\srelay",
         "\\d?\\s?x?\\s?\\d{3,4} [m|M](eter)?\\sshuttle\\shurdle",
+        "\\d?\\s?x?\\s?\\d [m|M](ile)?\\srelay",
         "\\dx\\d{2,}\\s*m\\srelay", # for relays
         "((Hep|Pen|Dec)(.*\\s))?\\d{2,5}\\s*[m|M](eter)?(\\shurdles)?", # also captures regular running events like 400m etc.
         "\\d? +mile(.*walk)?", # miles and racewalks as 2 Mile etc.
@@ -76,7 +77,7 @@ flash_event_parse <- function(text){
     stringr::str_replace("(\\d)\\s[M|m](eter)? Hurdles$", "\\1m Hurdles") %>%
     stringr::str_replace("(\\d)\\s[M|m](eter)? Relay$", "\\1m Relay") %>%
     stringr::str_replace("(\\d)\\s[M|m](eter)", "\\1m ") %>% # bring Meter next to digit as m
-    stringr::str_replace("1 Mile", "Mile") %>%  # reformat mile event name
+    stringr::str_replace("(?<![x|X])1 Mile", "Mile") %>%  # reformat mile event name, but not 4x1 Mile Relay
     stringr::str_remove("(Women )|(Men )|(Boys )|(Girls)|(Mixed )") %>%
     stringr::str_replace("Distance Medley", "Dmr") %>%
     stringr::str_replace("Sprint Medley", "Smr")
