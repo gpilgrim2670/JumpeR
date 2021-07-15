@@ -52,10 +52,9 @@ flash_clean_events_helper <-
         "^[1-4]?[0-9]\\d M",
         " [1-4]?[0-9]\\dm",
         " [1-4]?[0-9]\\d M",
-        "Shuttle",
         "Sprint"
       )
-    relay_names <- c("Relay", "relay")
+    relay_names <- c("Relay", "relay", "shuttle", "Shuttle")
 
     if (any(str_detect(event_name_helper, vertical_names)) == TRUE) {
       df_helper <- df_helper %>%

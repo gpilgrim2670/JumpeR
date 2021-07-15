@@ -59,7 +59,7 @@ flash_clean_relay_events <- function(df, wide_format_relay) {
 
   # begin actual function
   clean_relay_data <- df %>%
-    dplyr::mutate(Time = stringr::str_remove(Time, "Q|q")) %>%
+    dplyr::mutate(Time = stringr::str_remove(Time, "(?<!D)[Q|q]")) %>%
     dplyr::rename("Result" = "Time") %>%
     dplyr::mutate(Tiebreaker = dplyr::case_when(stringr::str_detect(Result, "\\(\\d{1,2}\\.\\d{3}\\)") == TRUE ~ stringr::str_extract(Result, "\\d{1,2}\\.\\d{3}"), # pull tiebreakers out of Results column
                                                 TRUE ~ "NA")) %>%
@@ -68,13 +68,14 @@ flash_clean_relay_events <- function(df, wide_format_relay) {
     dplyr::na_if("NA") %>%
     dplyr::mutate(dplyr::across(where(is.character), stringr::str_trim))  # remove whitespaces
 
-  if("Team" %in% names(clean_relay_data) == FALSE){
-    clean_relay_data <- clean_relay_data %>%
-      dplyr::mutate(
-        Team = stringr::str_split_fixed(Name, "\\\n", 3)[, 2],
-        Name = stringr::str_split_fixed(Name, "\\\n", 3)[, 1]
-      )
-  }
+  # if("Team" %in% names(clean_relay_data) == FALSE){
+  #   clean_relay_data <- clean_relay_data %>%
+  #     dplyr::mutate(
+  #       Team = Name
+  #       Team = stringr::str_split_fixed(Name, "\\\n", 3)[, 2],
+  #       Name = stringr::str_split_fixed(Name, "\\\n", 3)[, 1]
+  #     )
+  # }
 
   return(clean_relay_data)
 
