@@ -44,7 +44,7 @@ flash_event_parse <- function(text){
         "distance relay",
         "sprint relay",
         "DMR",
-        'SMR',
+        "\\d{3,4}?\\s?SMR\\s?(Swedish)?",
         "[:alpha:]+ medley( relay)?",
         "\\d?\\s?x?\\s?\\d{3,4} (meter)?\\srelay",
         "\\d?\\s?x?\\s?\\d{3,4} [m|M](eter)?\\sshuttle\\shurdle",

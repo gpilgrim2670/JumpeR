@@ -780,5 +780,127 @@ test_that("4x110m Hurdles Shuttle", {
   }
 })
 
+test_that("Women 1600 SMR", {
+
+  skip_on_cran() # due to risk of external resources failing
+
+  file <-
+    "https://flashresults.com/2018_Meets/Outdoor/04-27_NRChampionships/049-1-01.htm"
+
+  data <- try(flash_parse_table(file), silent = TRUE)
+
+  if (any(grep("error", class(data)))) {
+    skip("Link to external data is broken")
+  } else {
+
+    # build standard
+    df_standard <-
+      structure(
+        list(
+          Place = c("1", "2", "3", "4", "5", "1", "2", "3",
+                    "4", "5"),
+          Lane = c("5", "7", "6", "4", "8", "5", "7", "6", "4",
+                   "8"),
+          Team = c(
+            "STANFORD",
+            "BAYLOR",
+            "FLORIDA",
+            "KENTUCKY",
+            "MIAMI",
+            "STANFORD",
+            "BAYLOR",
+            "FLORIDA",
+            "KENTUCKY",
+            "MIAMI"
+          ),
+          Result = c(
+            "3:41.59",
+            "3:42.11",
+            "3:47.48",
+            "3:47.93",
+            "3:52.70",
+            "3:41.59",
+            "3:42.11",
+            "3:47.48",
+            "3:47.93",
+            "3:52.70"
+          ),
+          Event = c(
+            "1600 Smr",
+            "1600 Smr",
+            "1600 Smr",
+            "1600 Smr",
+            "1600 Smr",
+            "1600 Smr",
+            "1600 Smr",
+            "1600 Smr",
+            "1600 Smr",
+            "1600 Smr"
+          ),
+          Gender = c(
+            "Women",
+            "Women",
+            "Women",
+            "Women",
+            "Women",
+            "Women",
+            "Women",
+            "Women",
+            "Women",
+            "Women"
+          ),
+          Event_Date = structure(
+            c(
+              17649,
+              17649,
+              17649,
+              17649,
+              17649,
+              17649,
+              17649,
+              17649,
+              17649,
+              17649
+            ),
+            class = "Date"
+          ),
+          Split_Distance = c(
+            "L1.L3",
+            "L1.L3",
+            "L1.L3",
+            "L1.L3",
+            "L1.L3",
+            "800",
+            "800",
+            "800",
+            "800",
+            "800"
+          ),
+          Split_Time = c(
+            "1:40.70",
+            "1:40.41",
+            "1:40.16",
+            "1:39.84",
+            "1:40.53",
+            "3:41.59",
+            "3:42.11",
+            "3:47.48",
+            "3:47.93",
+            "3:52.70"
+          )
+        ),
+        row.names = c(NA,-10L),
+        class = "data.frame"
+      )
+    # generate test df
+    df_test <- data %>%
+      flash_clean_events()
+
+    # test
+    expect_equivalent(df_standard,
+                      df_test)
+  }
+})
+
 
 # testthat::test_file("tests/testthat/test-flash_table.R")
