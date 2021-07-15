@@ -42,7 +42,9 @@ flash_clean_events_helper <-
         "\\d{5}",
         "Distance",
         "Dmr",
-        "DMR"
+        "DMR",
+        "SMR",
+        "Smr"
       )
     sprint_names <-
       c(
