@@ -46,7 +46,7 @@ flash_clean_events <- function(df, wide_format_clean = FALSE){
   event_names <- unique(df$Event)
 
   # function body
-  if(length(event_names) < 2){ # if there's only one event in the dataframe
+  if(length(event_names) < 2){ # if there's only one event in the data frame
 
     df <- df %>%
       flash_clean_events_helper(wide_format_clean_helper = wide_format_clean)
@@ -64,13 +64,17 @@ flash_clean_events <- function(df, wide_format_clean = FALSE){
   }
 
   # rename Team/Name columns for relay
-  relay_strings <- paste0(c("x", "Relay", "Medley", "DMR", "Dmr"), collapse = "|")
+  relay_strings <- paste0(c("x", "Relay", "Medley", "DMR", "Dmr", "Shuttle", "SMR", "Smr"), collapse = "|")
 
   if(any(stringr::str_detect(df$Event, relay_strings))){
     if("Name" %in% names(df) & "Team" %!in% names(df)){
       df <- df %>%
         dplyr::rename("Team" = "Name")
-    } else if("Name" %in% names(df) & "Team" %in% names(df)){
+    } else if("Name" %in% names(df) & "Team" %in% names(df) & all(is.na(df$Team)) == TRUE){
+      df <- df %>%
+        mutate(Team = Name) %>%
+        dplyr::select(-Name)
+    } else if("Name" %in% names(df) & "Team" %in% names(df) & all(is.na(df$Team)) == FALSE){
       df <- df %>%
         dplyr::select(-Name)
     }

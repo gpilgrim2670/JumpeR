@@ -35,7 +35,7 @@ flash_clean_sprint_events <- function(df, wide_format_sprint) {
 
     df <- df %>%
       data.frame() %>%
-      dplyr::mutate(Time = stringr::str_remove(Time, "[Q|q]")) %>%
+      dplyr::mutate(Time = stringr::str_remove(Time, "(?<!D)[Q|q]")) %>%
       dplyr::mutate(dplyr::across(dplyr::matches("[0-9]"), ~stringr::str_remove(.x, " ?\\[(.*)\\]")))
 
 
@@ -55,7 +55,7 @@ flash_clean_sprint_events <- function(df, wide_format_sprint) {
 
   # begin actual function
   clean_sprint_data <- df %>%
-    dplyr::mutate(Time = stringr::str_remove(Time, "Q|q")) %>%
+    dplyr::mutate(Time = stringr::str_remove(Time, "(?<!D)[Q|q]")) %>%
     dplyr::rename("Result" = "Time") %>%
     dplyr::mutate(Tiebreaker = dplyr::case_when(stringr::str_detect(Result, "\\(\\d{1,2}\\.\\d{3}\\)") == TRUE ~ stringr::str_extract(Result, "\\d{1,2}\\.\\d{3}"), # pull tiebreakers out of Results column
                                                 TRUE ~ "NA")) %>%

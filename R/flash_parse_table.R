@@ -60,6 +60,7 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   # link <- "https://flashresults.com/2016_Meets/Outdoor/05-10_BigSouth/012-1_compiled.htm"
   # link <- "https://flashresults.com/2016_Meets/Outdoor/07-29_SummerSeries/009-1_compiled.htm"
   # link <- "https://www.flashresults.com/2021_Meets/Outdoor/04-16_VirginiaChallenge/035-1_compiledSeries.htm"
+  #link <- "https://flashresults.com/2018_Meets/Outdoor/06-15_NBHSON/045-1_compiled.htm"
 
   page_content <- xml2::read_html(link, options = c("DTDLOAD", "NOBLANKS"))
 
@@ -245,6 +246,7 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   df <- data.frame(lapply(df, function(x) {
     stringr::str_replace_all(x, "\u00BD", "\\.5")
   }))
+
   df <- data.frame(lapply(df, function(x) {
     stringr::str_replace_all(x, "\u00BE", "\\.75")
   }))

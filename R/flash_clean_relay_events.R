@@ -38,7 +38,7 @@ flash_clean_relay_events <- function(df, wide_format_relay) {
     df <- df %>%
       data.frame() %>%
       dplyr::select(-dplyr::matches("X\\.\\d+")) %>%
-      dplyr::mutate(Time = stringr::str_remove(Time, "[Q|q]")) %>%
+      dplyr::mutate(Time = stringr::str_remove(Time, "(?<!D)[Q|q]")) %>%
       dplyr::mutate(dplyr::across(dplyr::matches("[0-9]"), ~stringr::str_remove(.x, " ?\\[(.*)\\]")))
 
 

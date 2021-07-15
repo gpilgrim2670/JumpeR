@@ -46,7 +46,8 @@ flash_event_parse <- function(text){
         "DMR",
         'SMR',
         "[:alpha:]+ medley( relay)?",
-        "\\d?\\s?x?\\s?\\d{3,4} (meter )?relay",
+        "\\d?\\s?x?\\s?\\d{3,4} (meter)?\\srelay",
+        "\\d?\\s?x?\\s?\\d{3,4} [m|M](eter)?\\sshuttle\\shurdle",
         "\\dx\\d{2,}\\s*m\\srelay", # for relays
         "((Hep|Pen|Dec)(.*\\s))?\\d{2,5}\\s*[m|M](eter)?(\\shurdles)?", # also captures regular running events like 400m etc.
         "\\d? +mile(.*walk)?", # miles and racewalks as 2 Mile etc.
