@@ -14,6 +14,9 @@ JumpeR is available on CRAN
 ### Latest Development Version from Github
 
 `devtools::install_github("gpilgrim2670/JumpeR")`
+
+v0.2.2 - September 13th, 2021
+
 Package is still under heavy development so development versions will be unstable.
 Please use the stable CRAN release unless you have a very good reason not to.
 

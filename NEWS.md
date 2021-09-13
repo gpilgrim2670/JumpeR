@@ -1,3 +1,7 @@
+# JumpeR 0.2.2 September 13th, 2021
+
+* Bug fixes etc. for Hytek results on Delta Timing
+
 # JumpeR 0.2.1 June 23rd, 2021
 
 * Further integration of tools for scraping flashresults.com

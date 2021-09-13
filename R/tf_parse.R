@@ -83,6 +83,15 @@ tf_parse <-
     # file <- read_results("http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm")
     # file <- "http://www.leonetiming.com/2020/Indoor/IvyLeague/Results.htm"
     # file <- read_results(file)
+    # file <- read_results("http://tfresultsdata.deltatiming.com/2019-horizon-outdoor-championships/190503F026.htm")
+    # typo <- typo_default
+    # replacement <- replacement_default
+    # avoid <- avoid_default
+    # flights <- TRUE
+    # flight_attempts <- TRUE
+    # split_attempts <- TRUE
+    # relay_athletes <- TRUE
+
 
     #### default typo and replacement strings ####
     typo_default <- c("typo")
@@ -838,6 +847,7 @@ tf_parse <-
           Row_Numb = as.numeric(Row_Numb)
         ) %>%
         dplyr::filter(Row_Numb >= Min_Row_Numb) %>%
+        dplyr::filter(stringr::str_detect(Place, "\\.") %in% c(FALSE, NA)) %>%
         dplyr::na_if("NA")
     )
 
@@ -930,7 +940,7 @@ tf_parse <-
     #### ordering columns after adding flights ####
     if (all(flights == TRUE & flight_attempts == TRUE)) {
       data <- data %>%
-        dplyr::select(colnames(.)[stringr::str_detect(names(.), "^Flight", negate = TRUE)], sort(colnames(.)[stringr::str_detect(names(.), "^Flight")]))
+        dplyr::select(colnames(.)[stringr::str_detect(names(.), "^Flight", negate = TRUE)], stringr::str_sort(colnames(.)[stringr::str_detect(names(.), "^Flight")]))
     }
 
     #### remove empty columns (all values are NA) ####

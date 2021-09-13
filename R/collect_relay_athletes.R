@@ -22,18 +22,23 @@
 collect_relay_athletes <- function(x){
 
   #### testing ####
-  # x <- read_results("http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm")
-  # x <- add_row_numbers(x)
+  # x <- read_results("http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm") %>%
+  # add_row_numbers()
+  # x <- as_lines_list_2
 
 
-  #### define strins ####
+  #### define strings ####
   relay_athlete_string <- "\n\\s*[1-4]\\)"
+  score_string <- "\\d{3}\\.?\\d?\\d?\\s|\\s{4,}\\d{1,}\\s"
 
   #### find row numbers of relay athletes ####
   row_numbs_relay_athlete <- x %>%
     .[purrr::map_lgl(.,
                      stringr::str_detect,
                      relay_athlete_string)] %>%
+    .[purrr::map_lgl(.,
+                     stringr::str_detect,
+                     score_string, negate = TRUE)] %>%
     stringr::str_extract_all("\\d{1,}$")
 
   #### if there are some rows with relay athletes pull them out ####
@@ -46,6 +51,9 @@ collect_relay_athletes <- function(x){
         .[purrr::map_lgl(.,
                          stringr::str_detect,
                          relay_athlete_string)] %>%
+        .[purrr::map_lgl(.,
+                         stringr::str_detect,
+                         score_string, negate = TRUE)] %>%
         stringr::str_remove_all("\n") %>%
         stringr::str_replace_all("\\s(?=\\d)", "  ") %>% # make to sure have enough spaces between athlete names
         stringr::str_replace_all("(?<=[1-4]\\))   ", " NA  ") %>%
