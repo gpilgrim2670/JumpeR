@@ -31,6 +31,13 @@ flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_form
   # df <- "https://www.flashresults.com/2021_Meets/Outdoor/04-16_VirginiaChallenge/035-1_compiledSeries.htm" %>%
   #   flash_parse_table()
 
+  # df <- "https://www.flashresults.com/2021_Meets/Indoor/03-11_NCAA/033-3_compiledSeries.htm" %>%
+  #   flash_parse_table()
+
+  # df <-
+  #   "https://flashresults.com/2015_Meets/Outdoor/05-28_NCAAEast/017-1_compiledSeries.htm" %>%
+  #   flash_parse_table(wide_format = FALSE)
+
   df <- df %>%
     data.frame() %>%
     dplyr::select(
@@ -41,7 +48,8 @@ flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_form
       Gender,
       dplyr::contains("Order"),
       dplyr::contains("Wind"),
-      dplyr::contains("Best"),
+      # dplyr::contains("Best"),
+      dplyr::contains("Final"),
       dplyr::contains("Points"), # for decathlon points
       dplyr::contains("Date"),
     )
@@ -70,7 +78,7 @@ flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_form
   }
 
   clean_horizontal_data <- df %>%
-    dplyr::rename_with(cols = dplyr::starts_with("Best"), ~stringr::str_remove(., "(?<=(Best)).*")) %>%
+    # dplyr::rename_with(cols = dplyr::starts_with("Best"), ~stringr::str_remove(., "(?<=(Best)).*")) %>%
     dplyr::mutate(
       # Flight = stringr::str_split_fixed(Name, "\\\n", 3)[, 3],
       Flight = stringr::str_extract(Name, "(?<=Flight\\:\\s{1,3})\\d{1,}"),
@@ -99,11 +107,24 @@ flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_form
     dplyr::select(-Standard)
   }
 
-  if("Best" %in% names(clean_horizontal_data)){
+  if("Finals_Result" %in% names(clean_horizontal_data)){
     clean_horizontal_data <- clean_horizontal_data %>%
-      dplyr::mutate(Best = stringr::str_split_fixed(Best, "\\\n", 2)[, 1]) %>%
-      dplyr::mutate(Best = stringr::str_remove(Best, " \\(\\d{1,3}\\-\\d{1,2}\\.?\\d{0,2}")) # remove results in standard units
+      dplyr::mutate(Finals_Result = stringr::str_split_fixed(Finals_Result, "\\\n", 2)[, 1]) %>%
+      dplyr::mutate(Finals_Result = stringr::str_remove(Finals_Result, " \\(\\d{1,3}\\-\\d{1,2}\\.?\\d{0,2}")) %>%  # remove results in standard units
+      dplyr::mutate(dplyr::across(dplyr::matches("^R"), ~ stringr::str_remove(.x, "\n.*\n?.*\n?.*\n?.*\n?.*"))) %>%
+      dplyr::mutate(dplyr::across(dplyr::matches("^R"), ~ stringr::str_remove(.x, "\\s?w\\:\\+?\\-?\\d?\\d?\\.?\\d?\\s?")))
+      # dplyr::rename("Finals_Result" = Best)
+
+    if(wide_format_horizontal == TRUE){
+      clean_horizontal_data <- clean_horizontal_data %>%
+        dplyr::select(-dplyr::matches("^Result"))
+    }
+
   }
+
+  #### renaming columns ####
+  names(clean_horizontal_data) <- stringr::str_replace_all(names(clean_horizontal_data), "Rnd\\.(\\d)", "Round_\\1")
+  names(clean_horizontal_data) <- stringr::str_replace_all(names(clean_horizontal_data), "Round\\.(\\d)", "Round_\\1")
 
   # Drops all-NA wind column from throws and indoor meets
   clean_horizontal_data <- Filter(function(x)

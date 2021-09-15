@@ -42,7 +42,7 @@ flash_clean_vertical_events <- function(df, wide_format_vertical = wide_format_c
     data.frame()
 
   # clean up column names
-  names(df) <- str_replace(names(df), "Best\\.Jump", "Best")
+  # names(df) <- str_replace(names(df), "Best\\.Jump", "Best")
   names(df) <- str_replace(names(df), "Fl\\.\\.Pl\\.", "Flight_Place")
 
   # convert to long format, requires columns like 3.31m etc.
@@ -71,8 +71,8 @@ flash_clean_vertical_events <- function(df, wide_format_vertical = wide_format_c
     }
   }
 
-  df <- df %>%
-    dplyr::rename_with(cols = dplyr::starts_with("Best"), ~stringr::str_remove(., "(?<=(Best)).*"))
+  # df <- df %>%
+  #   dplyr::rename_with(cols = dplyr::starts_with("Best"), ~stringr::str_remove(., "(?<=(Best)).*"))
 
   # break out team names, which are sometimes included in Name
   if("Team" %!in% names(df)){
@@ -82,10 +82,10 @@ flash_clean_vertical_events <- function(df, wide_format_vertical = wide_format_c
   }
 
   # remove standard unit heights from Best
-  if("Best" %in% names(df)){
+  if("Finals_Result" %in% names(df)){
     df <- df %>%
-      mutate(Best = stringr::str_split_fixed(Best, "\\\n", 2)[,1],
-             Best = stringr::str_split_fixed(Best, "\\s", 2)[,1])
+      mutate(Finals_Result = stringr::str_split_fixed(Finals_Result, "\\\n", 2)[,1],
+             Finals_Result = stringr::str_split_fixed(Finals_Result, "\\s", 2)[,1])
   }
 
   # remove standard unit heights from Height

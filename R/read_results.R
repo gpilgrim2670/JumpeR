@@ -23,15 +23,19 @@
 #' @export
 
 read_results <- function(file, node = "pre") {
+
   '%!in%' <- function(x, y)
     ! ('%in%'(x, y))
+
+  # file <- "https://flashresults.com/2018_Meets/Outdoor/06-15_NBHSON/040-1-01.htm"
+
+
   if (stringr::str_detect(file, "\\.pdf$|\\.pdf\\.aspx$|\\.aspx$") == TRUE) {
     ### PDF ###
     results <- pdftools::pdf_text(file)
     as_lines <- stringr::str_extract_all(results, "\n.*")
     as_lines_list_2 <- unlist(as_lines, recursive = FALSE)
 
-    return(as_lines_list_2)
 
 
   } else {
@@ -45,8 +49,20 @@ read_results <- function(file, node = "pre") {
       as_lines <- stringr::str_extract_all(results, "\n.*")
       as_lines_list_2 <- unlist(as_lines, recursive = FALSE)
 
-      return(as_lines_list_2)
-
     }
   }
+
+  # if nothing is unpacked by the above just return the source url
+  # flash page results, like those handled by flash_parse_table will
+  # pass through and be read
+
+  if(is.null(as_lines_list_2) == FALSE){
+    return(as_lines_list_2)
+  } else {
+
+    file_flagged <- c(file, "try flash_parse_table")
+
+    return(file_flagged)
+  }
+
 }

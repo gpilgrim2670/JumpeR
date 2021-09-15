@@ -60,7 +60,8 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   # link <- "https://flashresults.com/2016_Meets/Outdoor/05-10_BigSouth/012-1_compiled.htm"
   # link <- "https://flashresults.com/2016_Meets/Outdoor/07-29_SummerSeries/009-1_compiled.htm"
   # link <- "https://www.flashresults.com/2021_Meets/Outdoor/04-16_VirginiaChallenge/035-1_compiledSeries.htm"
-  #link <- "https://flashresults.com/2018_Meets/Outdoor/06-15_NBHSON/045-1_compiled.htm"
+  # link <- "https://flashresults.com/2018_Meets/Outdoor/06-15_NBHSON/045-1_compiled.htm"
+  # link <- "https://www.flashresults.com/2019_Meets/Outdoor/06-05_NCAAOTF-Austin/015-1_compiled.htm"
 
   page_content <- xml2::read_html(link, options = c("DTDLOAD", "NOBLANKS"))
 
@@ -197,13 +198,13 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   if (is.na(age_col) == FALSE) {
     df <- df %>%
       dplyr::rename("Age" = dplyr::all_of(age_col),
-                    "Placeholder" = dplyr::all_of(blank_col))
+                    "Placeholder" = dplyr::all_of(c(blank_col, athlete_col, reaction_time_col, place_col, position_col, wind_col)))
   }
 
   if (is.na(wind_col) == FALSE) {
     df <- df %>%
       dplyr::rename("Wind" = dplyr::all_of(wind_col),
-                    "Placeholder" = dplyr::all_of(blank_col))
+                    "Placeholder" = dplyr::all_of(c(blank_col, athlete_col, reaction_time_col, place_col, position_col)))
   }
 
   df <- df %>%
@@ -358,6 +359,12 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   if ("Affiliation" %in% names(df)) {
     df <- df %>%
       dplyr::rename("Team" = "Affiliation")
+  }
+
+  # regularize Finals_Result column name
+  if (any(str_detect(names(df), "Best.*")) == TRUE) {
+    df <- df %>%
+      dplyr::rename("Finals_Result" = dplyr::contains("Best"))
   }
 
   # clean results

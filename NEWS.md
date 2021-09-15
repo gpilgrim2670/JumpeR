@@ -1,3 +1,7 @@
+# JumpeR 0.2.3 September 15th, 2021
+
+* Integration of `flash_parse_table` inside `tf_parse` and `read_results`
+
 # JumpeR 0.2.2 September 13th, 2021
 
 * Bug fixes etc. for Hytek results on Delta Timing

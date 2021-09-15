@@ -13,6 +13,8 @@
 #' @importFrom dplyr across
 #' @importFrom dplyr left_join
 #' @importFrom dplyr all_of
+#' @importFrom dplyr starts_with
+#' @importFrom dplyr matches
 #' @importFrom stringr str_remove
 #' @importFrom stringr str_remove_all
 #' @importFrom stringr str_detect
@@ -144,6 +146,25 @@ tf_parse <-
     # typo <- "typo"
     # replacement <- "typo"
     # relay_athletes <- TRUE
+
+    if(file[2] == "try flash_parse_table"){
+
+      data <- flash_parse_table(link = file[1], wide_format = TRUE, clean = TRUE)
+
+      message("Column names for Flash results in table form are derived from the source data and may not match column names from other sources")
+
+      # if(flights == FALSE){
+      #   data <- data %>%
+      #     dplyr::select(-dplyr::starts_with("Flight"))
+      # }
+      #
+      # if(all(flights == TRUE, flight_attempts == FALSE))
+      #   data <- data %>%
+      #   dplyr::select(-dplyr::matches("Flight\\_\\d{1,}\\_"))
+
+      return(data)
+
+    } else {
 
 
     #### assign row numbers ####
@@ -947,10 +968,14 @@ tf_parse <-
     data <- Filter(function(x)
       !all(is.na(x)), data)
 
+
     #### remove unneeded columns ####
     data <- data %>%
-    dplyr::select(which(SwimmeR::`%!in%`(names(.), c("Row_Numb", "Exhibition", "Points", "Heat"))))
+      dplyr::select(which(SwimmeR::`%!in%`(
+        names(.), c("Row_Numb", "Exhibition", "Points", "Heat")
+      )))
 
     return(data)
-}
+    }
+    }
   }

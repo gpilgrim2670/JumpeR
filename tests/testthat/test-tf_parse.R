@@ -242,4 +242,99 @@ test_that("tf_parse high jump with team scores", {
 })
 
 
+test_that("tf_parse pass through", {
+
+  skip_on_cran()
+
+  file <- "https://www.flashresults.com/2021_Meets/Indoor/03-11_NCAA/033-3_compiledSeries.htm"
+
+  df_test <- file %>%
+    read_results() %>%
+    tf_parse()
+
+
+  df_standard <-
+    structure(list(Place = c("1", "2", "3", "4", "5", "6", "7", "8",
+                             "9", "10", "11", "12", "13", "14", "15", NA), Name = c("Karel TILGA",
+                                                                                    "Max VOLLMER", "Kyle GARLAND", "Leo NEUGEBAUER", "Daniel SPEJCHER",
+                                                                                    "Felix WOLTER", "Ayden OWENS", "Jacob SPOTSWOOD", "Alex SPYRIDONIDIS",
+                                                                                    "Peyton HAACK", "Isaiah MARTIN", "Kristo SIMULASK", "Austin WEST",
+                                                                                    "Etamar BHASTEKAR", "Denim ROGERS", "Markus BALLENGEE"), Round_1 = c("15.52",
+                                                                                                                                                       "15.45", "14.95", "14.95", "14.86", "12.97", "12.26", "13.01",
+                                                                                                                                                       "13.47", "X", "13.24", "13.03", "12.92", "10.73", "12.22", "DNS"
+                                                                                    ), Round_2 = c("14.86", "15.70", "15.41", "13.47", "14.73", "X",
+                                                                                                 "12.93", "13.58", "13.19", "12.22", "13.11", "12.54", "X", "11.22",
+                                                                                                 "12.19", NA), Round_3 = c("16.04", "15.82", "13.94", "14.71", "X",
+                                                                                                                         "14.13", "14.07", "12.27", "13.11", "13.44", "13.33", "X", "12.60",
+                                                                                                                         "12.32", "X", NA), Event = c("Hept Shot Put", "Hept Shot Put",
+                                                                                                                                                      "Hept Shot Put", "Hept Shot Put", "Hept Shot Put", "Hept Shot Put",
+                                                                                                                                                      "Hept Shot Put", "Hept Shot Put", "Hept Shot Put", "Hept Shot Put",
+                                                                                                                                                      "Hept Shot Put", "Hept Shot Put", "Hept Shot Put", "Hept Shot Put",
+                                                                                                                                                      "Hept Shot Put", "Hept Shot Put"), Gender = c("Men", "Men", "Men",
+                                                                                                                                                                                                    "Men", "Men", "Men", "Men", "Men", "Men", "Men", "Men", "Men",
+                                                                                                                                                                                                    "Men", "Men", "Men", "Men"), Finals_Result = c("16.04m", "15.82m", "15.41m",
+                                                                                                                                                                                                                                          "14.95m", "14.86m", "14.13m", "14.07m", "13.58m", "13.47m", "13.44m",
+                                                                                                                                                                                                                                          "13.33m", "13.03m", "12.92m", "12.32m", "12.22m", "DNS"), Event_Date = structure(c(18698,
+                                                                                                                                                                                                                                                                                                                             18698, 18698, 18698, 18698, 18698, 18698, 18698, 18698, 18698,
+                                                                                                                                                                                                                                                                                                                             18698, 18698, 18698, 18698, 18698, 18698), class = "Date"), Team = c("Georgia",
+                                                                                                                                                                                                                                                                                                                                                                                                  "Oregon", "Georgia", "Texas", "Arkansas", "Pittsburgh", "Michigan",
+                                                                                                                                                                                                                                                                                                                                                                                                  "Alabama", "Auburn", "Iowa", "Purdue", "Oklahoma", "Iowa", "Arkansas",
+                                                                                                                                                                                                                                                                                                                                                                                                  "Houston Baptist", "Arkansas"), Age = c("SO", "SO", "SO", "SO",
+                                                                                                                                                                                                                                                                                                                                                                                                                                          "SO", "SR", "SO", "JR", "JR", "JR", "JR", "JR", "SO", "SR", "SR",
+                                                                                                                                                                                                                                                                                                                                                                                                                                          "SR")), row.names = c(NA, -16L), class = "data.frame")
+
+
+
+
+  expect_equivalent(df_test, df_standard)
+
+  #### all FALSE ####
+
+  file <-
+    "https://www.flashresults.com/2019_Meets/Outdoor/06-05_NCAAOTF-Austin/015-1_compiled.htm"
+
+  df_test <- file %>%
+    read_results() %>%
+    tf_parse()
+
+  df_standard <-
+    structure(list(Place = c("1", "2", "3", "4", "5", "6", "7", "8",
+                             "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
+                             "20", "21", NA, NA, NA), Name = c("JuVaughn HARRISON", "Trumaine JEFFERSON",
+                                                               "Yann RANDRIANASOLO", "Justin HALL", "Jacob FINCHAM-DUKES", "Jamie BROWN",
+                                                               "Kemonie BRIGGS", "Jordan LATIMER", "Odaine LEWIS", "Steffin MCCARTER",
+                                                               "Chris MCBRIDE", "Grant HOLLOWAY", "Charles BROWN", "Carter SHELL",
+                                                               "Samory FRAGA", "R'Lazon BRUMFIELD", "Allen GORDON", "Kenan JONES",
+                                                               "Jullane WALKER", "DaJuan SEWARD", "Rayvon GREY", "Keshun MCGEE",
+                                                               "Jalen SEALS", "Derrick MONROE"), Event = c("Long Jump", "Long Jump",
+                                                                                                           "Long Jump", "Long Jump", "Long Jump", "Long Jump", "Long Jump",
+                                                                                                           "Long Jump", "Long Jump", "Long Jump", "Long Jump", "Long Jump",
+                                                                                                           "Long Jump", "Long Jump", "Long Jump", "Long Jump", "Long Jump",
+                                                                                                           "Long Jump", "Long Jump", "Long Jump", "Long Jump", "Long Jump",
+                                                                                                           "Long Jump", "Long Jump"), Gender = c("Men", "Men", "Men", "Men",
+                                                                                                                                                 "Men", "Men", "Men", "Men", "Men", "Men", "Men", "Men", "Men",
+                                                                                                                                                 "Men", "Men", "Men", "Men", "Men", "Men", "Men", "Men", "Men",
+                                                                                                                                                 "Men", "Men"), Wind = c("+0.7", "+1.6", "+2.3", "+0.7", "+2.0",
+                                                                                                                                                                         "+1.8", "+2.1", "+3.2", "+2.1", "+1.3", "+1.0", "+1.3", "+3.1",
+                                                                                                                                                                         "+2.8", "+2.7", "+1.6", "+1.4", "+1.7", "+2.0", "+2.6", "+1.6",
+                                                                                                                                                                         NA, NA, NA), Finals_Result = c("8.20m", "8.18m", "8.12m", "8.05m",
+                                                                                                                                                                                                        "8.00m", "7.88m", "7.87m", "7.83m", "7.78m", "7.76m", "7.73m",
+                                                                                                                                                                                                        "7.72m", "7.70m", "7.67m", "7.65m", "7.62m", "7.61m", "7.54m",
+                                                                                                                                                                                                        "7.44m", "7.38m", "7.38m", "FOUL", "DNS", "DNS"), Event_Date = structure(c(18053,
+                                                                                                                                                                                                                                                                                   18053, 18053, 18053, 18053, 18053, 18053, 18053, 18053, 18053,
+                                                                                                                                                                                                                                                                                   18053, 18053, 18053, 18053, 18053, 18053, 18053, 18053, 18053,
+                                                                                                                                                                                                                                                                                   18053, 18053, 18053, 18053, 18053), class = "Date"), Team = c(NA_character_,
+                                                                                                                                                                                                                                                                                                                                                 NA_character_, NA_character_, NA_character_, NA_character_, NA_character_,
+                                                                                                                                                                                                                                                                                                                                                 NA_character_, NA_character_, NA_character_, NA_character_, NA_character_,
+                                                                                                                                                                                                                                                                                                                                                 NA_character_, NA_character_, NA_character_, NA_character_, NA_character_,
+                                                                                                                                                                                                                                                                                                                                                 NA_character_, NA_character_, NA_character_, NA_character_, NA_character_,
+                                                                                                                                                                                                                                                                                                                                                 NA_character_, NA_character_, NA_character_)), row.names = c(NA,
+                                                                                                                                                                                                                                                                                                                                                                                                              -24L), class = "data.frame")
+
+  expect_equivalent(df_test, df_standard)
+
+})
+
+
+
 # testthat::test_file("tests/testthat/test-tf_parse_works.R")
