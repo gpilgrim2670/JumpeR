@@ -1,3 +1,7 @@
+# JumpeR 0.2.4 September 15th, 2021
+
+* Integration of `hytek_parse` inside `tf_parse`
+
 # JumpeR 0.2.3 September 15th, 2021
 
 * Integration of `flash_parse_table` inside `tf_parse` and `read_results`
