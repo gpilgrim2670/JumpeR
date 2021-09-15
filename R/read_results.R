@@ -7,6 +7,7 @@
 #' @importFrom rvest html_nodes
 #' @importFrom rvest html_text
 #' @importFrom pdftools pdf_text
+#' @importFrom SwimmeR `%!in%`
 #'
 #' @param file a .pdf or .html file (could be a url) where containing swimming
 #'   track and field results.  pdfs with multiple columns will not work.
@@ -23,9 +24,6 @@
 #' @export
 
 read_results <- function(file, node = "pre") {
-
-  '%!in%' <- function(x, y)
-    ! ('%in%'(x, y))
 
   # file <- "https://flashresults.com/2018_Meets/Outdoor/06-15_NBHSON/040-1-01.htm"
 

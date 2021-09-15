@@ -2,8 +2,7 @@
 % Please edit documentation in R/tf_parse.R
 \name{tf_parse}
 \alias{tf_parse}
-\title{Reads track and field results into a list of strings in preparation for
-parsing with \code{tf_parse}}
+\title{PArses track and field data from Flash or Hytek format data into a data frame}
 \usage{
 tf_parse(
   file,
@@ -57,7 +56,7 @@ lot of columns.  Defaults to \code{FALSE}}
 a data frame of track and field results
 }
 \description{
-Outputs list of strings to be processed by \code{tf_parse}
+Outputs a data frame containing track and field data
 }
 \examples{
 \donttest{tf_parse(

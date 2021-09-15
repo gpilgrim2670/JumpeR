@@ -902,5 +902,60 @@ test_that("Women 1600 SMR", {
   }
 })
 
+test_that("flash table empty columns", {
+
+  skip_on_cran() # due to risk of external resources failing
+
+  file <-
+    "https://www.flashresults.com/2019_Meets/Outdoor/06-05_NCAAOTF-Austin/015-1_compiled.htm"
+
+  df_test <- try(flash_parse_table(file, clean = TRUE), silent = TRUE)
+
+  if (any(grep("error", class(data)))) {
+    skip("Link to external data is broken")
+  } else {
+
+    # build standard
+    df_standard <-
+      structure(list(Place = c("1", "2", "3", "4", "5", "6", "7", "8",
+                               "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
+                               "20", "21", NA, NA, NA), Name = c("JuVaughn HARRISON", "Trumaine JEFFERSON",
+                                                                 "Yann RANDRIANASOLO", "Justin HALL", "Jacob FINCHAM-DUKES", "Jamie BROWN",
+                                                                 "Kemonie BRIGGS", "Jordan LATIMER", "Odaine LEWIS", "Steffin MCCARTER",
+                                                                 "Chris MCBRIDE", "Grant HOLLOWAY", "Charles BROWN", "Carter SHELL",
+                                                                 "Samory FRAGA", "R'Lazon BRUMFIELD", "Allen GORDON", "Kenan JONES",
+                                                                 "Jullane WALKER", "DaJuan SEWARD", "Rayvon GREY", "Keshun MCGEE",
+                                                                 "Jalen SEALS", "Derrick MONROE"), Event = c("Long Jump", "Long Jump",
+                                                                                                             "Long Jump", "Long Jump", "Long Jump", "Long Jump", "Long Jump",
+                                                                                                             "Long Jump", "Long Jump", "Long Jump", "Long Jump", "Long Jump",
+                                                                                                             "Long Jump", "Long Jump", "Long Jump", "Long Jump", "Long Jump",
+                                                                                                             "Long Jump", "Long Jump", "Long Jump", "Long Jump", "Long Jump",
+                                                                                                             "Long Jump", "Long Jump"), Gender = c("Men", "Men", "Men", "Men",
+                                                                                                                                                   "Men", "Men", "Men", "Men", "Men", "Men", "Men", "Men", "Men",
+                                                                                                                                                   "Men", "Men", "Men", "Men", "Men", "Men", "Men", "Men", "Men",
+                                                                                                                                                   "Men", "Men"), Wind = c("+0.7", "+1.6", "+2.3", "+0.7", "+2.0",
+                                                                                                                                                                           "+1.8", "+2.1", "+3.2", "+2.1", "+1.3", "+1.0", "+1.3", "+3.1",
+                                                                                                                                                                           "+2.8", "+2.7", "+1.6", "+1.4", "+1.7", "+2.0", "+2.6", "+1.6",
+                                                                                                                                                                           NA, NA, NA), Finals_Result = c("8.20m", "8.18m", "8.12m", "8.05m",
+                                                                                                                                                                                                          "8.00m", "7.88m", "7.87m", "7.83m", "7.78m", "7.76m", "7.73m",
+                                                                                                                                                                                                          "7.72m", "7.70m", "7.67m", "7.65m", "7.62m", "7.61m", "7.54m",
+                                                                                                                                                                                                          "7.44m", "7.38m", "7.38m", "FOUL", "DNS", "DNS"), Event_Date = structure(c(18053,
+                                                                                                                                                                                                                                                                                     18053, 18053, 18053, 18053, 18053, 18053, 18053, 18053, 18053,
+                                                                                                                                                                                                                                                                                     18053, 18053, 18053, 18053, 18053, 18053, 18053, 18053, 18053,
+                                                                                                                                                                                                                                                                                     18053, 18053, 18053, 18053, 18053), class = "Date"), Team = c(NA_character_,
+                                                                                                                                                                                                                                                                                                                                                   NA_character_, NA_character_, NA_character_, NA_character_, NA_character_,
+                                                                                                                                                                                                                                                                                                                                                   NA_character_, NA_character_, NA_character_, NA_character_, NA_character_,
+                                                                                                                                                                                                                                                                                                                                                   NA_character_, NA_character_, NA_character_, NA_character_, NA_character_,
+                                                                                                                                                                                                                                                                                                                                                   NA_character_, NA_character_, NA_character_, NA_character_, NA_character_,
+                                                                                                                                                                                                                                                                                                                                                   NA_character_, NA_character_, NA_character_)), row.names = c(NA,
+                                                                                                                                                                                                                                                                                                                                                                                                                -24L), class = "data.frame")
+
+
+    # test
+    expect_equivalent(df_standard,
+                      df_test)
+  }
+})
+
 
 # testthat::test_file("tests/testthat/test-flash_table.R")

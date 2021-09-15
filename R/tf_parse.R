@@ -1,33 +1,12 @@
-#' Reads track and field results into a list of strings in preparation for
-#' parsing with \code{tf_parse}
+#' PArses track and field data from Flash or Hytek format data into a data frame
 #'
-#' Outputs list of strings to be processed by \code{tf_parse}
+#' Outputs a data frame containing track and field data
 #'
-#' @importFrom dplyr mutate
-#' @importFrom dplyr filter
-#' @importFrom dplyr case_when
-#' @importFrom dplyr na_if
-#' @importFrom dplyr select
-#' @importFrom dplyr bind_rows
-#' @importFrom dplyr arrange
-#' @importFrom dplyr across
-#' @importFrom dplyr left_join
-#' @importFrom dplyr all_of
-#' @importFrom dplyr starts_with
-#' @importFrom dplyr matches
-#' @importFrom stringr str_remove
-#' @importFrom stringr str_remove_all
+
 #' @importFrom stringr str_detect
-#' @importFrom stringr str_split
-#' @importFrom stringr str_length
 #' @importFrom stringr str_replace_all
-#' @importFrom stringr str_replace
-#' @importFrom stringr str_subset
-#' @importFrom stringr str_remove
-#' @importFrom purrr map
 #' @importFrom purrr map_lgl
 #' @importFrom stats setNames
-#' @importFrom SwimmeR `%!in%`
 #'
 #' @param file a .pdf or .html file (could be a url) where containing track and
 #'   field results.  Must be formatted in a "normal" fashion - see vignette
@@ -81,7 +60,6 @@ tf_parse <-
            flights = FALSE,
            flight_attempts = FALSE,
            split_attempts = FALSE) {
-
     # file <- read_results("http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm")
     # file <- "http://www.leonetiming.com/2020/Indoor/IvyLeague/Results.htm"
     # file <- read_results(file)
@@ -109,12 +87,14 @@ tf_parse <-
     }
 
     if (all(flight_attempts == FALSE & split_attempts == TRUE)) {
-      stop("If split_attempts is set to TRUE flights and flight_attempts should also be set to TRUE.")
+      stop(
+        "If split_attempts is set to TRUE flights and flight_attempts should also be set to TRUE."
+      )
     }
 
     #### strings that if a line begins with one of them the line is ignored ####
     avoid_default <- c("Record\\:",
-        "[:alpha:]\\: .*")
+                       "[:alpha:]\\: .*")
 
     #### testing setup ####
     # file_1 <-
@@ -147,11 +127,15 @@ tf_parse <-
     # replacement <- "typo"
     # relay_athletes <- TRUE
 
-    if(file[2] == "try flash_parse_table"){
+    if (file[2] == "try flash_parse_table") {
+      data <-
+        flash_parse_table(link = file[1],
+                          wide_format = TRUE,
+                          clean = TRUE)
 
-      data <- flash_parse_table(link = file[1], wide_format = TRUE, clean = TRUE)
-
-      message("Column names for Flash results in table form are derived from the source data and may not match column names from other sources")
+      message(
+        "Column names for Flash results in table form are derived from the source data and may not match column names from other sources"
+      )
 
       # if(flights == FALSE){
       #   data <- data %>%
@@ -162,54 +146,53 @@ tf_parse <-
       #   data <- data %>%
       #   dplyr::select(-dplyr::matches("Flight\\_\\d{1,}\\_"))
 
-      # return(data)
-
     } else {
+      #### assign row numbers ####
+      as_lines_list_2 <- add_row_numbers(text = file)
 
-
-    #### assign row numbers ####
-    as_lines_list_2 <- add_row_numbers(text = file)
-
-    #### clean input data ####
-    suppressWarnings(
-      raw_results <- as_lines_list_2 %>%
-        .[purrr::map_lgl(., ~ !any(stringr::str_detect(., avoid)))] %>% # remove lines contained in avoid
-        stringr::str_replace_all(stats::setNames(replacement, typo)) %>%
-        stringr::str_replace_all("\\*(\\d{1,})", replacement = "\\1") # removes * placed in front of place number in ties
+      #### clean input data ####
+      suppressWarnings(
+        raw_results <- as_lines_list_2 %>%
+          .[purrr::map_lgl(., ~ !any(stringr::str_detect(., avoid)))] %>% # remove lines contained in avoid
+          stringr::str_replace_all(stats::setNames(replacement, typo)) %>%
+          stringr::str_replace_all("\\*(\\d{1,})", replacement = "\\1") # removes * placed in front of place number in ties
       ) # removes * placed in front of place number in ties
 
-    if(all((length(raw_results) < 2) &
-           stringr::str_detect(raw_results, "^http"))) {
-      stop("Please pass links to read_results prior to calling tf_parse")
-    }
+      if (all((length(raw_results) < 2) &
+              stringr::str_detect(raw_results, "^http"))) {
+        stop("Please pass links to read_results prior to calling tf_parse")
+      }
 
-    #### Flash results or Hy-Tek ####
-    # Flash
-    if(any(stringr::str_detect(raw_results[1:5], "CONDITIONS|\\d\\d?\\:\\d{2}\\s?A?PM\\s+\\d\\d? [A-Z][a-z]{2} \\d{4}"), na.rm = TRUE) == TRUE){
-      data <-
-        flash_parse(
-          flash_file = raw_results,
-          flash_flights = flights,
-          flash_flight_attempts = flight_attempts,
-          flash_split_attempts = split_attempts
+      #### Flash results or Hy-Tek ####
+      # Flash
+      if (any(
+        stringr::str_detect(
+          raw_results[1:5],
+          "CONDITIONS|\\d\\d?\\:\\d{2}\\s?A?PM\\s+\\d\\d? [A-Z][a-z]{2} \\d{4}"
+        ),
+        na.rm = TRUE
+      ) == TRUE) {
+        data <-
+          flash_parse(
+            flash_file = raw_results,
+            flash_flights = flights,
+            flash_flight_attempts = flight_attempts,
+            flash_split_attempts = split_attempts
+          )
+
+      } else {
+        # Hy-Tek
+
+
+        data <- hytek_parse(
+          hytek_file = raw_results,
+          hytek_relay_athletes = relay_athletes,
+          hytek_flights = flights,
+          hytek_flight_attempts = flight_attempts,
+          hytek_split_attempts = split_attempts
         )
 
-      # return(data)
-
-    } else { # Hy-Tek
-
-
-      data <- hytek_parse(
-        hytek_file = raw_results,
-        hytek_relay_athletes = relay_athletes,
-        hytek_flights = flights,
-        hytek_flight_attempts = flight_attempts,
-        hytek_split_attempts = split_attempts
-      )
-
-      # return(data)
-
-    }
+      }
     }
     return(data)
   }
