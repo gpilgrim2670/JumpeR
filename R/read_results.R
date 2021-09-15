@@ -27,6 +27,8 @@ read_results <- function(file, node = "pre") {
 
   # file <- "https://flashresults.com/2018_Meets/Outdoor/06-15_NBHSON/040-1-01.htm"
 
+  # file <- "http://results.deltatiming.com/ncaa/tf/2019-joe-walker-invitational/190412F009"
+  # node <- "pre"
 
   if (stringr::str_detect(file, "\\.pdf$|\\.pdf\\.aspx$|\\.aspx$") == TRUE) {
     ### PDF ###

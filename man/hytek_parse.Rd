@@ -9,29 +9,39 @@ hytek_parse(
   hytek_relay_athletes = relay_athletes,
   hytek_flights = flights,
   hytek_flight_attempts = flight_attempts,
-  hytek_split_attempts = split_attempts
+  hytek_split_attempts = split_attempts,
+  hytek_splits = splits,
+  hytek_split_length = split_length
 )
 }
 \arguments{
 \item{hytek_file}{data with row numbers added}
 
-\item{hytek_relay_athletes}{should \code{tf_parse} try to include the names of
-relay athletes for relay events?  Names will be listed in new columns
+\item{hytek_relay_athletes}{should \code{tf_parse} try to include the names
+of relay athletes for relay events?  Names will be listed in new columns
 "Relay-Athlete_1", "Relay_Athlete_2" etc.  Defaults to \code{FALSE}.}
 
 \item{hytek_flights}{should \code{tf_parse} try to include flights for
 jumping/throwing events?  Please note this will add a significant number of
-columns to the resulting dataframe.  Defaults to \code{FALSE}.}
+columns to the resulting data frame.  Defaults to \code{FALSE}.}
 
-\item{hytek_flight_attempts}{should \code{tf_parse} try to include flights results
-(i.e. "PASS", "X", "O") for high jump and pole value events?  Please note
-this will add a significant number of columns to the resulting dataframe.
-Defaults to \code{FALSE}}
+\item{hytek_flight_attempts}{should \code{tf_parse} try to include flights
+results (i.e. "PASS", "X", "O") for high jump and pole value events?
+Please note this will add a significant number of columns to the resulting
+data frame. Defaults to \code{FALSE}}
 
-\item{hytek_split_attempts}{should \code{tf_parse} split attempts from each flight
-into separate columns?  For example "XXO" would result in three columns,
-one for "X', another for the second "X" and third for "O".  There will be a
-lot of columns.  Defaults to \code{FALSE}}
+\item{hytek_split_attempts}{should \code{tf_parse} split attempts from each
+flight into separate columns?  For example "XXO" would result in three
+columns, one for "X', another for the second "X" and third for "O".  There
+will be a lot of columns.  Defaults to \code{FALSE}}
+
+\item{hytek_splits}{either \code{TRUE} or the default, \code{FALSE} - should
+\code{hytek_parse} attempt to include splits.}
+
+\item{hytek_split_length}{either the distance at which splits are collected
+(must be constant distance) or the default, \code{1}, the length of track
+at which splits are recorded.  Not all results are internally consistent on
+this issue.  If in doubt use the default \code{1}}
 }
 \value{
 a data frame of track and field results

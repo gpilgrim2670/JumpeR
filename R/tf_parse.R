@@ -27,15 +27,21 @@
 #'   "Relay-Athlete_1", "Relay_Athlete_2" etc.  Defaults to \code{FALSE}.
 #' @param flights should \code{tf_parse} try to include flights for
 #'   jumping/throwing events?  Please note this will add a significant number of
-#'   columns to the resulting dataframe.  Defaults to \code{FALSE}.
+#'   columns to the resulting data frame.  Defaults to \code{FALSE}.
 #' @param flight_attempts should \code{tf_parse} try to include flights results
 #'   (i.e. "PASS", "X", "O") for high jump and pole value events?  Please note
-#'   this will add a significant number of columns to the resulting dataframe.
+#'   this will add a significant number of columns to the resulting data frame.
 #'   Defaults to \code{FALSE}
 #' @param split_attempts should \code{tf_parse} split attempts from each flight
 #'   into separate columns?  For example "XXO" would result in three columns,
 #'   one for "X', another for the second "X" and third for "O".  There will be a
 #'   lot of columns.  Defaults to \code{FALSE}
+#' @param splits either \code{TRUE} or the default, \code{FALSE} - should
+#'   \code{tf_parse} attempt to include splits.
+#' @param split_length either the distance at which splits are collected
+#'   (must be constant distance) or the default, \code{1}, the length of track
+#'   at which splits are recorded.  Not all results are internally consistent on
+#'   this issue.  If in doubt use the default \code{1}
 #'
 #' @return a data frame of track and field results
 #'
@@ -59,7 +65,9 @@ tf_parse <-
            relay_athletes = FALSE,
            flights = FALSE,
            flight_attempts = FALSE,
-           split_attempts = FALSE) {
+           split_attempts = FALSE,
+           splits = FALSE,
+           split_length = 1) {
     # file <- read_results("http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm")
     # file <- "http://www.leonetiming.com/2020/Indoor/IvyLeague/Results.htm"
     # file <- read_results(file)
@@ -90,6 +98,14 @@ tf_parse <-
       stop(
         "If split_attempts is set to TRUE flights and flight_attempts should also be set to TRUE."
       )
+    }
+
+    if(any(!is.logical(splits) & is.na(splits)) == TRUE) {
+      stop("splits must be logical, either TRUE or FALSE")
+    }
+
+    if(is.numeric(split_length) == FALSE) {
+      stop("split_length must be numeric, usually 1 or 200")
     }
 
     #### strings that if a line begins with one of them the line is ignored ####
@@ -189,7 +205,9 @@ tf_parse <-
           hytek_relay_athletes = relay_athletes,
           hytek_flights = flights,
           hytek_flight_attempts = flight_attempts,
-          hytek_split_attempts = split_attempts
+          hytek_split_attempts = split_attempts,
+          hytek_splits = splits,
+          hytek_split_length = split_length
         )
 
       }

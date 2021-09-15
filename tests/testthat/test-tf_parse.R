@@ -288,7 +288,7 @@ test_that("tf_parse pass through", {
 
   expect_equivalent(df_test, df_standard)
 
-  #### all FALSE ####
+  #### Long Jump ####
 
   file <-
     "https://www.flashresults.com/2019_Meets/Outdoor/06-05_NCAAOTF-Austin/015-1_compiled.htm"
@@ -333,6 +333,41 @@ test_that("tf_parse pass through", {
 
   expect_equivalent(df_test, df_standard)
 
+})
+
+test_that("tf_parse 1600m with team scores at bottom", {
+
+  skip_on_cran()
+
+  file <- "http://results.deltatiming.com/tf/2019-hurricane-invitational/190315F076"
+
+  df_test <- file %>%
+    read_results() %>%
+    tf_parse()
+
+  df_standard <-
+    structure(list(Place = c("1", "2", "3", "4", "5", "6", "7", "8",
+                             "9", "10", "11", "12", "13"), Name = c("Robert Pedroza", "Sukeil Foucha",
+                                                                    "Will Noonan", "Alec Collado", "Humberto Ramirez", "Zachary Vincennie",
+                                                                    "Kevin Kergean", "James Cusack", "George Stark", "Pedro Garcia",
+                                                                    "Tomas Esber", "Lucas Nolasco", "Lucas Batista"), Age = c("JR",
+                                                                                                                              "SR", "SR", "SR", "SO", "JR", "JR", "SR", "FR", "JR", "JR", "JR",
+                                                                                                                              "SR"), Team = c("Key West HS", "Piper", "Spanish River", "Miami Coral Park",
+                                                                                                                                              "Piper", "Spanish River", "Miami Columbus", "Ransom Everglades",
+                                                                                                                                              "Palmer Trinity", "Braddock", "Ransom Everglades", "Cypress Bay",
+                                                                                                                                              "Miami Coral Park"), Finals_Result = c("4:19.69", "4:25.06",
+                                                                                                                                                                                     "4:25.56", "4:27.56", "4:28.72", "4:29.69", "4:32.37", "4:33.01",
+                                                                                                                                                                                     "4:34.06", "4:38.01", "4:42.45", "4:42.76", "5:23.53"), DQ = c(0,
+                                                                                                                                                                                                                                                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), Event = c("Boys 1600 m Run Invitational High School",
+                                                                                                                                                                                                                                                                                                   "Boys 1600 m Run Invitational High School", "Boys 1600 m Run Invitational High School",
+                                                                                                                                                                                                                                                                                                   "Boys 1600 m Run Invitational High School", "Boys 1600 m Run Invitational High School",
+                                                                                                                                                                                                                                                                                                   "Boys 1600 m Run Invitational High School", "Boys 1600 m Run Invitational High School",
+                                                                                                                                                                                                                                                                                                   "Boys 1600 m Run Invitational High School", "Boys 1600 m Run Invitational High School",
+                                                                                                                                                                                                                                                                                                   "Boys 1600 m Run Invitational High School", "Boys 1600 m Run Invitational High School",
+                                                                                                                                                                                                                                                                                                   "Boys 1600 m Run Invitational High School", "Boys 1600 m Run Invitational High School"
+                                                                                                                                                                                                                                                    )), row.names = c(NA, -13L), class = "data.frame")
+
+    expect_equivalent(df_test, df_standard)
 })
 
 

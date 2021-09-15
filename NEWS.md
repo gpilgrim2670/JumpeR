@@ -1,3 +1,7 @@
+# JumpeR 0.2.5 September 15th, 2021
+
+* Adding splits capabilities to `tf_parse` and `hytek_parse`
+
 # JumpeR 0.2.4 September 15th, 2021
 
 * Integration of `hytek_parse` inside `tf_parse`

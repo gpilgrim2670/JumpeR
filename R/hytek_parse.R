@@ -14,6 +14,7 @@
 #' @importFrom dplyr all_of
 #' @importFrom dplyr starts_with
 #' @importFrom dplyr matches
+#' @importFrom dplyr distinct
 #' @importFrom stringr str_remove
 #' @importFrom stringr str_remove_all
 #' @importFrom stringr str_detect
@@ -29,20 +30,26 @@
 #' @importFrom SwimmeR `%!in%`
 #'
 #' @param hytek_file data with row numbers added
-#' @param hytek_relay_athletes should \code{tf_parse} try to include the names of
-#'   relay athletes for relay events?  Names will be listed in new columns
+#' @param hytek_relay_athletes should \code{tf_parse} try to include the names
+#'   of relay athletes for relay events?  Names will be listed in new columns
 #'   "Relay-Athlete_1", "Relay_Athlete_2" etc.  Defaults to \code{FALSE}.
 #' @param hytek_flights should \code{tf_parse} try to include flights for
 #'   jumping/throwing events?  Please note this will add a significant number of
-#'   columns to the resulting dataframe.  Defaults to \code{FALSE}.
-#' @param hytek_flight_attempts should \code{tf_parse} try to include flights results
-#'   (i.e. "PASS", "X", "O") for high jump and pole value events?  Please note
-#'   this will add a significant number of columns to the resulting dataframe.
-#'   Defaults to \code{FALSE}
-#' @param hytek_split_attempts should \code{tf_parse} split attempts from each flight
-#'   into separate columns?  For example "XXO" would result in three columns,
-#'   one for "X', another for the second "X" and third for "O".  There will be a
-#'   lot of columns.  Defaults to \code{FALSE}
+#'   columns to the resulting data frame.  Defaults to \code{FALSE}.
+#' @param hytek_flight_attempts should \code{tf_parse} try to include flights
+#'   results (i.e. "PASS", "X", "O") for high jump and pole value events?
+#'   Please note this will add a significant number of columns to the resulting
+#'   data frame. Defaults to \code{FALSE}
+#' @param hytek_split_attempts should \code{tf_parse} split attempts from each
+#'   flight into separate columns?  For example "XXO" would result in three
+#'   columns, one for "X', another for the second "X" and third for "O".  There
+#'   will be a lot of columns.  Defaults to \code{FALSE}
+#' @param hytek_splits either \code{TRUE} or the default, \code{FALSE} - should
+#'   \code{hytek_parse} attempt to include splits.
+#' @param hytek_split_length either the distance at which splits are collected
+#'   (must be constant distance) or the default, \code{1}, the length of track
+#'   at which splits are recorded.  Not all results are internally consistent on
+#'   this issue.  If in doubt use the default \code{1}
 #'
 #' @return a data frame of track and field results
 #'
@@ -56,10 +63,20 @@ hytek_parse <-
            hytek_relay_athletes = relay_athletes,
            hytek_flights = flights,
            hytek_flight_attempts = flight_attempts,
-           hytek_split_attempts = split_attempts) {
+           hytek_split_attempts = split_attempts,
+           hytek_splits = splits,
+           hytek_split_length = split_length) {
 
     #### testing setup ####
+    # hytek_file <-
+    #   "http://results.deltatiming.com/ncaa/tf/2019-joe-walker-invitational/190412F009" %>%
+    #   read_results() %>%
+    #   add_row_numbers()
 
+    # hytek_file <-
+    #   "http://results.deltatiming.com/ncaa/tf/2019-joe-walker-invitational/print/190412F010" %>%
+    #   read_results() %>%
+    #   add_row_numbers()
 
 
         #### Pulls out event labels from text ####
@@ -755,15 +772,6 @@ hytek_parse <-
             dplyr::mutate(Name = stringr::str_replace(Name, "Period", "\\."))
         }
 
-        # if("Points" %in% names(data) == FALSE)
-        # {data$Points <- NA}
-        #
-        # if("Heat" %in% names(data) == FALSE)
-        # {data$Heat <- NA}
-        #
-        # if("Tiebreaker" %in% names(data) == FALSE)
-        # {data$Tiebreaker <- NA}
-
         #### added in to work with arrange/distinct calls after adding in events ####
         if("Prelims_Result" %in% names(data) == FALSE){
           data$Prelims_Result <- NA
@@ -790,6 +798,25 @@ hytek_parse <-
 
           data <- data %>%
             dplyr::left_join(relay_athletes_df, c("Row_Numb" = "Row_Numb_Adjusted"))
+        }
+
+        #### adding splits back in ####
+        if (hytek_splits == TRUE) {
+
+          splits_df <- splits_parse(raw_results, split_len = hytek_split_length) %>%
+            dplyr::distinct(dplyr::across(-Row_Numb), .keep_all = TRUE)
+
+          #### matches row numbers in splits_df to available row numbers in data
+          # helps a lot with relays, since their row numbers vary based on whether or not relay swimmers are included
+          # and if those swimmers are listed on one line or two
+          splits_df  <-
+            transform(splits_df, Row_Numb_Adjusted = data$Row_Numb[findInterval(Row_Numb, data$Row_Numb)]) %>%
+            dplyr::select(-Row_Numb)
+
+          data <- data %>%
+            dplyr::left_join(splits_df, by = c("Row_Numb" = "Row_Numb_Adjusted")) %>%
+            dplyr::select(!dplyr::starts_with("Split"), stringr::str_sort(names(.), numeric = TRUE)) # keep splits columns in order
+
         }
 
         #### adding in flights ####
