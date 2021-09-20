@@ -1,3 +1,7 @@
+# JumpeR 0.2.7 September 20th, 2021
+
+* Pulls wind values by round out of Hytek results
+
 # JumpeR 0.2.6 September 20th, 2021
 
 * Pulls wind values by round out of Flash table results

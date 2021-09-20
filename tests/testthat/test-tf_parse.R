@@ -370,5 +370,72 @@ test_that("tf_parse 1600m with team scores at bottom", {
 })
 
 
+test_that("hytek_parse long jump with wind speeds by flight/attempt", {
+
+  skip_on_cran()
+
+  file <- "http://results.deltatiming.com/ncaa/tf/2019-florida-relays/print/190328F005"
+
+  df_test <- file %>%
+    read_results() %>%
+    tf_parse(flights = TRUE)
+
+  df_standard <-
+    structure(list(Place = c("1", "2", "3", "4", "5", "6", "7", "8",
+                             "9", "10", "11", "12", "13", "14", "15", "16", "17"), Name = c("Alyssa Jones",
+                                                                                            "Caroline Johnston", "Eddiyah Frye", "Destiny Castillo", "Morgan Bentley",
+                                                                                            "Jordyn Showers", "Jasmyn Dorsey", "Christon Kingcade", "Samarah Hill",
+                                                                                            "Ashantae Harvey", "Jaela Hollie", "Natiya James", "Saniah Fuller",
+                                                                                            "Mackenzie Forrest", "Ameion Hamlet", "Gabriele Matthews", "Jiya Hastings"
+                             ), Age = c("FR", "SR", "SO", "SR", "11", "JR", "JR", "SR", "SR",
+                                        "JR", "SR", "JR", "SR", "JR", "JR", "JR", "SO"), Team = c("Miami Southridge",
+                                                                                                  "Episcopal", "St. Thomas Aquinas", "Hallandale", "Brookwood",
+                                                                                                  "Calvary Chri", "Mainland", "Miami Northwestern", "Trinity Prep",
+                                                                                                  "Hallandale", "Jones", "Eastside", "Windermere", "Forest", "Godby",
+                                                                                                  "Dr. Phillips", "DeLand"), Finals_Result = c("6.05m", "5.92m",
+                                                                                                                                               "5.83m", "5.80m", "5.66m", "5.65m", "5.41m", "5.38m", "5.36m",
+                                                                                                                                               "5.30m", "5.28m", "5.14m", "5.10m", "5.01m", "4.94m", "4.52m",
+                                                                                                                                               "4.50m"), DQ = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                                                                                                                                                0, 0), Event = c("Girls Long Jump High School", "Girls Long Jump High School",
+                                                                                                                                                                                 "Girls Long Jump High School", "Girls Long Jump High School",
+                                                                                                                                                                                 "Girls Long Jump High School", "Girls Long Jump High School",
+                                                                                                                                                                                 "Girls Long Jump High School", "Girls Long Jump High School",
+                                                                                                                                                                                 "Girls Long Jump High School", "Girls Long Jump High School",
+                                                                                                                                                                                 "Girls Long Jump High School", "Girls Long Jump High School",
+                                                                                                                                                                                 "Girls Long Jump High School", "Girls Long Jump High School",
+                                                                                                                                                                                 "Girls Long Jump High School", "Girls Long Jump High School",
+                                                                                                                                                                                 "Girls Long Jump High School"), Flight_1 = c("5.90m", "FOUL",
+                                                                                                                                                                                                                              "FOUL", "FOUL", "5.53m", "5.64m", "FOUL", "5.38m", "FOUL", "5.12m",
+                                                                                                                                                                                                                              "5.28m", "4.98m", "FOUL", "4.61m", "4.94m", "4.52m", "4.50m"),
+                   Flight_1_Wind = c("0.2", "1.9", "1.7", "2.7", "0.5", "1.4",
+                                     "+0.0", "0.6", "0.5", "0.7", "0.3", "0.6", "2.3", "+0.0",
+                                     "3.4", "1.9", "0.5"), Flight_2 = c("6.05m", "5.65m", "FOUL",
+                                                                        "5.80m", "FOUL", "5.65m", "5.41m", "ND", "5.24m", "5.30m",
+                                                                        "5.09m", "5.14m", "4.85m", "ND", "FOUL", "ND", "ND"), Flight_2_Wind = c("2.2",
+                                                                                                                                                "+0.0", "0.2", "2.3", "1.7", "1.6", "+0.0", "2.1", "0.8",
+                                                                                                                                                "1.0", "1.2", "0.7", "1.5", "1.7", "+0.0", "1.0", "0.2"),
+                   Flight_3 = c("5.93m", "FOUL", "5.83m", "ND", "5.49m", "5.26m",
+                                "FOUL", "ND", "5.36m", "5.23m", "ND", "ND", "5.10m", "5.01m",
+                                "FOUL", "ND", "FOUL"), Flight_3_Wind = c("0.2", "0.2", "2.1",
+                                                                         "+0.0", "1.1", "0.2", "1.1", "0.2", "1.9", "1.2", "1.7",
+                                                                         "2.2", "0.5", "+0.0", "2.2", "0.3", "1.0"), Flight_4 = c("5.93m",
+                                                                                                                                  "5.72m", "5.29m", "FOUL", "FOUL", "5.43m", "5.23m", "5.18m",
+                                                                                                                                  "5.29m", NA, NA, NA, NA, NA, NA, NA, NA), Flight_4_Wind = c("1.7",
+                                                                                                                                                                                              "0.8", "1.2", "0.2", "0.9", "0.6", "2.4", "0.9", "2.2", NA,
+                                                                                                                                                                                              NA, NA, NA, NA, NA, NA, NA), Flight_5 = c("5.74m", "5.72m",
+                                                                                                                                                                                                                                        "5.81m", "FOUL", "FOUL", "5.46m", "5.14m", "FOUL", "5.16m",
+                                                                                                                                                                                                                                        NA, NA, NA, NA, NA, NA, NA, NA), Flight_5_Wind = c("1.5",
+                                                                                                                                                                                                                                                                                           "0.9", "+0.0", "+0.0", "0.9", "1.2", "+0.0", "+0.0", "+0.0",
+                                                                                                                                                                                                                                                                                           NA, NA, NA, NA, NA, NA, NA, NA), Flight_6 = c("5.82m", "5.92m",
+                                                                                                                                                                                                                                                                                                                                         "FOUL", "FOUL", "5.66m", "5.24m", "5.13m", "5.06m", "5.14m",
+                                                                                                                                                                                                                                                                                                                                         NA, NA, NA, NA, NA, NA, NA, NA), Flight_6_Wind = c("2.1",
+                                                                                                                                                                                                                                                                                                                                                                                            "3.0", "1.4", "1.5", "3.4", "1.6", "+0.0", "1.9", "1.4",
+                                                                                                                                                                                                                                                                                                                                                                                            NA, NA, NA, NA, NA, NA, NA, NA)), row.names = c(NA, -17L), class = "data.frame")
+
+
+  expect_equivalent(df_test, df_standard)
+})
+
+
 
 # testthat::test_file("tests/testthat/test-tf_parse_works.R")

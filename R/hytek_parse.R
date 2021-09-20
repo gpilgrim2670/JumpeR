@@ -852,8 +852,19 @@ hytek_parse <-
             dplyr::na_if("")
         }
 
+        # add in wind for flights
+        if(hytek_flights == TRUE){
+        flight_wind_df <- wind_parse_hytek(raw_results)
+
+        flight_wind_df <-
+          transform(flight_wind_df, Row_Numb_Adjusted = data$Row_Numb[findInterval(Row_Numb, data$Row_Numb)]) %>%
+          dplyr::select(-Row_Numb)
+
+        data <- dplyr::left_join(data, flight_wind_df, by = c("Row_Numb" = "Row_Numb_Adjusted"))
+        }
+
         #### ordering columns after adding flights ####
-        if (all(hytek_flights == TRUE & hytek_flight_attempts == TRUE)) {
+        if (hytek_flights == TRUE) {
           data <- data %>%
             dplyr::select(colnames(.)[stringr::str_detect(names(.), "^Flight", negate = TRUE)], stringr::str_sort(colnames(.)[stringr::str_detect(names(.), "^Flight")]))
         }
