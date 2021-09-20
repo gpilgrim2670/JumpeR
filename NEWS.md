@@ -1,3 +1,7 @@
+# JumpeR 0.2.6 September 20th, 2021
+
+* Pulls wind values by round out of Flash table results
+
 # JumpeR 0.2.5 September 15th, 2021
 
 * Adding splits capabilities to `tf_parse` and `hytek_parse`

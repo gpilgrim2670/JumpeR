@@ -34,7 +34,7 @@ test_that("flash table sprint works", {
   }
 })
 
-test_that("flash table horizontal works", {
+test_that("flash table horizontal works, no wind data by round", {
 
   skip_on_cran() # due to risk of external resources failing
 
@@ -53,7 +53,7 @@ test_that("flash table horizontal works", {
                                          Event = rep("Shot Put", 3),
                                          Gender = rep("Men", 3),
                                          Finals_Result = rep("20.33m", 3),
-                                         Date = rep(as.Date("2015-05-30"), 3),
+                                         Event_Date = rep(as.Date("2015-05-30"), 3),
                                          Round = c("1", "2", "3"),
                                          Result = c("18.06", "20.33", "19.51"),
                                          Flight = rep("4", 3),
@@ -65,6 +65,49 @@ test_that("flash table horizontal works", {
     df_test <- data %>%
       flash_clean_events() %>%
       filter(Name == "Darrell Hill")
+
+    # test
+    expect_equivalent(df_standard_horizontal,
+                      df_test)
+  }
+})
+
+
+test_that("flash table horizontal works, with wind data by round", {
+
+  skip_on_cran() # due to risk of external resources failing
+
+  file <-
+    "https://www.flashresults.com/2019_Meets/Outdoor/06-05_NCAAOTF-Austin/015-1_compiledSeries.htm"
+
+  data <- try(flash_parse_table(file, wide_format = FALSE), silent = TRUE)
+
+  if (any(grep("error", class(data)))) {
+    skip("Link to external data is broken")
+  } else {
+
+    # build standard
+    df_standard_horizontal <-
+      structure(list(Place = c("1", "18", "21"), Name = c("JuVaughn HARRISON",
+                                                          "Kenan JONES", "Rayvon GREY"), Event = c("Long Jump", "Long Jump",
+                                                                                                   "Long Jump"), Gender = c("Men", "Men", "Men"), Order = c("F2-10",
+                                                                                                                                                            "F2-12", "F2-09"), Finals_Result = c("8.20m", "7.54m", "7.38m"
+                                                                                                                                                            ), Event_Date = structure(c(18053, 18053, 18053), class = "Date"),
+                     Flight = c("2", "2", "2"), Team = c("LSU", "LSU", "LSU"),
+                     Round_1 = c("7.89", "7.26", "7.38"), Round_1_Wind = c("+1.3",
+                                                                           "+0.7", "+1.6"), Round_2 = c("8.20", "7.54", "X"), Round_2_Wind = c("+0.7",
+                                                                                                                                               "+1.7", "+1.7"), Round_3 = c("X", "7.09", "X"), Round_3_Wind = c("+2.3",
+                                                                                                                                                                                                                "+1.0", "+0.9"), Round_4 = c("7.99", NA, NA), Round_4_Wind = c("+1.5",
+                                                                                                                                                                                                                                                                               NA, NA), Round_5 = c("7.85", NA, NA), Round_5_Wind = c("+1.2",
+                                                                                                                                                                                                                                                                                                                                      NA, NA), Round_6 = c("X", NA, NA), Round_6_Wind = c("+1.3",
+                                                                                                                                                                                                                                                                                                                                                                                          NA, NA), Age = c("SO", "FR", "JR")), row.names = c(NA, -3L
+                                                                                                                                                                                                                                                                                                                                                                                          ), class = "data.frame")
+
+
+    # generate test df
+    df_test <- data %>%
+      flash_clean_events(wide_format_clean = TRUE) %>%
+      filter(Team == "LSU")
 
     # test
     expect_equivalent(df_standard_horizontal,
@@ -299,7 +342,7 @@ test_that("flash table 400m tiebreaker", {
   }
 })
 
-test_that("flash table long jump, wind without w: marker", {
+test_that("flash table long jump, wind without w: marker, long format", {
 
   skip_on_cran() # due to risk of external resources failing
 
@@ -318,7 +361,7 @@ test_that("flash table long jump, wind without w: marker", {
       Name = c("Ezra MELLINGER", "Evan LEE", "Harry LORD" ),
       Event = rep("Long Jump", 3),
       Gender = rep("Men", 3),
-      Best = c("7.30m", "6.71m", "6.55m"),
+      Finals_Result = c("7.30m", "6.71m", "6.55m"),
       Date = rep(as.Date("2021-04-17"), 3),
       Round = rep("1", 3),
       Result = c("7.02", "6.57", "6.36"),
@@ -339,6 +382,44 @@ test_that("flash table long jump, wind without w: marker", {
                       df_test)
   }
 })
+
+
+test_that("flash table long jump, wind without w: marker, wide format", {
+
+  skip_on_cran() # due to risk of external resources failing
+
+  file <-
+    "https://www.flashresults.com/2021_Meets/Outdoor/04-16_VirginiaChallenge/035-1_compiledSeries.htm"
+
+  data <- try(flash_parse_table(file), silent = TRUE)
+
+  if (any(grep("error", class(data)))) {
+    skip("Link to external data is broken")
+  } else {
+
+    # build standard
+    df_standard_wind <-
+      structure(list(Place = c("3", "7"), Name = c("Robert BLUE", "Louis GORDON"
+      ), Event = c("Long Jump", "Long Jump"), Gender = c("Men", "Men"
+      ), Finals_Result = c("7.57m", "7.17m"), Event_Date = structure(c(18734,
+                                                                       18734), class = "Date"), Team = c("Albany", "Albany"), Round_1 = c("7.05",
+                                                                                                                                          "7.17"), Round_1_Wind = c("-0.6", "+0.3"), Round_2 = c("7.26",
+                                                                                                                                                                                                 "5.20"), Round_2_Wind = c("+0.1", "-1.5"), Round_3 = c("7.57",
+                                                                                                                                                                                                                                                        "7.02"), Round_3_Wind = c("+0.8", "-2.1"), Round_4 = c("X", "4.20"
+                                                                                                                                                                                                                                                        ), Round_4_Wind = c(NA, "+0.5"), Round_5 = c("X", "4.40"), Round_5_Wind = c(NA,
+                                                                                                                                                                                                                                                                                                                                    "-0.2"), Round_6 = c("X", NA), Round_6_Wind = c(NA_character_,
+                                                                                                                                                                                                                                                                                                                                                                                    NA_character_), Age = c("SO", "FR")), row.names = c(NA, -2L), class = "data.frame")
+    # generate test df
+    df_test <- data %>%
+      flash_clean_events(wide_format_clean = TRUE) %>%
+      filter(Team == "Albany")
+
+    # test
+    expect_equivalent(df_standard_wind,
+                      df_test)
+  }
+})
+
 
 test_that("flash table DMR, several record strings", {
 

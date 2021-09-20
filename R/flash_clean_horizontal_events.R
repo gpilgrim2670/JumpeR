@@ -38,6 +38,11 @@ flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_form
   #   "https://flashresults.com/2015_Meets/Outdoor/05-28_NCAAEast/017-1_compiledSeries.htm" %>%
   #   flash_parse_table(wide_format = FALSE)
 
+
+  # df <-
+  #   "https://www.flashresults.com/2019_Meets/Outdoor/06-05_NCAAOTF-Austin/015-1_compiledSeries.htm" %>%
+  #   flash_parse_table(wide_format = TRUE)
+
   df <- df %>%
     data.frame() %>%
     dplyr::select(
@@ -108,11 +113,13 @@ flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_form
   }
 
   if("Finals_Result" %in% names(clean_horizontal_data)){
+
     clean_horizontal_data <- clean_horizontal_data %>%
       dplyr::mutate(Finals_Result = stringr::str_split_fixed(Finals_Result, "\\\n", 2)[, 1]) %>%
+      wind_from_rounds() %>%
       dplyr::mutate(Finals_Result = stringr::str_remove(Finals_Result, " \\(\\d{1,3}\\-\\d{1,2}\\.?\\d{0,2}")) %>%  # remove results in standard units
-      dplyr::mutate(dplyr::across(dplyr::matches("^R"), ~ stringr::str_remove(.x, "\n.*\n?.*\n?.*\n?.*\n?.*"))) %>%
-      dplyr::mutate(dplyr::across(dplyr::matches("^R"), ~ stringr::str_remove(.x, "\\s?w\\:\\+?\\-?\\d?\\d?\\.?\\d?\\s?")))
+      dplyr::mutate(dplyr::across(dplyr::matches("^R"), ~ stringr::str_remove(.x, "\n.*\n?.*\r?.*\n?.*\n?.*\n?.*\n?.*\n?.*\n?.*"))) %>%
+      dplyr::mutate(dplyr::across(!dplyr::matches("Wind"), ~ stringr::str_remove(.x, "\\s?w\\:\\+?\\-?\\d?\\d?\\.?\\d?\\s?")))
       # dplyr::rename("Finals_Result" = Best)
 
     if(wide_format_horizontal == TRUE){
@@ -125,6 +132,10 @@ flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_form
   #### renaming columns ####
   names(clean_horizontal_data) <- stringr::str_replace_all(names(clean_horizontal_data), "Rnd\\.(\\d)", "Round_\\1")
   names(clean_horizontal_data) <- stringr::str_replace_all(names(clean_horizontal_data), "Round\\.(\\d)", "Round_\\1")
+
+  # reorder wind and round columns #
+  clean_horizontal_data <- clean_horizontal_data %>%
+    dplyr::select(!dplyr::matches("R.*\\_"), stringr::str_sort(names(.), numeric = TRUE))
 
   # Drops all-NA wind column from throws and indoor meets
   clean_horizontal_data <- Filter(function(x)

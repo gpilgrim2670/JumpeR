@@ -180,7 +180,7 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   age_col <- which(stringr::str_detect(as.vector(t(df)), "(^SR$)|(^JR$)|(^SO$)|(^FR$)"))[1]
 
   # wind column
-  wind_col <- which(stringr::str_detect(as.vector(t(df)), "^(\\+|-)?\\d\\.\\d$"))[1]
+  wind_col <- which(stringr::str_detect(as.vector(t(df)), "^w?\\:?(\\+|-)?\\d\\.\\d$"))[1]
 
   # blank columns
   blank_col <- which(colnames(df) == "")
