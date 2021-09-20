@@ -31,6 +31,9 @@ wind_parse_hytek <- function(text) {
   # text <- read_results("http://results.deltatiming.com/ncaa/tf/2019-florida-relays/print/190328F005") %>%
   #   add_row_numbers()
 
+  # text <- read_results("http://results.deltatiming.com/tf/2019-tiger-track-classic/190405F032") %>%
+  #   add_row_numbers()
+
   #### Actual Function ####
   ### collect row numbers from rows containing splits ###
   ### define strings ###
@@ -48,16 +51,20 @@ wind_parse_hytek <- function(text) {
     minimum_row <- min(as.numeric(row_numbs))
     maximum_row <- as.numeric(length(text))
 
-    #### help out a little, in case there are splits that only have one space between them ####
+    #### help out a little, in case there are wind results that only have one space between them ####
     text <- stringr::str_replace_all(text, "(\\)) (\\d)", "\\1  \\2")
 
-    #### pull out rows containing splits, which will remove row numbers ####
+    text <- stringr::str_replace_all(text, "(?<=\\sX)\\s{5,}(?=\\d)", "  NA  ")
+
+
+
+    #### pull out rows containing wind results, which will remove row numbers ####
 
       suppressWarnings(
         data_1_wind <- text %>%
           .[purrr::map_lgl(.,
                            stringr::str_detect,
-                           wind_string)] %>%
+                           paste0(wind_string, "|\\s{2}NA\\s{2}"))] %>%
           stringr::str_replace_all("\n", "") %>%
           stringr::str_extract_all(
            wind_string
@@ -182,37 +189,14 @@ wind_parse_hytek <- function(text) {
       lines_sort(min_row = minimum_row) %>%
       dplyr::mutate(Row_Numb = as.numeric(Row_Numb) - 1) # make row number of split match row number of performance
 
-
-    ### goal here is to deal with cases where there are multiple splits in parens and outside.  Want to keep only fist split outside parens
-    ### and remove all others
-    ### parens are replaced with "qq" above because dealing with detecting parens is annoying
-    if(suppressWarnings(any(stringr::str_detect(data_wind, "qq"))) == TRUE) {
-      data_wind <- data_wind %>%
-        dplyr::mutate(dplyr::across(
-          3:length(data_wind),
-          ~ dplyr::case_when(stringr::str_detect(., "qq") == FALSE ~ "NA",
-                             TRUE ~ .)
-        )) %>%
-        dplyr::na_if("NA") %>%
-        dplyr::mutate(dplyr::across(
-          dplyr::everything(),
-          ~ stringr::str_replace_all(., "qq", "")
-        )) %>%
-        fill_left()
-
-      if("V1" %in% names(data_wind) & any(stringr::str_detect(data_wind$V1, "\\.") == FALSE)){
-        data_wind <- data_wind %>%
-          dplyr::rename("Row_Numb" = V1)
-      }
-    }
-
     #### rename columns V1, V2 etc. by 50 ####
     old_names <- names(data_wind)[grep("^V", names(data_wind))]
     new_names <-
       paste("Flight", seq(1, length(old_names)), "Wind", sep = "_")
 
     data_wind <- data_wind %>%
-      dplyr::rename_at(dplyr::vars(old_names), ~ new_names)
+      dplyr::rename_at(dplyr::vars(old_names), ~ new_names) %>%
+      dplyr::na_if("NA")
 
   } else { # if there are no rows with valid splits return blank dataframe
     data_wind <- data.frame(Row_Numb = as.numeric())
