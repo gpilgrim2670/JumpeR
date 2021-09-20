@@ -55,6 +55,7 @@ event_parse <- function(text) {
       stringr::str_replace(events, "1 M  ", "1 M ") ## Addition
     events <- stringr::str_replace(events, "([^1])0  ", "\\10 ")
     events <- stringr::str_replace(events, " Class [:alpha:]", "")
+    events <- stringr::str_replace(events, " m ", "m ")
     events <- events %>% # Addition
       .[purrr::map_lgl(., stringr::str_detect, "[[:alpha:]]")] %>%
       stringr::str_replace_all("\\\n", "") %>%

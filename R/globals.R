@@ -73,6 +73,9 @@ utils::globalVariables(
     "Input",
     "Meet",
     "Best",
-    "Height"
+    "Height",
+    "relay_athletes",
+    "splits",
+    "split_length"
   )
 )
