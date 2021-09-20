@@ -18,8 +18,7 @@
 #'
 #' @param text output of \code{read_results} with row numbers appended by
 #'   \code{add_row_numbers}
-#' @param split_len length of pool at which splits are measured - usually 25 or
-#'   50
+#' @param split_len the distance at which splits are meausred
 #' @return returns a data frame with split times and row numbers
 #'
 #' @seealso \code{splits_parse} runs inside \code{\link{tf_parse}} on the
@@ -123,7 +122,7 @@ splits_parse <- function(text, split_len = 1) {
           stringr::str_extract_all(
             paste0("^\\s+\\d\\d\\.\\d\\d\\d?|\\s[8-9]\\.\\d{2,3}|", split_string)
           ) %>%
-          map(trimws) %>%
+          purrr::map(trimws) %>%
           stringr::str_remove_all('\\"') %>%
           stringr::str_remove_all("c\\(") %>%
           stringr::str_remove_all("\\)$") %>%

@@ -10,8 +10,7 @@ splits_parse(text, split_len = 1)
 \item{text}{output of \code{read_results} with row numbers appended by
 \code{add_row_numbers}}
 
-\item{split_len}{length of pool at which splits are measured - usually 25 or
-50}
+\item{split_len}{the distance at which splits are meausred}
 }
 \value{
 returns a data frame with split times and row numbers
