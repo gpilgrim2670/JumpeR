@@ -19,6 +19,7 @@
 #' @importFrom rvest html_attr
 #' @importFrom rvest html_table
 #' @importFrom stats na.omit
+#' @importFrom purrr when
 #'
 #' @param link a link to an event landing page on flashresults.com
 #' @param wide_format should results be presented in wide format (defaults to \code{FALSE})
@@ -61,6 +62,8 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   # link <- "https://flashresults.com/2016_Meets/Outdoor/07-29_SummerSeries/009-1_compiled.htm"
   # link <- "https://www.flashresults.com/2021_Meets/Outdoor/04-16_VirginiaChallenge/035-1_compiledSeries.htm"
   # link <- "https://flashresults.com/2018_Meets/Outdoor/06-15_NBHSON/045-1_compiled.htm"
+  # link <- "https://www.flashresults.com/2019_Meets/Outdoor/06-05_NCAAOTF-Austin/015-1_compiled.htm"
+  # link <- "https://www.flashresults.com/2018_Meets/Outdoor/06-09_NCAAEugene/025-1-01.htm"
   # link <- "https://www.flashresults.com/2019_Meets/Outdoor/06-05_NCAAOTF-Austin/015-1_compiled.htm"
 
   page_content <- xml2::read_html(link, options = c("DTDLOAD", "NOBLANKS"))
@@ -156,6 +159,11 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
     df <- df[-1, ]
   }
 
+  if (any(names(df) == "")) {
+    names(df)[names(df) == ""] <-
+      paste0("Placeholder_", seq(1, length(names(df)[names(df) == ""]), 1))
+  }
+
   # athlete column
   athlete_col <-
     which(stringr::str_detect(as.vector(t(df)), "^Athlete$"))
@@ -195,27 +203,36 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
     blank_col <- setdiff(blank_col, ifelse(length(wind_col) > 0, wind_col, 0)) # don't want to capture wind column
   }
 
-  if (is.na(age_col) == FALSE) {
-    df <- df %>%
-      dplyr::rename("Age" = dplyr::all_of(age_col),
-                    "Placeholder" = dplyr::all_of(c(blank_col, athlete_col, reaction_time_col, place_col, position_col, wind_col)))
-  }
-
-  if (is.na(wind_col) == FALSE) {
-    df <- df %>%
-      dplyr::rename("Wind" = dplyr::all_of(wind_col),
-                    "Placeholder" = dplyr::all_of(c(blank_col, athlete_col, reaction_time_col, place_col, position_col)))
-  }
+  # if (is.na(age_col) == FALSE) {
+  #   df <- df %>%
+  #     dplyr::rename("Age" = dplyr::all_of(age_col),
+  #                   "Placeholder" = dplyr::all_of(c(blank_col, athlete_col, reaction_time_col, place_col, position_col, wind_col)))
+  # }
+  #
+  # if (is.na(wind_col) == FALSE) {
+  #   df <- df %>%
+  #     dplyr::rename("Wind" = dplyr::all_of(wind_col),
+  #                   "Placeholder" = dplyr::all_of(c(blank_col, athlete_col, reaction_time_col, place_col, position_col)))
+  # }
 
   df <- df %>%
-    dplyr::rename(
-      # "Placeholder" = all_of(blank_col),
-      "Athlete" = dplyr::all_of(athlete_col),
-      "Reaction_Time" = dplyr::all_of(reaction_time_col),
-      "Place" = dplyr::all_of(place_col),
-      "Pos" = dplyr::all_of(position_col),
-      "Placeholder" = dplyr::all_of(blank_col)
-    ) %>%
+    purrr::when(all(length(blank_col) > 0, sum(is.na(blank_col)) < length(blank_col)) ~ rename(., "Placeholder" = all_of(blank_col)), ~ .) %>%
+    purrr::when(all(length(age_col) > 0, sum(is.na(age_col)) < length(age_col)) ~ rename(., "Age" = all_of(age_col)), ~ .) %>%
+    purrr::when(all(length(wind_col) > 0, sum(is.na(wind_col)) < length(wind_col)) ~ rename(., "Wind" = all_of(wind_col)), ~ .) %>%
+    purrr::when(all(length(athlete_col) > 0, sum(is.na(athlete_col)) < length(athlete_col)) ~ rename(., "Athlete" = all_of(athlete_col)), ~ .) %>%
+    purrr::when(all(length(reaction_time_col) > 0, sum(is.na(reaction_time_col)) < length(reaction_time_col)) ~ rename(., "Reaction_Time" = all_of(reaction_time_col)), ~ .) %>%
+    purrr::when(all(length(place_col) > 0, sum(is.na(place_col)) < length(place_col)) ~ rename(., "Place" = all_of(place_col)), ~ .) %>%
+    purrr::when(all(length(position_col) > 0, sum(is.na(position_col)) < length(position_col)) ~ rename(., "Pos" = all_of(position_col)), ~ .) %>%
+    # dplyr::rename(
+    #   "Placeholder" = all_of(blank_col),
+    #   "Age" = dplyr::all_of(age_col),
+    #   "Wind" = dplyr::all_of(wind_col),
+    #   "Athlete" = dplyr::all_of(athlete_col),
+    #   "Reaction_Time" = dplyr::all_of(reaction_time_col),
+    #   "Place" = dplyr::all_of(place_col),
+    #   "Pos" = dplyr::all_of(position_col),
+    #   "Placeholder" = dplyr::all_of(blank_col)
+    # ) %>%
     dplyr::select(-dplyr::contains("Placeholder"))
 
   # remove unnamed columns
