@@ -7,8 +7,8 @@
 hytek_parse(
   hytek_file = file,
   hytek_relay_athletes = relay_athletes,
-  hytek_flights = flights,
-  hytek_flight_attempts = flight_attempts,
+  hytek_rounds = rounds,
+  hytek_round_attempts = round_attempts,
   hytek_split_attempts = split_attempts,
   hytek_splits = splits,
   hytek_split_length = split_length
@@ -21,17 +21,17 @@ hytek_parse(
 of relay athletes for relay events?  Names will be listed in new columns
 "Relay-Athlete_1", "Relay_Athlete_2" etc.  Defaults to \code{FALSE}.}
 
-\item{hytek_flights}{should \code{tf_parse} try to include flights for
+\item{hytek_rounds}{should \code{tf_parse} try to include rounds for
 jumping/throwing events?  Please note this will add a significant number of
 columns to the resulting data frame.  Defaults to \code{FALSE}.}
 
-\item{hytek_flight_attempts}{should \code{tf_parse} try to include flights
+\item{hytek_round_attempts}{should \code{tf_parse} try to include rounds
 results (i.e. "PASS", "X", "O") for high jump and pole value events?
 Please note this will add a significant number of columns to the resulting
 data frame. Defaults to \code{FALSE}}
 
 \item{hytek_split_attempts}{should \code{tf_parse} split attempts from each
-flight into separate columns?  For example "XXO" would result in three
+round into separate columns?  For example "XXO" would result in three
 columns, one for "X', another for the second "X" and third for "O".  There
 will be a lot of columns.  Defaults to \code{FALSE}}
 

@@ -8,8 +8,8 @@ test_that("hytek splits 1", {
     read_results() %>%
     tf_parse(
       relay_athletes = TRUE,
-      flights = TRUE,
-      flight_attempts = TRUE,
+      rounds = TRUE,
+      round_attempts = TRUE,
       split_attempts = TRUE,
       splits = TRUE
     )
@@ -71,8 +71,8 @@ test_that("hytek splits 2", {
     read_results() %>%
     tf_parse(
       relay_athletes = TRUE,
-      flights = TRUE,
-      flight_attempts = TRUE,
+      rounds = TRUE,
+      round_attempts = TRUE,
       split_attempts = TRUE,
       splits = TRUE
     )

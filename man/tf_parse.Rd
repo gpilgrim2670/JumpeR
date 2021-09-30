@@ -2,7 +2,7 @@
 % Please edit documentation in R/tf_parse.R
 \name{tf_parse}
 \alias{tf_parse}
-\title{PArses track and field data from Flash or Hytek format data into a data frame}
+\title{Parses track and field data from Flash or Hytek format data into a data frame}
 \usage{
 tf_parse(
   file,
@@ -10,8 +10,8 @@ tf_parse(
   typo = typo_default,
   replacement = replacement_default,
   relay_athletes = FALSE,
-  flights = FALSE,
-  flight_attempts = FALSE,
+  rounds = FALSE,
+  round_attempts = FALSE,
   split_attempts = FALSE,
   splits = FALSE,
   split_length = 1
@@ -40,16 +40,16 @@ to fix the issue described in \code{typo}}
 relay athletes for relay events?  Names will be listed in new columns
 "Relay-Athlete_1", "Relay_Athlete_2" etc.  Defaults to \code{FALSE}.}
 
-\item{flights}{should \code{tf_parse} try to include flights for
+\item{rounds}{should \code{tf_parse} try to include rounds for
 jumping/throwing events?  Please note this will add a significant number of
 columns to the resulting data frame.  Defaults to \code{FALSE}.}
 
-\item{flight_attempts}{should \code{tf_parse} try to include flights results
+\item{round_attempts}{should \code{tf_parse} try to include rounds results
 (i.e. "PASS", "X", "O") for high jump and pole value events?  Please note
 this will add a significant number of columns to the resulting data frame.
 Defaults to \code{FALSE}}
 
-\item{split_attempts}{should \code{tf_parse} split attempts from each flight
+\item{split_attempts}{should \code{tf_parse} split attempts from each round
 into separate columns?  For example "XXO" would result in three columns,
 one for "X', another for the second "X" and third for "O".  There will be a
 lot of columns.  Defaults to \code{FALSE}}
@@ -71,8 +71,8 @@ Outputs a data frame containing track and field data
 \examples{
 \donttest{tf_parse(
 read_results("https://www.flashresults.com/2018_Meets/Outdoor/05-05_A10/015-1.pdf"),
-flights = TRUE,
-flight_attempts = TRUE,
+rounds = TRUE,
+round_attempts = TRUE,
 split_attempts = TRUE)
 }
 

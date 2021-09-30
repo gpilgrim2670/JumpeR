@@ -1,4 +1,4 @@
-#' PArses track and field data from Flash or Hytek format data into a data frame
+#' Parses track and field data from Flash or Hytek format data into a data frame
 #'
 #' Outputs a data frame containing track and field data
 #'
@@ -25,14 +25,14 @@
 #' @param relay_athletes should \code{tf_parse} try to include the names of
 #'   relay athletes for relay events?  Names will be listed in new columns
 #'   "Relay-Athlete_1", "Relay_Athlete_2" etc.  Defaults to \code{FALSE}.
-#' @param flights should \code{tf_parse} try to include flights for
+#' @param rounds should \code{tf_parse} try to include rounds for
 #'   jumping/throwing events?  Please note this will add a significant number of
 #'   columns to the resulting data frame.  Defaults to \code{FALSE}.
-#' @param flight_attempts should \code{tf_parse} try to include flights results
+#' @param round_attempts should \code{tf_parse} try to include rounds results
 #'   (i.e. "PASS", "X", "O") for high jump and pole value events?  Please note
 #'   this will add a significant number of columns to the resulting data frame.
 #'   Defaults to \code{FALSE}
-#' @param split_attempts should \code{tf_parse} split attempts from each flight
+#' @param split_attempts should \code{tf_parse} split attempts from each round
 #'   into separate columns?  For example "XXO" would result in three columns,
 #'   one for "X', another for the second "X" and third for "O".  There will be a
 #'   lot of columns.  Defaults to \code{FALSE}
@@ -50,8 +50,8 @@
 #'
 #' @examples \donttest{tf_parse(
 #' read_results("https://www.flashresults.com/2018_Meets/Outdoor/05-05_A10/015-1.pdf"),
-#' flights = TRUE,
-#' flight_attempts = TRUE,
+#' rounds = TRUE,
+#' round_attempts = TRUE,
 #' split_attempts = TRUE)
 #' }
 #'
@@ -63,8 +63,8 @@ tf_parse <-
            typo = typo_default,
            replacement = replacement_default,
            relay_athletes = FALSE,
-           flights = FALSE,
-           flight_attempts = FALSE,
+           rounds = FALSE,
+           round_attempts = FALSE,
            split_attempts = FALSE,
            splits = FALSE,
            split_length = 1) {
@@ -75,8 +75,8 @@ tf_parse <-
     # typo <- typo_default
     # replacement <- replacement_default
     # avoid <- avoid_default
-    # flights <- TRUE
-    # flight_attempts <- TRUE
+    # rounds <- TRUE
+    # round_attempts <- TRUE
     # split_attempts <- TRUE
     # relay_athletes <- TRUE
 
@@ -90,13 +90,13 @@ tf_parse <-
       stop("typo and replacement must have the same number of elements (be the same length)")
     }
 
-    if (all(flight_attempts == TRUE & flights == FALSE)) {
-      stop("If flight_attempts is set to TRUE flights should also be set to TRUE.")
+    if (all(round_attempts == TRUE & rounds == FALSE)) {
+      stop("If round_attempts is set to TRUE rounds should also be set to TRUE.")
     }
 
-    if (all(flight_attempts == FALSE & split_attempts == TRUE)) {
+    if (all(round_attempts == FALSE & split_attempts == TRUE)) {
       stop(
-        "If split_attempts is set to TRUE flights and flight_attempts should also be set to TRUE."
+        "If split_attempts is set to TRUE rounds and round_attempts should also be set to TRUE."
       )
     }
 
@@ -153,14 +153,14 @@ tf_parse <-
         "Column names for Flash results in table form are derived from the source data and may not match column names from other sources"
       )
 
-      # if(flights == FALSE){
+      # if(rounds == FALSE){
       #   data <- data %>%
-      #     dplyr::select(-dplyr::starts_with("Flight"))
+      #     dplyr::select(-dplyr::starts_with("Round"))
       # }
       #
-      # if(all(flights == TRUE, flight_attempts == FALSE))
+      # if(all(rounds == TRUE, round_attempts == FALSE))
       #   data <- data %>%
-      #   dplyr::select(-dplyr::matches("Flight\\_\\d{1,}\\_"))
+      #   dplyr::select(-dplyr::matches("Round\\_\\d{1,}\\_"))
 
     } else {
       #### assign row numbers ####
@@ -191,8 +191,8 @@ tf_parse <-
         data <-
           flash_parse(
             flash_file = raw_results,
-            flash_flights = flights,
-            flash_flight_attempts = flight_attempts,
+            flash_rounds = rounds,
+            flash_round_attempts = round_attempts,
             flash_split_attempts = split_attempts
           )
 
@@ -203,8 +203,8 @@ tf_parse <-
         data <- hytek_parse(
           hytek_file = raw_results,
           hytek_relay_athletes = relay_athletes,
-          hytek_flights = flights,
-          hytek_flight_attempts = flight_attempts,
+          hytek_rounds = rounds,
+          hytek_round_attempts = round_attempts,
           hytek_split_attempts = split_attempts,
           hytek_splits = splits,
           hytek_split_length = split_length

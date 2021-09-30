@@ -1,8 +1,8 @@
 #' Creates new columns for splitting attempts strings
 #'
-#' Given a dataframe with columns "Flight_1_Attempts" it will produce three
-#' columns, for each of the attempts in flight 1 (Flight_1_Attempt_1,
-#' Flight_1_Attempt_2 etc.)
+#' Given a data frame with columns "Round_1_Attempts" it will produce three
+#' columns, for each of the attempts in round 1 (Round_1_Attempt_1,
+#' Round_1_Attempt_2 etc.)
 #'
 #' @importFrom dplyr mutate
 #' @importFrom stringr str_split_fixed
@@ -11,7 +11,7 @@
 #' @param data output from \code{tf_parse}
 #' @param new_cols a list of new column names to make
 #' @param old_cols a list of old columns to split
-#' @return returns a dataframe with Flight_X_Attempts columns split into
+#' @return returns a data frame with Round_X_Attempts columns split into
 #'   individual attempts inside \code{tf_parse}
 #'
 #' @seealso \code{attempts_split_cols} is a helper function inside

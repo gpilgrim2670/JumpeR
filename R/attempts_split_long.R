@@ -1,7 +1,7 @@
 #' Creates new rows of split attempts strings (long format change)
 #'
-#' Given a data frame with columns "Flight_1_Attempts" it will create three new
-#' rows, one for each of the attempts in flight 1
+#' Given a data frame with columns "Round_1_Attempts" it will create three new
+#' rows, one for each of the attempts in round 1
 #'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr bind_rows
@@ -11,15 +11,15 @@
 #'
 #' @param data_to_split output from \code{read_results} followed by
 #'   \code{add_row_numbers}
-#' @return returns a data frame with Flight_X_Attempts columns split into
+#' @return returns a data frame with Round_X_Attempts columns split into
 #'   individual attempts as rows
 #'
 #' @export
 #'
 #' @examples \donttest{df <- tf_parse(
 #' read_results("https://www.flashresults.com/2018_Meets/Outdoor/05-05_A10/015-1.pdf"),
-#' flights = TRUE,
-#' flight_attempts = TRUE,
+#' rounds = TRUE,
+#' round_attempts = TRUE,
 #' split_attempts = TRUE)
 #'
 #' df %>%
@@ -31,14 +31,14 @@ attempts_split_long <- function(data_to_split){
   #### testing ####
   # data_to_split <- tf_parse(
   #   read_results("https://www.flashresults.com/2019_Meets/Outdoor/04-12_TamuInvite/014-1.pdf"),
-  #   flights = TRUE,
-  #   flight_attempts = TRUE
+  #   rounds = TRUE,
+  #   round_attempts = TRUE
   # )
 
-  #### get names of all Flight_X_Attempts columns ####
-  cols_to_split <- stringr::str_subset(names(data_to_split), "^Flight_\\d{1,}_Attempts")
+  #### get names of all Round_X_Attempts columns ####
+  cols_to_split <- stringr::str_subset(names(data_to_split), "^Round_\\d{1,}_Attempts")
 
-  #### if there are no columns to replace just return original dataframe
+  #### if there are no columns to replace just return original data frame
   if(length(cols_to_split) >= 1){
 
     #### add in row numbers for joining ####

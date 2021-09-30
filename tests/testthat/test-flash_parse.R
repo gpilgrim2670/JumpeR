@@ -122,8 +122,8 @@ test_that("flash parse works sprint", {
       df_test <-
         tf_parse(
           raw_data,
-          flights = TRUE,
-          flight_attempts = TRUE,
+          rounds = TRUE,
+          round_attempts = TRUE,
           relay_athletes = TRUE
         )
     )
@@ -157,8 +157,8 @@ test_that("flash parse works long jump, team scores in results", {
       df_test <-
         tf_parse(
           raw_data,
-          flights = TRUE,
-          flight_attempts = TRUE,
+          rounds = TRUE,
+          round_attempts = TRUE,
           relay_athletes = TRUE
         )
     )
@@ -200,8 +200,8 @@ test_that("flash parse works pole vault", {
       df_test <-
         tf_parse(
           raw_data,
-          flights = TRUE,
-          flight_attempts = TRUE,
+          rounds = TRUE,
+          round_attempts = TRUE,
           relay_athletes = TRUE
         )
     )
@@ -271,8 +271,8 @@ test_that("flash parse works relay, team scores in results", {
       df_test <-
         tf_parse(
           raw_data,
-          flights = TRUE,
-          flight_attempts = TRUE,
+          rounds = TRUE,
+          round_attempts = TRUE,
           relay_athletes = TRUE
         )
     )
@@ -317,8 +317,8 @@ test_that("flash parse works relay, team scores in results", {
 #     # generate test df
 #     df_test <- tf_parse(
 #       raw_data,
-#       flights = TRUE,
-#       flight_attempts = TRUE,
+#       rounds = TRUE,
+#       round_attempts = TRUE,
 #       relay_athletes = TRUE
 #     )
 #
@@ -345,8 +345,8 @@ test_that("flash parse works split_attempts single line", {
     suppressWarnings(
       df_test <- tf_parse(
         raw_data,
-        flights = TRUE,
-        flight_attempts = TRUE,
+        rounds = TRUE,
+        round_attempts = TRUE,
         relay_athletes = TRUE,
         split_attempts = TRUE
       )
@@ -363,6 +363,7 @@ test_that("flash parse works split_attempts single line", {
     # readr::write_rds(df_test, "inst/extdata/df_standard_polevault_splits.rds")
     # to compare results
     # df <- dplyr::anti_join(df_standard_polevault_splits, df_test)
+    df <- dplyr::anti_join(df_test, df_standard_polevault_splits)
 
 })
 
@@ -392,8 +393,8 @@ test_that("flash parse works split_attempts single line", {
 #     # generate test df
 #     df_test <- tf_parse(
 #       raw_data,
-#       flights = TRUE,
-#       flight_attempts = TRUE,
+#       rounds = TRUE,
+#       round_attempts = TRUE,
 #       relay_athletes = TRUE,
 #       split_attempts = TRUE
 #     )
@@ -412,4 +413,4 @@ test_that("flash parse works split_attempts single line", {
 #   }
 # })
 
-# testthat::test_file("tests/testthat/test-flash_parse_works.R")
+# testthat::test_file("tests/testthat/test-flash_parse.R")

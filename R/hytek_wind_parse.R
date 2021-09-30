@@ -192,13 +192,13 @@ wind_parse_hytek <- function(text) {
     #### rename columns V1, V2 etc. by 50 ####
     old_names <- names(data_wind)[grep("^V", names(data_wind))]
     new_names <-
-      paste("Flight", seq(1, length(old_names)), "Wind", sep = "_")
+      paste("Round", seq(1, length(old_names)), "Wind", sep = "_")
 
     data_wind <- data_wind %>%
       dplyr::rename_at(dplyr::vars(old_names), ~ new_names) %>%
       dplyr::na_if("NA")
 
-  } else { # if there are no rows with valid splits return blank dataframe
+  } else { # if there are no rows with valid splits return blank data frame
     data_wind <- data.frame(Row_Numb = as.numeric())
   }
   return(data_wind)

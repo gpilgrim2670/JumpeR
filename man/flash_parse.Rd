@@ -7,8 +7,8 @@ parsing with \code{tf_parse}}
 \usage{
 flash_parse(
   flash_file,
-  flash_flights = flights,
-  flash_flight_attempts = flight_attempts,
+  flash_rounds = rounds,
+  flash_round_attempts = round_attempts,
   flash_split_attempts = split_attempts
 )
 }
@@ -17,13 +17,13 @@ flash_parse(
 track and field results.  Must be formatted in a "normal" fashion - see
 vignette}
 
-\item{flash_flights}{should tf_parse try to include flights for
+\item{flash_rounds}{should tf_parse try to include rounds for
 jumping/throwing events?  Defaults to \code{FALSE}}
 
-\item{flash_flight_attempts}{should tf_parse try to include outcomes for
-flights for vertical jumping events?  Defaults to \code{FALSE}}
+\item{flash_round_attempts}{should tf_parse try to include outcomes for
+rounds for vertical jumping events?  Defaults to \code{FALSE}}
 
-\item{flash_split_attempts}{should flight_attempts columns be split into
+\item{flash_split_attempts}{should round_attempts columns be split into
 individual attempts}
 }
 \value{

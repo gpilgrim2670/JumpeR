@@ -1,7 +1,7 @@
-#' Collects flights within \code{tf_parse}
+#' Collects rounds within \code{tf_parse}
 #'
 #' Takes the output of \code{read_results} and, inside of \code{tf_parse},
-#' extracts jump/throw flights and associated row numbers.
+#' extracts jump/throw rounds and associated row numbers.
 #'
 #' @importFrom dplyr bind_rows
 #' @importFrom dplyr rename_at
@@ -19,11 +19,11 @@
 #'   \code{add_row_numbers}
 #' @return returns a data frame with split times and row numbers
 #'
-#' @seealso \code{flights_parse} runs inside \code{\link{tf_parse}} on the
+#' @seealso \code{rounds_parse} runs inside \code{\link{tf_parse}} on the
 #'   output of \code{\link{read_results}} with row numbers from
 #'   \code{\link{add_row_numbers}}
 
-flights_parse <- function(text) {
+rounds_parse <- function(text) {
 
   #### Testing ####
   # file <- "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
@@ -33,12 +33,12 @@ flights_parse <- function(text) {
   # text <- add_row_numbers(file)
 
   #### Actual Function ####
-  ### collect row numbers from rows containing flights ###
+  ### collect row numbers from rows containing rounds ###
   ### define strings ###
 
   attempt_string <- "\\d{1,2}\\.\\d{2}m?|PASS|FOUL|\\d{1,3}\\-\\d{2}\\.?\\d{2}?" # for metric and imperial units
 
-    #### pull out rows containing flights ####
+    #### pull out rows containing rounds ####
 
       suppressWarnings(
         data_1 <- text %>%
@@ -48,7 +48,7 @@ flights_parse <- function(text) {
           .[purrr::map_lgl(., ~ !any(stringr::str_detect(., ":")))] %>% # helps with removing records like "NYS: 1.45m"
           stringr::str_replace_all("\\(\\+?\\-?\\d{1,3}\\.\\d{1,3}\\)", "  ") %>%  # remove anything in parenthesis, replace with spaces
           stringr::str_replace_all("\\(NWI\\)", "  ") %>%  # remove NWI in parenthesis, replace with spaces
-          stringr::str_replace_all(" ", "  ") %>% # put multiple spaces between flights
+          stringr::str_replace_all(" ", "  ") %>% # put multiple spaces between rounds
           trimws()
       )
 
@@ -178,7 +178,7 @@ flights_parse <- function(text) {
     #### rename columns V1, V2 etc. at Attempt_1, Attempt_2 etc. ####
     old_names <- names(data)[grep("^V", names(data))]
     new_names <-
-      paste("Flight", seq(1, length(names(data)) - 1), sep = "_")
+      paste("Round", seq(1, length(names(data)) - 1), sep = "_")
 
     data <- data %>%
       dplyr::rename_at(dplyr::vars(dplyr::all_of(old_names)), ~ new_names) %>%

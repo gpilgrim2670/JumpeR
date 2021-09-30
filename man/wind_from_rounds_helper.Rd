@@ -13,6 +13,8 @@ data}
 \item{i}{list of values to iterate along}
 
 \item{round_cols}{list of columns containing results and wind values by round}
+
+\item{...}{other arguments as needed}
 }
 \value{
 a list of data frames with all wind data for each round in a separate

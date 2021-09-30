@@ -73,6 +73,7 @@ wind_from_rounds <- function(df) {
 #'   data
 #' @param i list of values to iterate along
 #' @param round_cols list of columns containing results and wind values by round
+#' @param ... other arguments as needed
 #' @return a list of data frames with all wind data for each round in a separate
 #'   (tidy) column
 

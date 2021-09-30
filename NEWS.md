@@ -1,3 +1,8 @@
+# JumpeR 0.2.8 September 30th, 2021
+
+* Renamed "Flight" columns to "Round" for Hytek style results to better match
+Flash style
+
 # JumpeR 0.2.7 September 20th, 2021
 
 * Pulls wind values by round out of Hytek results

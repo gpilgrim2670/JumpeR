@@ -1,8 +1,8 @@
-#' Collects results of high jump & pole vault flight attempts within
+#' Collects results of high jump & pole vault round attempts within
 #' \code{tf_parse}
 #'
 #' Takes the output of \code{read_results} and, inside of \code{tf_parse},
-#' extracts vertical jump flight attempts (XXO etc) and associated row numbers
+#' extracts vertical jump round attempts (XXO etc) and associated row numbers
 #'
 #' @importFrom dplyr bind_rows
 #' @importFrom dplyr rename_at
@@ -24,11 +24,11 @@
 #'   \code{add_row_numbers}
 #' @return returns a data frame with split times and row numbers
 #'
-#' @seealso \code{flash_flight_attempts_parse} runs inside
+#' @seealso \code{flash_round_attempts_parse} runs inside
 #'   \code{\link{flash_parse}} on the output of \code{\link{read_results}} with
 #'   row numbers from \code{\link{add_row_numbers}}
 
-flash_flight_attempts_parse <- function(text) {
+flash_round_attempts_parse <- function(text) {
   #### Testing ####
   # file <- "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
   # file <-
@@ -50,12 +50,12 @@ flash_flight_attempts_parse <- function(text) {
     stringr::str_remove_all("\n\\s*") %>%
     .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "^[A-Z][a-z].{1,}$")))]  # remove records
 
-  #### collect row numbers from rows containing flights ####
+  #### collect row numbers from rows containing rounds ####
   # row_numbs <- text %>%
   #   .[purrr::map_lgl(., stringr::str_detect, attempt_results_string_flash)] %>%
   #   str_extract("\\d{1,}$")
 
-  #### pull out rows containing flights ####
+  #### pull out rows containing rounds ####
   suppressWarnings(data_1 <- text %>%
                      stringr::str_replace_all(" ", "  ") %>% # if attempts are close together "XO XO" to "XO   XO"
                      .[purrr::map_lgl(., stringr::str_detect, flash_attempts_string)] %>%
@@ -66,7 +66,7 @@ flash_flight_attempts_parse <- function(text) {
 
 
   #### break out by length ####
-  # theoretically there can be any number of flights, as long as
+  # theoretically there can be any number of rounds, as long as
   # one athlete keeps clearing heights
   data_length_1 <- data_1[purrr::map(data_1, length) == 1]
   data_length_2 <- data_1[purrr::map(data_1, length) == 2]
@@ -194,7 +194,7 @@ flash_flight_attempts_parse <- function(text) {
   #### bind up results ####
   # results are bound with named column "Row_Numb" retained
   suppressMessages(
-    data_flight_attempts <-
+    data_round_attempts <-
       dplyr::bind_rows(
         df_13,
         df_12,
@@ -210,57 +210,60 @@ flash_flight_attempts_parse <- function(text) {
         df_2
       )
   )
-  if ("V1" %in% names(data_flight_attempts)) {
-    data_flight_attempts <- data_flight_attempts %>%
+  if ("V1" %in% names(data_round_attempts)) {
+    data_round_attempts <- data_round_attempts %>%
       dplyr::mutate(Row_Numb = as.numeric(Row_Numb)) %>%
       dplyr::rename(V1a = V1,
                     V1 = Row_Numb)
 
     # suppressMessages(
-    # data_flight_attempts <- row_numbs %>%
-    #   dplyr::bind_cols(data_flight_attempts)
+    # data_round_attempts <- row_numbs %>%
+    #   dplyr::bind_cols(data_round_attempts)
     # )
 
-    data_flight_attempts <- data_flight_attempts %>%
+    data_round_attempts <- data_round_attempts %>%
       arrange(V1) %>%
       dplyr::mutate(V1 = dplyr::case_when(
         stringr::str_detect(dplyr::lag(.[, ncol(.)], default = "NA"), "O ?$|\U2013 ?$|- ?$") == TRUE &
           V1 - dplyr::lag(V1) <= 1 ~ V1 - 1,
-        # checks for strings in the last column which mean the athlete can keep jumping and adjusts row numbs to reflect athlete having multiple rows of flights
+        # checks for strings in the last column which mean the athlete can keep jumping and adjusts row numbs to reflect athlete having multiple rows of rounds
         TRUE ~ V1
       )) %>%
-      lines_sort(min_row = min(data_flight_attempts$V1)) %>%
+      lines_sort(min_row = min(data_round_attempts$V1)) %>%
       dplyr::mutate(Row_Numb = as.numeric(Row_Numb)) %>%
       dplyr::arrange(Row_Numb)
 
 
-    # names(data_flight_attempts)[ncol(data_flight_attempts)] <-
+    # names(data_round_attempts)[ncol(data_round_attempts)] <-
     #   "Row_Numb" # to rename last column since we don't know how many columns there will be
 
-    # data_flight_attempts <- data_flight_attempts %>%
+    # data_round_attempts <- data_round_attempts %>%
     #   dplyr::mutate(Row_Numb = as.numeric(Row_Numb)) # make row number of split match row number of performance
 
     #### rename columns V1, V2 etc. at Attempt_1, Attempt_2 etc. ####
     old_names <-
-      names(data_flight_attempts)[grep("^V", names(data_flight_attempts))]
+      names(data_round_attempts)[grep("^V", names(data_round_attempts))]
     new_names <-
-      paste("Flight", seq(1, length(names(
-        data_flight_attempts
+      paste("Round", seq(1, length(names(
+        data_round_attempts
       )) - 1), "Attempts", sep = "_")
 
-    data_flight_attempts <- data_flight_attempts %>%
+    data_round_attempts <- data_round_attempts %>%
       dplyr::rename_at(dplyr::vars(dplyr::all_of(old_names)), ~ new_names) %>%
       # dplyr::arrange(Row_Numb) %>%
       dplyr::mutate(dplyr::across(new_names, stringr::str_trim))
   }
 
-  if (sum(suppressWarnings(str_detect(data_flight_attempts, "O"))) >= 1) {
-    # some results, like long jump will have X for faults, but not O for pass - these are not the kind of results we want for flight_attempts, rather they will be caputred as flights
-    return(data_flight_attempts)
+  if (sum(suppressWarnings(str_detect(data_round_attempts, "O"))) >= 1) {
+    # some results, like long jump will have X for faults, but not O for pass - these are not the kind of results we want for round_attempts, rather they will be captured as rounds
+
+    row.names(data_round_attempts) <- NULL
+
+    return(data_round_attempts)
   } else {
-    data_flight_attempts <- data.frame(Row_Numb = character(),
+    data_round_attempts <- data.frame(Row_Numb = character(),
                                         stringsAsFactors = FALSE)
-    return(data_flight_attempts)
+    return(data_round_attempts)
   }
 
 }

@@ -15,7 +15,7 @@ JumpeR is available on CRAN
 
 `devtools::install_github("gpilgrim2670/JumpeR")`
 
-v0.2.7 - September 20th, 2021
+v0.2.8 - September 30th, 2021
 
 Package is still under heavy development so development versions will be unstable.
 Please use the stable CRAN release unless you have a very good reason not to.
@@ -53,7 +53,7 @@ tf_parse(
     read_results(
       system.file("extdata", "SMTFA-2019-Full-Results.pdf", package = "JumpeR")
     ),
-    flights = TRUE
+    rounds = TRUE
   )
 ```
 ![Imported with JumpeR](https://github.com/gpilgrim2670/Pilgrim_Data/raw/master/JumepR_readme_files/HyTek_SMTFA_longjump_html_Import.png)
@@ -113,11 +113,11 @@ tf_parse(
 ```
 ![Relay results](https://github.com/gpilgrim2670/Pilgrim_Data/raw/master/JumepR_readme_files/HyTek_Cornell_4x400mRelay_html_Import.png)
 
-* `flights` records a unit of length for events where athletes get to try multiple times (long jump, javelin, pole vault etc. - basically the "field" events in track and field).  The default is `FALSE` but setting `flights` to `TRUE` will cause `tf_parse` to attempt to collect the distance/height (or FOUL) for each flight.  New columns called `Flight_1`, `Flight_2` etc. will be created.
+* `rounds` records a unit of length for events where athletes get to try multiple times (long jump, javelin, pole vault etc. - basically the "field" events in track and field).  The default is `FALSE` but setting `rounds` to `TRUE` will cause `tf_parse` to attempt to collect the distance/height (or FOUL) for each round.  New columns called `Round_1`, `Round_2` etc. will be created.
 
-[Here's](https://www.flashresults.com/2018_Meets/Outdoor/04-28_VirginiaGrandPrix/035-1.pdf) the long jump prelims from the 2019 Virginia Grand Prix at the University of Virginia with the "flights" highlighted in yellow.
+[Here's](https://www.flashresults.com/2018_Meets/Outdoor/04-28_VirginiaGrandPrix/035-1.pdf) the long jump prelims from the 2019 Virginia Grand Prix at the University of Virginia with the "rounds" highlighted in yellow.
 
-![Long jump flights](https://github.com/gpilgrim2670/Pilgrim_Data/raw/master/JumepR_readme_files/Flash_Results_VA_longjump_Flights.png)
+![Long jump rounds](https://github.com/gpilgrim2670/Pilgrim_Data/raw/master/JumepR_readme_files/Flash_Results_VA_longjump_Rounds.png)
 
 Here's the same thing after importing with `JumpeR`
 ```r
@@ -125,16 +125,16 @@ tf_parse(
     read_results(
       "https://www.flashresults.com/2018_Meets/Outdoor/04-28_VirginiaGrandPrix/035-1.pdf"
     ),
-    flights = TRUE
+    rounds = TRUE
   )
 ```
-![New flights columns](https://github.com/gpilgrim2670/Pilgrim_Data/raw/master/JumepR_readme_files/Flash_Results_VA_longjump_Flights_Import.png)
+![New rounds columns](https://github.com/gpilgrim2670/Pilgrim_Data/raw/master/JumepR_readme_files/Flash_Results_VA_longjump_Rounds_Import.png)
 
-* `flight_attempts` records the outcome of each attempt (height) in the vertical jumping events (high jump, pole vault).  The default for `flight_attempts` is `FALSE` but setting it to `TRUE` will include these values (usually some combination of "X", "O" and "-") in new columns called `Flight_1_Attempts`, `Flight_2_Attempts` etc.  If `flight_attempts = TRUE` then `flights = TRUE` must be set as well.
+* `round_attempts` records the outcome of each attempt (height) in the vertical jumping events (high jump, pole vault).  The default for `round_attempts` is `FALSE` but setting it to `TRUE` will include these values (usually some combination of "X", "O" and "-") in new columns called `Round_1_Attempts`, `Round_2_Attempts` etc.  If `round_attempts = TRUE` then `rounds = TRUE` must be set as well.
 
-[Here's](https://www.flashresults.com/2018_Meets/Outdoor/04-20_DukeInvite/014-1.pdf) the pole vault results from the 2019 Duke Invite at (natch) Duke University with the "flight_attempts" highlighted in yellow and the "flights" circled in red.
+[Here's](https://www.flashresults.com/2018_Meets/Outdoor/04-20_DukeInvite/014-1.pdf) the pole vault results from the 2019 Duke Invite at (natch) Duke University with the "round_attempts" highlighted in yellow and the "rounds" circled in red.
 
-![Pole vault results](https://github.com/gpilgrim2670/Pilgrim_Data/raw/master/JumepR_readme_files/Flash_Results_Duke_polevault_Flight_Attempts.png)
+![Pole vault results](https://github.com/gpilgrim2670/Pilgrim_Data/raw/master/JumepR_readme_files/Flash_Results_Duke_polevault_Round_Attempts.png)
 
 Here's the same thing after importing with `JumpeR` - adding all these columns makes the results very wide.
 ```r
@@ -142,26 +142,26 @@ tf_parse(
     read_results(
       "https://www.flashresults.com/2018_Meets/Outdoor/04-20_DukeInvite/014-1.pdf"
     ),
-    flights = TRUE,
-    flight_attempts = TRUE
+    rounds = TRUE,
+    round_attempts = TRUE
   )
 ```
-![New flight_attempts columns](https://github.com/gpilgrim2670/Pilgrim_Data/raw/master/JumepR_readme_files/Flash_Results_Duke_polevault_Flight_Attempts_Split_Import.png)
+![New round_attempts columns](https://github.com/gpilgrim2670/Pilgrim_Data/raw/master/JumepR_readme_files/Flash_Results_Duke_polevault_Round_Attempts_Split_Import.png)
 
-* `split_attempts` setting `split_attempts = TRUE` will cause `tf_parse` to break each `Flight_X_Attempts` column into pieces.  A column containing "XXO" for example will become three columns, one containing "X", the second containing the second "X" and the third containing "O".  This will mean there are a lot of columns!  If `split_attempts = TRUE` then `flight_attempts` must be `TRUE` as well.
+* `split_attempts` setting `split_attempts = TRUE` will cause `tf_parse` to break each `Round_X_Attempts` column into pieces.  A column containing "XXO" for example will become three columns, one containing "X", the second containing the second "X" and the third containing "O".  This will mean there are a lot of columns!  If `split_attempts = TRUE` then `round_attempts` must be `TRUE` as well.
 
-Looking at those same [Duke pole vault results](https://www.flashresults.com/2018_Meets/Outdoor/04-20_DukeInvite/014-1.pdf), here's how using `split_attempts` works - adding all these columns make the results extremely wide.  I'm only going to show the first six split columns, called `Flight_1_Attempt_1`, `Flight_1_Attempt_2`, `Flight_1_Attempt_3` etc..
+Looking at those same [Duke pole vault results](https://www.flashresults.com/2018_Meets/Outdoor/04-20_DukeInvite/014-1.pdf), here's how using `split_attempts` works - adding all these columns make the results extremely wide.  I'm only going to show the first six split columns, called `Round_1_Attempt_1`, `Round_1_Attempt_2`, `Round_1_Attempt_3` etc..
 ```r
 tf_parse(
     read_results(
       "https://www.flashresults.com/2018_Meets/Outdoor/04-20_DukeInvite/014-1.pdf"
     ),
-    flights = TRUE,
-    flight_attempts = TRUE,
+    rounds = TRUE,
+    round_attempts = TRUE,
     split_attempts = TRUE
   )
 ```
-![New split columns](https://github.com/gpilgrim2670/Pilgrim_Data/raw/master/JumepR_readme_files/Flash_Results_Duke_polevault_Flight_Attempts_Split_Import.png)
+![New split columns](https://github.com/gpilgrim2670/Pilgrim_Data/raw/master/JumepR_readme_files/Flash_Results_Duke_polevault_Round_Attempts_Split_Import.png)
 
 See `?tf_parse` for more information.
 
@@ -175,19 +175,19 @@ df <-
     read_results(
       "https://www.flashresults.com/2018_Meets/Outdoor/04-20_DukeInvite/014-1.pdf"
     ),
-    flights = TRUE,
-    flight_attempts = TRUE,
+    rounds = TRUE,
+    round_attempts = TRUE,
   )
 df %>% 
   attempts_split_long() %>% 
   select(Place, Name, Age, Team, Finals_Result, Event, Bar_Height, Attempt, Result)
 ```
 
-![Long format pole jump](https://github.com/gpilgrim2670/Pilgrim_Data/raw/master/JumepR_readme_files/Flash_Results_Duke_polevault_Flight_Attempts_Split_Import_Long.png)
+![Long format pole jump](https://github.com/gpilgrim2670/Pilgrim_Data/raw/master/JumepR_readme_files/Flash_Results_Duke_polevault_Round_Attempts_Split_Import_Long.png)
 
 # Formatting Results
 
-By default all results (like the `Finals_Result` column) returned by `JumpeR` are characters, not numeric.  This is because lots of results don't fit `R`s notions of what a number is.  A result like `"1.65m"` for a long jump can't be a number because of the "m".  A result like `"1:45.32"` as a time can't be a number because of the ":".  Luckily `JUmpeR` is here to help with all of that.  Passing results to `math_format` will return results formatted as numeric, such that they can be used in math.
+By default all results (like the `Finals_Result` column) returned by `JumpeR` are characters, not numeric.  This is because lots of results don't fit `R`s notions of what a number is.  A result like `"1.65m"` for a long jump can't be a number because of the "m".  A result like `"1:45.32"` as a time can't be a number because of the ":".  Luckily `JumpeR` is here to help with all of that.  Passing results to `math_format` will return results formatted as numeric, such that they can be used in math.
 
 Please note however that `JumpeR` doesn't understand units.  Passing
 ```r

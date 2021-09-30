@@ -5,3 +5,7 @@
 ^CRAN-RELEASE$
 ^cran-comments\.md$
 ^\.github$
+^GP_DL pdf_07132021\.Rmd$
+^Flash2015\.rds$
+^Flash2016\.rds$
+^Flash2017\.rds$

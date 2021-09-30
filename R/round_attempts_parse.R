@@ -19,11 +19,11 @@
 #'   \code{add_row_numbers}
 #' @return returns a data frame with split times and row numbers
 #'
-#' @seealso \code{flight_attempts_parse} runs inside \code{\link{tf_parse}} on
+#' @seealso \code{round_attempts_parse} runs inside \code{\link{tf_parse}} on
 #'   the output of \code{\link{read_results}} with row numbers from
 #'   \code{\link{add_row_numbers}}
 
-flight_attempts_parse <- function(text) {
+round_attempts_parse <- function(text) {
 
   #### Testing ####
   # file <- "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
@@ -172,20 +172,20 @@ flight_attempts_parse <- function(text) {
 
   #### bind up results ####
   # results are bound with named column "Row_Numb" retained
-  flight_attempts_data <-
+  round_attempts_data <-
     dplyr::bind_rows(df_12, df_11, df_10, df_9, df_8, df_7, df_6, df_5, df_4, df_3, df_2) %>%
     dplyr::mutate(Row_Numb = as.numeric(Row_Numb) - 1) # make row number of split match row number of performance
 
   #### rename columns V1, V2 etc. at Attempt_1, Attempt_2 etc. ####
-  old_names <- names(flight_attempts_data)[grep("^V", names(flight_attempts_data))]
+  old_names <- names(round_attempts_data)[grep("^V", names(round_attempts_data))]
   new_names <-
-    paste("Flight", seq(1, length(names(flight_attempts_data)) - 1), "Attempts", sep = "_")
+    paste("Round", seq(1, length(names(round_attempts_data)) - 1), "Attempts", sep = "_")
 
-  flight_attempts_data <- flight_attempts_data %>%
+  round_attempts_data <- round_attempts_data %>%
     dplyr::rename_at(dplyr::vars(dplyr::all_of(old_names)), ~ new_names) %>%
     dplyr::arrange(Row_Numb)
 
-  return(flight_attempts_data)
+  return(round_attempts_data)
 
 }
 

@@ -33,15 +33,15 @@
 #' @param hytek_relay_athletes should \code{tf_parse} try to include the names
 #'   of relay athletes for relay events?  Names will be listed in new columns
 #'   "Relay-Athlete_1", "Relay_Athlete_2" etc.  Defaults to \code{FALSE}.
-#' @param hytek_flights should \code{tf_parse} try to include flights for
+#' @param hytek_rounds should \code{tf_parse} try to include rounds for
 #'   jumping/throwing events?  Please note this will add a significant number of
 #'   columns to the resulting data frame.  Defaults to \code{FALSE}.
-#' @param hytek_flight_attempts should \code{tf_parse} try to include flights
+#' @param hytek_round_attempts should \code{tf_parse} try to include rounds
 #'   results (i.e. "PASS", "X", "O") for high jump and pole value events?
 #'   Please note this will add a significant number of columns to the resulting
 #'   data frame. Defaults to \code{FALSE}
 #' @param hytek_split_attempts should \code{tf_parse} split attempts from each
-#'   flight into separate columns?  For example "XXO" would result in three
+#'   round into separate columns?  For example "XXO" would result in three
 #'   columns, one for "X', another for the second "X" and third for "O".  There
 #'   will be a lot of columns.  Defaults to \code{FALSE}
 #' @param hytek_splits either \code{TRUE} or the default, \code{FALSE} - should
@@ -61,8 +61,8 @@
 hytek_parse <-
   function(hytek_file = file,
            hytek_relay_athletes = relay_athletes,
-           hytek_flights = flights,
-           hytek_flight_attempts = flight_attempts,
+           hytek_rounds = rounds,
+           hytek_round_attempts = round_attempts,
            hytek_split_attempts = split_attempts,
            hytek_splits = splits,
            hytek_split_length = split_length) {
@@ -819,26 +819,26 @@ hytek_parse <-
 
         }
 
-        #### adding in flights ####
-        if(hytek_flights == TRUE){
-          flights_df <- flights_parse(raw_results)
+        #### adding in rounds ####
+        if(hytek_rounds == TRUE){
+          rounds_df <- rounds_parse(raw_results)
 
-          flights_df <-
-            transform(flights_df, Row_Numb_Adjusted = data$Row_Numb[findInterval(Row_Numb, data$Row_Numb)]) %>%
+          rounds_df <-
+            transform(rounds_df, Row_Numb_Adjusted = data$Row_Numb[findInterval(Row_Numb, data$Row_Numb)]) %>%
             dplyr::select(-Row_Numb)
 
-          data <- dplyr::left_join(data, flights_df, by = c("Row_Numb" = "Row_Numb_Adjusted"))
+          data <- dplyr::left_join(data, rounds_df, by = c("Row_Numb" = "Row_Numb_Adjusted"))
         }
 
-        #### adding in flights results ####
-        if(hytek_flight_attempts == TRUE){
-          flight_attempts_df <- flight_attempts_parse(raw_results)
+        #### adding in rounds results ####
+        if(hytek_round_attempts == TRUE){
+          round_attempts_df <- round_attempts_parse(raw_results)
 
-          flight_attempts_df <-
-            transform(flight_attempts_df, Row_Numb_Adjusted = data$Row_Numb[findInterval(Row_Numb, data$Row_Numb)]) %>%
+          round_attempts_df <-
+            transform(round_attempts_df, Row_Numb_Adjusted = data$Row_Numb[findInterval(Row_Numb, data$Row_Numb)]) %>%
             dplyr::select(-Row_Numb)
 
-          data <- dplyr::left_join(data, flight_attempts_df, by = c("Row_Numb" = "Row_Numb_Adjusted"))
+          data <- dplyr::left_join(data, round_attempts_df, by = c("Row_Numb" = "Row_Numb_Adjusted"))
         }
 
         if(hytek_split_attempts == TRUE){
@@ -846,27 +846,27 @@ hytek_parse <-
         }
 
 
-        # removes unneeded Flight_X columns (i.e. those that don't have an associated Flight_Result)
-        if (any(stringr::str_detect(names(data), "Flight_\\d{1,}_Attempt")) == TRUE) {
-          data <- remove_unneeded_flights(data) %>%
+        # removes unneeded Round_X columns (i.e. those that don't have an associated Round_Result)
+        if (any(stringr::str_detect(names(data), "Round_\\d{1,}_Attempt")) == TRUE) {
+          data <- remove_unneeded_rounds(data) %>%
             dplyr::na_if("")
         }
 
-        # add in wind for flights
-        if(hytek_flights == TRUE){
-        flight_wind_df <- wind_parse_hytek(raw_results)
+        # add in wind for rounds
+        if(hytek_rounds == TRUE){
+        round_wind_df <- wind_parse_hytek(raw_results)
 
-        flight_wind_df <-
-          transform(flight_wind_df, Row_Numb_Adjusted = data$Row_Numb[findInterval(Row_Numb, data$Row_Numb)]) %>%
+        round_wind_df <-
+          transform(round_wind_df, Row_Numb_Adjusted = data$Row_Numb[findInterval(Row_Numb, data$Row_Numb)]) %>%
           dplyr::select(-Row_Numb)
 
-        data <- dplyr::left_join(data, flight_wind_df, by = c("Row_Numb" = "Row_Numb_Adjusted"))
+        data <- dplyr::left_join(data, round_wind_df, by = c("Row_Numb" = "Row_Numb_Adjusted"))
         }
 
-        #### ordering columns after adding flights ####
-        if (hytek_flights == TRUE) {
+        #### ordering columns after adding rounds ####
+        if (hytek_rounds == TRUE) {
           data <- data %>%
-            dplyr::select(colnames(.)[stringr::str_detect(names(.), "^Flight", negate = TRUE)], stringr::str_sort(colnames(.)[stringr::str_detect(names(.), "^Flight")]))
+            dplyr::select(colnames(.)[stringr::str_detect(names(.), "^Round", negate = TRUE)], stringr::str_sort(colnames(.)[stringr::str_detect(names(.), "^Round")]))
         }
 
         #### remove empty columns (all values are NA) ####
