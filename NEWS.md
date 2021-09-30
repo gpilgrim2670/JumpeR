@@ -1,3 +1,7 @@
+# JumpeR 0.2.9 September 30th, 2021
+
+* `attempts_split_long` for Flash Table results
+
 # JumpeR 0.2.8 September 30th, 2021
 
 * Renamed "Flight" columns to "Round" for Hytek style results to better match

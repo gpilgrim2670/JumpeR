@@ -19,13 +19,11 @@ Given a data frame with columns "Round_1_Attempts" it will create three new
 rows, one for each of the attempts in round 1
 }
 \examples{
-\donttest{df <- tf_parse(
-read_results("https://www.flashresults.com/2018_Meets/Outdoor/05-05_A10/015-1.pdf"),
-rounds = TRUE,
-round_attempts = TRUE,
-split_attempts = TRUE)
+\donttest{
+df <- tf_parse( read_results(
+"https://www.flashresults.com/2018_Meets/Outdoor/04-20_DukeInvite/014-1.pdf"
+), rounds = TRUE, round_attempts = TRUE, )
 
-df \%>\%
-attempts_split_long()
+ df \%>\% attempts_split_long()
 }
 }

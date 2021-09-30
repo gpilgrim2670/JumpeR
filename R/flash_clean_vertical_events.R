@@ -94,6 +94,11 @@ flash_clean_vertical_events <- function(df, wide_format_vertical = wide_format_c
       mutate(Height = str_replace_all(Height, "m\\d{0,}\\-?\\.?\\d{0,}\\.?\\d{0,}", "m"))
   }
 
+  # remove residual standard units from names
+  # they're sometimes present in pole vault results
+
+  names(df) <- stringr::str_remove(names(df), "(?<=\\dm)\\.\\d{1,2}$")
+
   # original version, uses tidyr
   # clean_vertical_data <- df %>%
   #   tidyr::pivot_longer(matches("[0-9]"),
