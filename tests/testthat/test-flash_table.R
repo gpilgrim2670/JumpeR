@@ -1269,5 +1269,41 @@ test_that("flash table duplicate names in splits", {
   }
 })
 
+test_that("flash table rebuilt_event_table 1", {
+
+  skip_on_cran() # due to risk of external resources failing
+
+  file <-
+    "https://flashresults.com/2016_Meets/Outdoor/06-17_NBHSN/140-1-07.htm"
+
+  df_test <- try(flash_parse_table(file, clean = TRUE, wide_format = TRUE), silent = TRUE)
+
+  if (any(grep("error", class(data)))) {
+    skip("Link to external data is broken")
+  } else {
+
+    # build standard
+    df_standard <-
+      structure(list(Place = c("1", "2", "3", "4", "5", "6", "7", "DNS"
+      ), Lane = c("3", "2", "7", "8", "1", "5", "6", "4"), Team = c("Shaker Tc-Ny",
+                                                                    "River Dell Tc-Nj", "Teaneck Express Tc-Nj", "Robinson Tc-Va",
+                                                                    "Ithaca Tc-Mi", "Damascus Tc-Md", "Langley Tc-Va", "Withrow Tc-Oh-Girls"
+      ), Result = c("4:09.40", "4:10.23", "4:13.27", "4:15.71", "4:19.05",
+                    "4:24.54", "4:27.20", NA), L1.L2 = c("53.44", "53.58", "52.89",
+                                                         "52.69", "54.49", "54.77", "57.43", NA), L3 = c("1:54.39", "1:53.31",
+                                                                                                         "1:51.97", "1:53.55", "1:58.30", "1:57.67", "2:02.02", NA), L4 = c("4:09.40",
+                                                                                                                                                                            "4:10.23", "4:13.27", "4:15.71", "4:19.05", "4:24.54", "4:27.20",
+                                                                                                                                                                            NA), Event = c("Smr", "Smr", "Smr", "Smr", "Smr", "Smr", "Smr",
+                                                                                                                                                                                           "Smr"), Gender = c("Girls", "Girls", "Girls", "Girls", "Girls",
+                                                                                                                                                                                                              "Girls", "Girls", "Girls"), Event_Date = structure(c(16969, 16969,
+                                                                                                                                                                                                                                                                   16969, 16969, 16969, 16969, 16969, 16969), class = "Date")), row.names = c(NA,
+                                                                                                                                                                                                                                                                                                                                              -8L), class = "data.frame")
+
+    # test
+    expect_equivalent(df_standard,
+                      df_test)
+  }
+})
+
 
 # testthat::test_file("tests/testthat/test-flash_table.R")

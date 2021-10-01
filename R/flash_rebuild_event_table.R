@@ -112,11 +112,17 @@ flash_rebuild_event_table <- function(event_url_rebuild) {
   x <- purrr::map(x, utils::tail,-1) # remove all the "Begin"s
 
   # reassemble dataframe
-  df <-
+  df_new <-
     setNames(transform(do.call(rbind, lapply(x, "[", 1:ncol(
       df
     )))), names(df)) %>%
     dplyr::na_if("NA")
+
+  if(nrow(df_new) >= nrow(df)){
+    df <- df_new
+  } else {
+    rm(df_new)
+  }
 
   # remove column named only with new line character
   df <- df[names(df) %in% c("\n") == FALSE]

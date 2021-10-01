@@ -68,6 +68,7 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   # link <- "https://flashresults.com/2021_Meets/Outdoor/03-19_49er/041-2-01.htm"
   # link <- "https://flashresults.com/2020_Meets/Indoor/01-18_ArkHSInvite/001-1-11.htm"
   # link <- "https://flashresults.com/2016_Meets/Indoor/01-16_TAMUTeam/032-1-16384.htm"
+  # link <- "https://flashresults.com/2016_Meets/Outdoor/06-17_NBHSN/140-1-07.htm"
 
 
   page_content <- xml2::read_html(link, options = c("DTDLOAD", "NOBLANKS"))
