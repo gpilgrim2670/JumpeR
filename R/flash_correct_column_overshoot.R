@@ -37,15 +37,15 @@ flash_correct_column_overshoot <- function(x = NA, df) {
 #' @seealso \code{flash_correct_column_overshoot} is a helper function inside
 #'   \code{\link{flash_parse_table}}
 
-flash_correct_column_overshoot_helper <- function(x, df){
-  if(is.na(x)){
+flash_correct_column_overshoot_helper <- function(x, df) {
+  if (is.na(x)) {
     return(x)
-  } else if(identical(x, integer(0))) {
+  } else if (identical(x, integer(0))) {
     return(integer(0))
   } else {
+    multiplier <- floor(x / ncol(df))
+    x <- ifelse(x > ncol(df), x - (ncol(df) * multiplier) , x)
 
-  x <- ifelse(x > ncol(df), x - ncol(df), x)
-
-  return(x)
+    return(x)
   }
 }

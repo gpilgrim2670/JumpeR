@@ -1173,4 +1173,40 @@ test_that("flash table empty columns 3, also has 2 dummy rows", {
   }
 })
 
+test_that("flash table empty columns 4, column label is several rows down", {
+
+  skip_on_cran() # due to risk of external resources failing
+
+  file <-
+    "https://flashresults.com/2020_Meets/Indoor/01-18_ArkHSInvite/001-1-11.htm"
+
+  df_test <- try(flash_parse_table(file, clean = TRUE), silent = TRUE)
+
+  if (any(grep("error", class(data)))) {
+    skip("Link to external data is broken")
+  } else {
+
+    # build standard
+    df_standard <-
+    structure(list(Place = c("1", "2", "3", "4", "5", "6", "7", "8"
+    ), Lane = c("3", "4", "5", "2", "6", "8", "7", "1"), Name = c("Keviah EALY",
+                                                                  "Trinity KIRK", "Tay'Maro POWELL-PETERS", "Arianna MCCURIN",
+                                                                  "Sidney MARTIN", "MaKyia VENSON", "Anna POSSEHL", "Alyssa WINSTON"
+    ), Age = c(NA, NA, "SR", NA, "0", "SO", "0", "FR"), Team = c("Team Quest",
+                                                                 "Desoto Nitro", "Unattached", "Unattached", "St. Louis Blues",
+                                                                 "Sylvan Hills", "Cea", "Spartan Track Club"), Result = c("7.87",
+                                                                                                                          "7.97", "8.04", "8.11", "8.14", "8.59", "8.63", "8.92"), Event = c("60m",
+                                                                                                                                                                                             "60m", "60m", "60m", "60m", "60m", "60m", "60m"), Gender = c("Girls",
+                                                                                                                                                                                                                                                          "Girls", "Girls", "Girls", "Girls", "Girls", "Girls", "Girls"
+                                                                                                                                                                                             ), Event_Date = structure(c(18283, 18283, 18283, 18283, 18283,
+                                                                                                                                                                                                                         18283, 18283, 18283), class = "Date")), row.names = c(NA, -8L
+                                                                                                                                                                                                                         ), class = "data.frame")
+
+
+    # test
+    expect_equivalent(df_standard,
+                      df_test)
+  }
+})
+
 # testthat::test_file("tests/testthat/test-flash_table.R")
