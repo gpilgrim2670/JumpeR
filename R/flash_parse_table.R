@@ -245,7 +245,7 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   if(length(dup_df_names) > 0){
 
   names(df)[names(df) == dup_df_names] <- names(df)[names(df) == dup_df_names] %>%
-    paste0(., seq(1, length(.), by = 1))
+    paste0(letters[1:length(.)], .)
   }
 
   df <- df %>%

@@ -48,6 +48,14 @@ flash_clean_vertical_events <- function(df, wide_format_vertical = wide_format_c
   # convert to long format, requires columns like 3.31m etc.
 
 
+
+  if(any(stringr::str_detect(names(df), "[:lower:]\\d\\.\\d\\dm"))){
+
+    wide_format_vertical <- TRUE
+    # if("Finals_Result" %in% names(df))
+    message("Duplicate column names fixed in results.  Please check column names.")
+  }
+
   # if (all(wide_format_vertical == FALSE & any(stringr::str_detect(names(df), "[0-9]")))) {
   if (wide_format_vertical == FALSE) {
 

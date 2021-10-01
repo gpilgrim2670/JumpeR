@@ -1224,20 +1224,12 @@ test_that("flash table duplicate names as pole heights", {
 
     # build standard
     df_standard <-
-      structure(list(Place = c("1", "2", "1", "2", "1", "2"), Order = c("19",
-                                                                        "17", "19", "17", "19", "17"), Name = c("Jacob Wooten", "Audie Wyatt",
-                                                                                                                "Jacob Wooten", "Audie Wyatt", "Jacob Wooten", "Audie Wyatt"),
-                     Finals_Result = c("5.41m", "5.36m", "5.41m", "5.36m", "5.41m",
-                                       "5.36m"), Event = c("Pole Vault", "Pole Vault", "Pole Vault",
-                                                           "Pole Vault", "Pole Vault", "Pole Vault"), Gender = c("Men",
-                                                                                                                 "Men", "Men", "Men", "Men", "Men"), Event_Date = structure(c(16816,
-                                                                                                                                                                              16816, 16816, 16816, 16816, 16816), class = "Date"), Height = c("5.41m",
-                                                                                                                                                                                                                                              "5.41m", "5.36m", "5.36m", "5.41m", "5.41m"), Result = c("X",
-                                                                                                                                                                                                                                                                                                       "X", "O", "O", "O", "X"), Team = c("Texas A&M", "Texas A&M",
-                                                                                                                                                                                                                                                                                                                                          "Texas A&M", "Texas A&M", "Texas A&M", "Texas A&M")), row.names = c(NA,
-                                                                                                                                                                                                                                                                                                                                                                                                              -6L), class = "data.frame")
-
-
+      structure(list(Place = c("1", "2"), Order = c("19", "17"), Name = c("Jacob Wooten",
+                                                                          "Audie Wyatt"), Finals_Result = c("5.41m", "5.36m"), a5.41m = c("X",
+                                                                                                                                          "X"), X5.36m = c("O", "O"), b5.41m = c("O", "X"), Event = c("Pole Vault",
+                                                                                                                                                                                                      "Pole Vault"), Gender = c("Men", "Men"), Event_Date = structure(c(16816,
+                                                                                                                                                                                                                                                                        16816), class = "Date"), Team = c("Texas A&M", "Texas A&M")), row.names = c(NA,
+                                                                                                                                                                                                                                                                                                                                                    -2L), class = "data.frame")
     # test
     expect_equivalent(df_standard,
                       df_test)
