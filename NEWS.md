@@ -1,3 +1,7 @@
+# JumpeR 0.2.10 October 1st, 2021
+
+* Bug fixing for Flash Table results
+
 # JumpeR 0.2.9 September 30th, 2021
 
 * `attempts_split_long` for Flash Table results

@@ -1140,4 +1140,37 @@ test_that("flash table empty columns 2", {
 })
 
 
+test_that("flash table empty columns 3, also has 2 dummy rows", {
+
+  skip_on_cran() # due to risk of external resources failing
+
+  file <-
+    "https://flashresults.com/2021_Meets/Outdoor/03-19_49er/041-2-01.htm"
+
+  df_test <- try(flash_parse_table(file, clean = TRUE), silent = TRUE) %>%
+    head(5)
+
+  if (any(grep("error", class(data)))) {
+    skip("Link to external data is broken")
+  } else {
+
+    # build standard
+    df_standard <-
+      structure(list(Place = c("1", "2", "3", "4", "5"), Pos = c("7",
+                                                                 "5", "8", "4", "9"), Name = c("Hannah KANJIAN", "Lucy WALLIKER",
+                                                                                               "Malene KOLLBERG", "Hazel TANKARD", "Cerys LEE"), Event = c("Hept High Jump",
+                                                                                                                                                           "Hept High Jump", "Hept High Jump", "Hept High Jump", "Hept High Jump"
+                                                                                               ), Gender = c("Women", "Women", "Women", "Women", "Women"), Event_Date = structure(c(18706,
+                                                                                                                                                                                    18706, 18706, 18706, 18706), class = "Date"), Height = c("1.30m",
+                                                                                                                                                                                                                                             "1.30m", "1.30m", "1.30m", "1.30m"), Result = c("---", "---",
+                                                                                                                                                                                                                                                                                             "---", "---", "---"), Team = c("Davidson", "Queens", "Queens",
+                                                                                                                                                                                                                                                                                                                            "Davidson", "Queens"), Age = c("SO", "SO", "FR", "JR", "FR")), row.names = c(NA,
+                                                                                                                                                                                                                                                                                                                                                                                                         5L), class = "data.frame")
+
+    # test
+    expect_equivalent(df_standard,
+                      df_test)
+  }
+})
+
 # testthat::test_file("tests/testthat/test-flash_table.R")

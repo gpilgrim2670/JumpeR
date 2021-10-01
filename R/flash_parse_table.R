@@ -65,6 +65,7 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   # link <- "https://www.flashresults.com/2019_Meets/Outdoor/06-05_NCAAOTF-Austin/015-1_compiled.htm"
   # link <- "https://www.flashresults.com/2018_Meets/Outdoor/06-09_NCAAEugene/025-1-01.htm"
   # link <- "https://www.flashresults.com/2019_Meets/Outdoor/06-05_NCAAOTF-Austin/015-1_compiled.htm"
+  # link <- "https://flashresults.com/2021_Meets/Outdoor/03-19_49er/041-2-01.htm"
 
   page_content <- xml2::read_html(link, options = c("DTDLOAD", "NOBLANKS"))
 
@@ -159,6 +160,11 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
     df <- df[-1, ]
   }
 
+  # remove unicode characters of 1/4, 1/2, 3/4, all other unicode characters
+  colnames(df) <- data.frame(lapply(colnames(df), function(x) { # remove all non ASCII characters from column names
+    iconv(x, "latin1", "ASCII", sub = "")
+  }))
+
   if (any(names(df) == "")) {
     names(df)[names(df) == ""] <-
       paste0("Placeholder_", seq(1, length(names(df)[names(df) == ""]), 1))
@@ -167,28 +173,43 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   # athlete column
   athlete_col <-
     which(stringr::str_detect(as.vector(t(df)), "^Athlete$"))
+  if(all(length(athlete_col) > 0, athlete_col > ncol(df))){
+    n_rows_to_remove <- ceiling(-athlete_col/ncol(df))
+
+    athlete_col <- athlete_col %>%
+  flash_correct_column_overshoot(df = df)
+
+  } else {
+    n_rows_to_remove <- 0
+  }
 
   # reaction time columns
   if (any(stringr::str_detect(as.vector(t(df)), "0\\.\\d{3}"), na.rm = TRUE) == TRUE) {
     reaction_time_col <-
       min(which(stringr::str_detect(as.vector(t(
         df
-      )), "0\\.\\d{3}")))
+      )), "0\\.\\d{3}"))) %>%
+      flash_correct_column_overshoot(df = df)
+
   } else {
     reaction_time_col <- numeric(0)
   }
 
   # place column
-  place_col <- which(stringr::str_detect(as.vector(t(df)), "(^Pl$)|(^Place$)"))
+  place_col <- which(stringr::str_detect(as.vector(t(df)), "(^Pl$)|(^Place$)")) %>%
+    flash_correct_column_overshoot(df = df)
 
   # position column
-  position_col <- which(stringr::str_detect(as.vector(t(df)), "(^Pos$)|(^Position$)"))
+  position_col <- which(stringr::str_detect(as.vector(t(df)), "(^Pos$)|(^Position$)")) %>%
+    flash_correct_column_overshoot(df = df)
 
   # age column
-  age_col <- which(stringr::str_detect(as.vector(t(df)), "(^SR$)|(^JR$)|(^SO$)|(^FR$)"))[1]
+  age_col <- which(stringr::str_detect(as.vector(t(df)), "(^SR$)|(^JR$)|(^SO$)|(^FR$)"))[1] %>%
+    flash_correct_column_overshoot(df = df)
 
   # wind column
-  wind_col <- which(stringr::str_detect(as.vector(t(df)), "^w?\\:?(\\+|-)?\\d\\.\\d$"))[1]
+  wind_col <- which(stringr::str_detect(as.vector(t(df)), "^w?\\:?(\\+|-)?\\d\\.\\d$"))[1] %>%
+    flash_correct_column_overshoot(df = df)
 
   # blank columns
   blank_col <- which(colnames(df) == "")
@@ -238,10 +259,9 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   # remove unnamed columns
   df <- df[names(df) != ""]
 
-  # remove unicode characters of 1/4, 1/2, 3/4, all other unicode characters
-  colnames(df) <- data.frame(lapply(colnames(df), function(x) { # remove all non ASCII characters from column names
-    iconv(x, "latin1", "ASCII", sub = "")
-  }))
+  if(n_rows_to_remove < 0){
+    df <- df[n_rows_to_remove,]
+  }
 
   colnames(df) <- trimws(colnames(df)) # trim whitespaces in column names from removal of unicode characters
 
