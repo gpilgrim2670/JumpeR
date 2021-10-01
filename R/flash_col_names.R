@@ -49,6 +49,7 @@ flash_col_names_helper <- function(old_names){
 
     new_names[new_names == dup_new_names] <- new_names[new_names == dup_new_names] %>%
       paste0(., letters[1:length(.)])
+    message("Duplicate column names fixed in results.  Please check column names.")
   }
 
   return(new_names)
