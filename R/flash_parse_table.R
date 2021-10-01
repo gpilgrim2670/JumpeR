@@ -69,6 +69,7 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   # link <- "https://flashresults.com/2020_Meets/Indoor/01-18_ArkHSInvite/001-1-11.htm"
   # link <- "https://flashresults.com/2016_Meets/Indoor/01-16_TAMUTeam/032-1-16384.htm"
 
+
   page_content <- xml2::read_html(link, options = c("DTDLOAD", "NOBLANKS"))
 
   #This method allows us to keep the \n in the data, which is essential to cleaning.

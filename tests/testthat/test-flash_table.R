@@ -1236,5 +1236,38 @@ test_that("flash table duplicate names as pole heights", {
   }
 })
 
+test_that("flash table duplicate names in splits", {
+
+  skip_on_cran() # due to risk of external resources failing
+
+  file <-
+    "https://flashresults.com/2018_Meets/Outdoor/04-28_VirginiaGrandPrix/032-1-01.htm"
+
+  df_test <- try(flash_parse_table(file, clean = TRUE, wide_format = TRUE), silent = TRUE)
+
+  if (any(grep("error", class(data)))) {
+    skip("Link to external data is broken")
+  } else {
+
+    # build standard
+    df_standard <-
+      structure(list(Place = c("1", "2", "3", "4", "5"), Lane = c("5",
+                                                                  "6", "4", "3", "7"), Team = c("NORTH CAROLINA", "CHARLOTTE",
+                                                                                                "LIBERTY", "NORTH CAROLINA B", "WAKE FOREST"), Result = c("3:07.03",
+                                                                                                                                                          "3:07.12", "3:09.00", "3:19.36", "3:19.47"), Split_800 = c("1:34.28",
+                                                                                                                                                                                                                     "1:34.04", "1:34.20", "1:37.19", "1:39.91"), Split_400a = c("2:21.79",
+                                                                                                                                                                                                                                                                                 "2:21.66", "2:22.08", "2:29.33", "2:30.44"), Split_400b = c("3:07.03",
+                                                                                                                                                                                                                                                                                                                                             "3:07.12", "3:09.00", "3:19.36", "3:19.47"), Event = c("4x400m Relay",
+                                                                                                                                                                                                                                                                                                                                                                                                    "4x400m Relay", "4x400m Relay", "4x400m Relay", "4x400m Relay"
+                                                                                                                                                                                                                                                                                                                                             ), Gender = c("Men", "Men", "Men", "Men", "Men"), Event_Date = structure(c(17649,
+                                                                                                                                                                                                                                                                                                                                                                                                                        17649, 17649, 17649, 17649), class = "Date")), row.names = c(NA,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     -5L), class = "data.frame")
+
+    # test
+    expect_equivalent(df_standard,
+                      df_test)
+  }
+})
+
 
 # testthat::test_file("tests/testthat/test-flash_table.R")

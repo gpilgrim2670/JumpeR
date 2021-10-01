@@ -43,6 +43,13 @@ flash_col_names_helper <- function(old_names){
   distances <- stringr::str_remove(distances, "m")
   new_names <- paste0("Split_", distances)
 
+  dup_new_names <- new_names[duplicated(new_names)]
+
+  if(length(dup_new_names) > 0){
+
+    new_names[new_names == dup_new_names] <- new_names[new_names == dup_new_names] %>%
+      paste0(., letters[1:length(.)])
+  }
 
   return(new_names)
 
