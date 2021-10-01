@@ -67,6 +67,7 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   # link <- "https://www.flashresults.com/2019_Meets/Outdoor/06-05_NCAAOTF-Austin/015-1_compiled.htm"
   # link <- "https://flashresults.com/2021_Meets/Outdoor/03-19_49er/041-2-01.htm"
   # link <- "https://flashresults.com/2020_Meets/Indoor/01-18_ArkHSInvite/001-1-11.htm"
+  # link <- "https://flashresults.com/2016_Meets/Indoor/01-16_TAMUTeam/032-1-16384.htm"
 
   page_content <- xml2::read_html(link, options = c("DTDLOAD", "NOBLANKS"))
 
@@ -236,6 +237,16 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   #     dplyr::rename("Wind" = dplyr::all_of(wind_col),
   #                   "Placeholder" = dplyr::all_of(c(blank_col, athlete_col, reaction_time_col, place_col, position_col)))
   # }
+
+  # sometimes vertical events have the same pole height naming multiple columns
+  # this will deal with that
+  dup_df_names <- names(df)[duplicated(names(df))]
+
+  if(length(dup_df_names) > 0){
+
+  names(df)[names(df) == dup_df_names] <- names(df)[names(df) == dup_df_names] %>%
+    paste0(., seq(1, length(.), by = 1))
+  }
 
   df <- df %>%
     purrr::when(all(length(blank_col) > 0, sum(is.na(blank_col)) < length(blank_col)) ~ rename(., "Placeholder" = all_of(blank_col)), ~ .) %>%
