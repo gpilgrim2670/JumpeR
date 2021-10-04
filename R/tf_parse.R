@@ -138,14 +138,15 @@ tf_parse <-
     # file <- read_results(event_links[75])
     # file <- read_results(system.file("extdata", "Results-IVP-Track-Field-Championship-2019-20-v2.pdf", package = "JumpeR"))
     # file <- read_results("https://www.flashresults.com/2020_Meets/Indoor/02-21_VTChallenge/031-1.pdf")
+    # file <- read_results("http://image2.aausports.org/sports/athletics/results/2016/jogames/live/241-1-02.htm")
     # avoid <- c("[:alpha:]\\: .*")
     # typo <- "typo"
     # replacement <- "typo"
     # relay_athletes <- TRUE
 
-    if (file[2] == "try flash_parse_table") {
+    if (unname(unlist(file)[2]) == "try flash_parse_table") {
       data <-
-        flash_parse_table(link = file[1],
+        flash_parse_table(link = unname(unlist(file)[1]),
                           wide_format = TRUE,
                           clean = TRUE)
 

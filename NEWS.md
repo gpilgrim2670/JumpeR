@@ -1,3 +1,8 @@
+# JumpeR 0.2.11 October 4th, 2021
+
+* Changes to `tf_parse` so that it plays nicely with `purrr::map` and
+`purrr::safely` when applied to Flash Tables
+
 # JumpeR 0.2.10 October 1st, 2021
 
 * Bug fixing for Flash Table results
