@@ -1,3 +1,8 @@
+# JumpeR 0.2.12 October 6th, 2021
+
+* Changes to `tf_parse` so that it plays nicely with `purrr::map` and
+`purrr::safely` when applied to Hytek results
+
 # JumpeR 0.2.11 October 4th, 2021
 
 * Changes to `tf_parse` so that it plays nicely with `purrr::map` and

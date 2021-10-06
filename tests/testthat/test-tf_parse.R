@@ -23,6 +23,88 @@ test_that("tf_parse_round_attempts", {
   expect_equal(total_O_round_1, 17)
 })
 
+test_that("tf_parse mapping hytek", {
+
+  skip_on_cran()
+
+  links <-
+    c(
+      "http://tfresultsdata.deltatiming.com/2019-ysu-icebreaker/191206F022.htm",
+      "http://tfresultsdata.deltatiming.com/2019-ysu-icebreaker/191206F036.htm",
+      "http://tfresultsdata.deltatiming.com/2019-ysu-icebreaker/191206F035.htm"
+    )
+
+  df_test <- links %>%
+    map(read_results) %>%
+    map(tf_parse) %>%
+    map(head, 3) %>%
+    bind_rows()
+
+  df_standard <-
+    structure(list(Place = c("1", "2", "3", "1", "2", "3", "1", "2",
+                             "3"), Team = c("Pittsburgh", "Pittsburgh", "Kent State", "Buffalo",
+                                            "Youngstown St.", "Walsh", "Buffalo", "Pittsburgh", "Pittsburgh"
+                             ), Finals_Result = c("3:16.26", "3:21.54", "3:21.77", "18.91m",
+                                                  "17.95m", "17.57m", "17.41m", "16.47m", "16.27m"), DQ = c(0,
+                                                                                                            0, 0, 0, 0, 0, 0, 0, 0), Event = c("Men 4x400 Meter Relay", "Men 4x400 Meter Relay",
+                                                                                                                                               "Men 4x400 Meter Relay", "Men Weight Throw", "Men Weight Throw",
+                                                                                                                                               "Men Weight Throw", "Women Weight Throw", "Women Weight Throw",
+                                                                                                                                               "Women Weight Throw"), Name = c(NA, NA, NA, "Wray, Samuel", "Gutzky, Ben",
+                                                                                                                                                                               "Ott, Jacob", "Hoyte, Asia", "Mallett, Shannah", "Gyles, Antoinette"
+                                                                                                                                               ), Age = c(NA, NA, NA, "SR", "SR", "SO", "JR", "FR", "JR")), row.names = c(NA,
+                                                                                                                                                                                                                          -9L), class = "data.frame")
+
+
+  expect_equivalent(df_test, df_standard)
+})
+
+test_that("tf_parse safely mapping hytek", {
+
+  skip_on_cran()
+
+  links <-
+    c(
+      "http://tfresultsdata.deltatiming.com/2019-ysu-icebreaker/191206F022.htm",
+      "http://tfresultsdata.deltatiming.com/2019-ysu-icebreaker/191206F036.htm",
+      "http://tfresultsdata.deltatiming.com/2019-ysu-icebreaker/191206F035.htm"
+    )
+
+  df_test <- links %>%
+    map(read_results) %>%
+    map(    safely(tf_parse, otherwise = NA),
+            relay_athletes = TRUE,
+            rounds = TRUE,
+            round_attempts = TRUE,
+            split_attempts = TRUE,
+            splits = TRUE) %>%
+    SwimmeR::discard_errors() %>%
+    map(head, 3) %>%
+    bind_rows()
+
+  df_standard <-
+    structure(list(Place = c("1", "2", "3", "1", "2", "3", "1", "2",
+                             "3"), Team = c("Pittsburgh", "Pittsburgh", "Kent State", "Buffalo",
+                                            "Youngstown St.", "Walsh", "Buffalo", "Pittsburgh", "Pittsburgh"
+                             ), Finals_Result = c("3:16.26", "3:21.54", "3:21.77", "18.91m",
+                                                  "17.95m", "17.57m", "17.41m", "16.47m", "16.27m"), DQ = c(0,
+                                                                                                            0, 0, 0, 0, 0, 0, 0, 0), Event = c("Men 4x400 Meter Relay", "Men 4x400 Meter Relay",
+                                                                                                                                               "Men 4x400 Meter Relay", "Men Weight Throw", "Men Weight Throw",
+                                                                                                                                               "Men Weight Throw", "Women Weight Throw", "Women Weight Throw",
+                                                                                                                                               "Women Weight Throw"), Name = c(NA, NA, NA, "Wray, Samuel", "Gutzky, Ben",
+                                                                                                                                                                               "Ott, Jacob", "Hoyte, Asia", "Mallett, Shannah", "Gyles, Antoinette"
+                                                                                                                                               ), Age = c(NA, NA, NA, "SR", "SR", "SO", "JR", "FR", "JR"), Round_1 = c(NA,
+                                                                                                                                                                                                                       NA, NA, "17.01m", "ND", "17.57m", "ND", "16.47m", "15.36m"),
+                   Round_2 = c(NA, NA, NA, "18.06m", "17.43m", "ND", "ND", "16.12m",
+                               "16.27m"), Round_3 = c(NA, NA, NA, "ND", "17.59m", "15.98m",
+                                                      "14.71m", "16.42m", "ND"), Round_4 = c(NA, NA, NA, "18.91m",
+                                                                                             "17.39m", "ND", "17.41m", "16.31m", "ND"), Round_5 = c(NA,
+                                                                                                                                                    NA, NA, "18.33m", "17.68m", "17.29m", "15.01m", "15.17m",
+                                                                                                                                                    "ND"), Round_6 = c(NA, NA, NA, "18.86m", "17.95m", "ND",
+                                                                                                                                                                       "ND", "15.37m", "15.68m")), row.names = c(NA, -9L), class = "data.frame")
+
+  expect_equivalent(df_test, df_standard)
+})
+
 test_that("tf_parse_rounds", {
   file <-
     system.file("extdata", "underdistance-2020-result.pdf", package = "JumpeR")

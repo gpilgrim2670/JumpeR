@@ -165,6 +165,7 @@ tf_parse <-
 
     } else {
       #### assign row numbers ####
+      file <- unname(unlist(file))
       as_lines_list_2 <- add_row_numbers(text = file)
 
       #### clean input data ####

@@ -92,7 +92,7 @@ hytek_parse <-
           "_?[:alpha:]+\\s?\\'?[:alpha:\\-\\'\\.]*\\s?[:alpha:\\-\\'\\.]*\\s?[:alpha:\\-\\'\\.]*,?\\s?[:alpha:\\-\\'\\.]*\\s?[:alpha:]*\\s?[:alpha:]*\\s?[:alpha:]*\\.?,? [:alpha:]+\\s?[:alpha:\\-\\'\\.]*\\s?[:alpha:\\-\\']*\\s?[:alpha:]*\\s?[:alpha:]*\\s?[:alpha:\\.]*"
         Result_String <- "\\d{0,2}\\:?\\-?\\d{1,2}\\.\\d{2}m?"
         Result_Specials_String <-
-          paste0(Result_String, "$|^NT$|^NP$|^DQ$|^DNS$|^DNF$|^FOUL$|^NH$|^SCR$|^FS$")
+          paste0(Result_String, "$|^NT$|^NP$|^DQ$|^DNS$|^DNF$|^FOUL$|^NH$|^SCR$|^FS$|^ND$")
         Wind_String <-
           "\\+\\d\\.\\d|\\-\\d\\.\\d|^NWS$|^NWI$|^\\d\\.\\d$"
         Age_String <- "^SR$|^JR$|^SO$|^FR$|^M?W?[:digit:]{1,3}$"
@@ -103,7 +103,7 @@ hytek_parse <-
             .[purrr::map(., length) > 0] %>%
             .[purrr::map(., stringr::str_length) > 50] %>%
             .[purrr::map_dbl(., stringr::str_count, "\\d\\)") < 2] %>%  # remove inline splits and team scores as 1) Alfred 2) Ithaca etc.
-            .[purrr::map_lgl(., stringr::str_detect, paste0(Result_String, "|DQ|DNS|DNF|FOUL|NH|SCR|FS"))] %>% # must Results_String because all results do
+            .[purrr::map_lgl(., stringr::str_detect, paste0(Result_String, "|DQ|DNS|DNF|FOUL|NH|SCR|FS|ND"))] %>% # must Results_String because all results do
             .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "\\d{3}\\.\\d{2}")))] %>% # closes loophole in Result_String where a number like 100.00 could get through even though it's not a valid result
             .[purrr::map_lgl(., ~ !any(
               stringr::str_detect(., "^[0-9\\(\\)\\.FOULPASSm\\s\\-\\+]+$")
@@ -716,6 +716,10 @@ hytek_parse <-
             dplyr::arrange(Row_Numb) %>%
             dplyr::mutate(Exhibition = 0) %>%
             dplyr::mutate(DQ = 0) %>%
+          { # Place column might or might not exist
+            if("Place" %!in% names(.)) dplyr::mutate(., Place = "NA") else . # sometimes there's no place column
+            } %>%
+            dplyr::filter(Place != "ND") %>%
             ### moved up from below for DQ work 8/20
             dplyr::mutate(
               DQ = dplyr::case_when(
@@ -879,6 +883,8 @@ hytek_parse <-
           dplyr::select(which(SwimmeR::`%!in%`(
             names(.), c("Row_Numb", "Exhibition", "Points", "Heat")
           )))
+
+        row.names(data) <- NULL
 
         return(data)
       }
