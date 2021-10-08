@@ -74,7 +74,7 @@ hytek_parse <-
     #   add_row_numbers()
 
     # hytek_file <-
-    #   "http://results.deltatiming.com/ncaa/tf/2019-joe-walker-invitational/print/190412F010" %>%
+    #   "http://tfresultsdata.deltatiming.com/2018-hurricane-invitational/180316F028.htm" %>%
     #   read_results() %>%
     #   add_row_numbers()
 
@@ -153,6 +153,12 @@ hytek_parse <-
             stringr::str_replace_all("([:alpha])(\\.[:alpha:])", "\\1 \\2") %>%
             trimws()
         )
+
+        #### if data_1 is empty ####
+        if(!length(data_1) > 0){
+          message("No results found in file")
+
+        } else {
 
         #### splits data into variables by splitting at multiple (>= 2) spaces ####
         data_1 <-
@@ -887,5 +893,6 @@ hytek_parse <-
         row.names(data) <- NULL
 
         return(data)
+        }
       }
 

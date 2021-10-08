@@ -160,6 +160,12 @@ flash_parse <-
           .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "^[A-Z][a-z].{1,}|^[:upper:]{3}.*Meet|^[A-CEG-MO-Z][:upper:]{1,2}")))]   # remove records
       )
 
+    #### if data_1 is empty ####
+    if(!length(data_1) > 0){
+      message("No results found in file")
+
+    } else {
+
       #### splits data into variables by splitting at multiple (>= 2) spaces ####
       data_1 <-
         unlist(purrr::map(data_1, stringr::str_split, "\\s{2,}"),
@@ -1390,4 +1396,5 @@ flash_parse <-
         ! all(is.na(x)), flash_data)
 
       return(flash_data)
+    }
   }

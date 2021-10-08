@@ -1,3 +1,8 @@
+# JumpeR 0.2.13 October 8th, 2021
+
+* Changes to `hytek_parse` and `flash_parse` such that they don't hang on heat
+sheets without results
+
 # JumpeR 0.2.12 October 6th, 2021
 
 * Changes to `tf_parse` so that it plays nicely with `purrr::map` and

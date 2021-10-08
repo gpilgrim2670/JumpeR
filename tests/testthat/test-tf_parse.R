@@ -1,6 +1,18 @@
-test_that("tf_parse_round_attempts", {
+test_that("tf_parse heat sheet - no results", {
 
   skip_on_cran()
+
+  file <- "http://tfresultsdata.deltatiming.com/2018-hurricane-invitational/180316F028.htm"
+
+  expect_message(out <- file %>%
+    read_results() %>%
+    tf_parse(), "No results found in file")
+
+  expect_null(out)
+
+})
+
+test_that("tf_parse_round_attempts", {
 
   file <-
     system.file("extdata",
@@ -71,12 +83,14 @@ test_that("tf_parse safely mapping hytek", {
 
   df_test <- links %>%
     map(read_results) %>%
-    map(    safely(tf_parse, otherwise = NA),
-            relay_athletes = TRUE,
-            rounds = TRUE,
-            round_attempts = TRUE,
-            split_attempts = TRUE,
-            splits = TRUE) %>%
+    map(
+      purrr::safely(tf_parse, otherwise = NA),
+      relay_athletes = TRUE,
+      rounds = TRUE,
+      round_attempts = TRUE,
+      split_attempts = TRUE,
+      splits = TRUE
+    ) %>%
     SwimmeR::discard_errors() %>%
     map(head, 3) %>%
     bind_rows()
