@@ -117,7 +117,7 @@ tf_parse(
 
 [Here's](https://www.flashresults.com/2018_Meets/Outdoor/04-28_VirginiaGrandPrix/035-1.pdf) the long jump prelims from the 2019 Virginia Grand Prix at the University of Virginia with the "rounds" highlighted in yellow.
 
-![Long jump rounds](https://github.com/gpilgrim2670/Pilgrim_Data/raw/master/JumepR_readme_files/Flash_Results_VA_longjump_Rounds.png)
+![Long jump rounds](https://raw.githubusercontent.com/gpilgrim2670/Pilgrim_Data/master/JumepR_readme_files/Flash_Results_VA_longjump_Flights.png)
 
 Here's the same thing after importing with `JumpeR`
 ```r
@@ -128,13 +128,13 @@ tf_parse(
     rounds = TRUE
   )
 ```
-![New rounds columns](https://github.com/gpilgrim2670/Pilgrim_Data/raw/master/JumepR_readme_files/Flash_Results_VA_longjump_Rounds_Import.png)
+![New rounds columns](https://raw.githubusercontent.com/gpilgrim2670/Pilgrim_Data/master/JumepR_readme_files/Flash_Results_VA_longjump_Rounds_Import.PNG)
 
 * `round_attempts` records the outcome of each attempt (height) in the vertical jumping events (high jump, pole vault).  The default for `round_attempts` is `FALSE` but setting it to `TRUE` will include these values (usually some combination of "X", "O" and "-") in new columns called `Round_1_Attempts`, `Round_2_Attempts` etc.  If `round_attempts = TRUE` then `rounds = TRUE` must be set as well.
 
 [Here's](https://www.flashresults.com/2018_Meets/Outdoor/04-20_DukeInvite/014-1.pdf) the pole vault results from the 2019 Duke Invite at (natch) Duke University with the "round_attempts" highlighted in yellow and the "rounds" circled in red.
 
-![Pole vault results](https://github.com/gpilgrim2670/Pilgrim_Data/raw/master/JumepR_readme_files/Flash_Results_Duke_polevault_Round_Attempts.png)
+![Pole vault results](https://raw.githubusercontent.com/gpilgrim2670/Pilgrim_Data/master/JumepR_readme_files/Flash_Results_Duke_polevault_Flight_Attempts.png)
 
 Here's the same thing after importing with `JumpeR` - adding all these columns makes the results very wide.
 ```r
@@ -146,7 +146,7 @@ tf_parse(
     round_attempts = TRUE
   )
 ```
-![New round_attempts columns](https://github.com/gpilgrim2670/Pilgrim_Data/raw/master/JumepR_readme_files/Flash_Results_Duke_polevault_Round_Attempts_Split_Import.png)
+![New round_attempts columns](https://raw.githubusercontent.com/gpilgrim2670/Pilgrim_Data/master/JumepR_readme_files/Flash_Results_Duke_polevault_Round_Attempts_Import.PNG)
 
 * `split_attempts` setting `split_attempts = TRUE` will cause `tf_parse` to break each `Round_X_Attempts` column into pieces.  A column containing "XXO" for example will become three columns, one containing "X", the second containing the second "X" and the third containing "O".  This will mean there are a lot of columns!  If `split_attempts = TRUE` then `round_attempts` must be `TRUE` as well.
 
@@ -161,7 +161,7 @@ tf_parse(
     split_attempts = TRUE
   )
 ```
-![New split columns](https://github.com/gpilgrim2670/Pilgrim_Data/raw/master/JumepR_readme_files/Flash_Results_Duke_polevault_Round_Attempts_Split_Import.png)
+![New split columns](https://raw.githubusercontent.com/gpilgrim2670/Pilgrim_Data/master/JumepR_readme_files/Flash_Results_Duke_polevault_Round_Attempts_Split_Import.PNG)
 
 See `?tf_parse` for more information.
 
@@ -183,7 +183,7 @@ df %>%
   select(Place, Name, Age, Team, Finals_Result, Event, Bar_Height, Attempt, Result)
 ```
 
-![Long format pole jump](https://github.com/gpilgrim2670/Pilgrim_Data/raw/master/JumepR_readme_files/Flash_Results_Duke_polevault_Round_Attempts_Split_Import_Long.png)
+![Long format pole jump](https://raw.githubusercontent.com/gpilgrim2670/Pilgrim_Data/master/JumepR_readme_files/Flash_Results_Duke_polevault_Round_Attempts_Split_Import_Long.PNG)
 
 # Formatting Results
 
