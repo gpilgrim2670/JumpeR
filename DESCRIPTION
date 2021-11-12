@@ -1,6 +1,6 @@
 Package: JumpeR
 Title: Importing and Working with Track and Field Data
-Version: 0.2.13
+Version: 0.2.14
 Authors@R: 
     c(person(given = "Greg",
             family = "Pilgrim",
@@ -9,10 +9,7 @@ Authors@R:
             comment = c(ORCID = "0000-0001-7831-442X")),
       person(given = "George",
             family = "Perry",
-            role = "ctb"),
-      person(given = "Caitlin",
-             family = "Baldwin",
-             role = "ctb"))
+            role = "ctb"))
 Description: Primarily used to convert human readable track and field results into dataframes for further analysis.  Results can come from central repositories like <https://www.flashresults.com/> or <http://www.deltatiming.com/>, or from individual team sites, like those for colleges.   Also contains functions useful for working with track and field data.
 License: MIT + file LICENSE
 Encoding: UTF-8

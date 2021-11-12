@@ -12,6 +12,73 @@ test_that("tf_parse heat sheet - no results", {
 
 })
 
+test_that("triple jump with attempts_split and split_attempts", {
+
+  skip_on_cran()
+
+  file <- "http://tfresultsdata.deltatiming.com/2019-ysu-icebreaker/191206F031.htm"
+
+  df_test <- file %>%
+    read_results() %>%
+    tf_parse(
+      relay_athletes = TRUE,
+      rounds = TRUE,
+      round_attempts = TRUE,
+      split_attempts = TRUE,
+      splits = TRUE
+    )
+
+  df_standard <-
+    structure(list(Place = c("1", "2", "3", "4", "5", "6", "7", "8",
+                             "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
+                             "20", NA, NA), Name = c("Raqib, Nisa", "Britt, Kaylah", "Austin, Nikeela",
+                                                     "Taub, Shannon", "Lewis, Aaliyah", "Phoennik, Courtney", "Seto, Maris",
+                                                     "McQueeney, Hope", "Holmberg, Gabby", "DeLuca, Maria", "Horrell, Rachel",
+                                                     "Billone, Caroline", "Streeter, Quintasia", "Adams, Katlyn",
+                                                     "Ketterman, Stefanie", "Latoza, Kayla", "Hershberger, Faith",
+                                                     "Collins, Abbey", "Lodge, Emily", "Douglas, Jill", "Wagner, Alexis",
+                                                     "Swartzbaugh, Lydia"), Age = c("SO", "FR", "SR", "SR", "SO",
+                                                                                    "JR", "SR", "FR", "JR", "JR", "SO", "JR", "FR", "SR", "SO", "SO",
+                                                                                    "FR", "SO", "FR", "SO", "JR", "SR"), Team = c("Buffalo", "Buffalo",
+                                                                                                                                  "Indiana (Pa.)", "Unattached", "California (Pa.)", "John Carroll",
+                                                                                                                                  "Duquesne", "Clarion", "Duquesne", "John Carroll", "Indiana (Pa.)",
+                                                                                                                                  "Duquesne", "California (Pa.)", "Grove City", "Indiana (Pa.)",
+                                                                                                                                  "California (Pa.)", "Indiana (Pa.)", "Grove City", "Clarion",
+                                                                                                                                  "Westminster (Pa.)", "California (Pa.)", "Geneva"), Finals_Result = c("12.77m",
+                                                                                                                                                                                                        "12.02m", "11.79m", "11.39m", "11.17m", "11.15m", "11.12m", "11.09m",
+                                                                                                                                                                                                        "11.06m", "11.01m", "10.93m", "10.90m", "10.82m", "10.53m", "10.17m",
+                                                                                                                                                                                                        "10.13m", "10.02m", "9.75m", "9.13m", "8.97m", "FOUL", "FOUL"
+                                                                                                                                  ), DQ = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                                                                                                                            0, 0, 0, 1, 1), Event = c("Women Triple Jump", "Women Triple Jump",
+                                                                                                                                                                      "Women Triple Jump", "Women Triple Jump", "Women Triple Jump",
+                                                                                                                                                                      "Women Triple Jump", "Women Triple Jump", "Women Triple Jump",
+                                                                                                                                                                      "Women Triple Jump", "Women Triple Jump", "Women Triple Jump",
+                                                                                                                                                                      "Women Triple Jump", "Women Triple Jump", "Women Triple Jump",
+                                                                                                                                                                      "Women Triple Jump", "Women Triple Jump", "Women Triple Jump",
+                                                                                                                                                                      "Women Triple Jump", "Women Triple Jump", "Women Triple Jump",
+                                                                                                                                                                      "Women Triple Jump", "Women Triple Jump"), Round_1 = c("12.33m",
+                                                                                                                                                                                                                             "11.02m", "11.46m", "11.39m", "11.04m", "10.89m", "X", "11.09m",
+                                                                                                                                                                                                                             "X", "10.75m", "X", "10.79m", "X", "10.35m", "10.17m", "X", "10.02m",
+                                                                                                                                                                                                                             "9.75m", "9.13m", "8.97m", NA, NA), Round_2 = c("12.36m", "X",
+                                                                                                                                                                                                                                                                             "11.44m", "-", "11.07m", "11.04m", "X", "10.66m", "11.06m", "ND",
+                                                                                                                                                                                                                                                                             "10.93m", "10.90m", "10.47m", "10.53m", "ND", "10.13m", "ND",
+                                                                                                                                                                                                                                                                             "ND", "ND", "ND", NA, NA), Round_3 = c("12.38m", "X", "11.26m",
+                                                                                                                                                                                                                                                                                                                    "-", "X", "10.86m", "11.06m", "ND", "X", "11.01m", "10.65m",
+                                                                                                                                                                                                                                                                                                                    "10.81m", "10.82m", "10.43m", "X", "X", "ND", "X", "ND", "ND",
+                                                                                                                                                                                                                                                                                                                    NA, NA), Round_4 = c("12.13m", "X", "11.72m", "-", "X", "11.13m",
+                                                                                                                                                                                                                                                                                                                                         "X", "10.82m", "-", NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,
+                                                                                                                                                                                                                                                                                                                                         NA, NA), Round_5 = c("12.77m", "12.02m", "11.79m", "-", "11.13m",
+                                                                                                                                                                                                                                                                                                                                                              "10.76m", "X", "10.71m", "-", NA, NA, NA, NA, NA, NA, NA, NA,
+                                                                                                                                                                                                                                                                                                                                                              NA, NA, NA, NA, NA), Round_6 = c("12.27m", "X", "11.77m", "-",
+                                                                                                                                                                                                                                                                                                                                                                                               "11.17m", "11.15m", "11.12m", "10.87m", "-", NA, NA, NA, NA,
+                                                                                                                                                                                                                                                                                                                                                                                               NA, NA, NA, NA, NA, NA, NA, NA, NA)), row.names = c(NA, -22L), class = "data.frame")
+
+  expect_equivalent(df_test, df_standard)
+
+
+
+})
+
 test_that("tf_parse_round_attempts", {
 
   file <-

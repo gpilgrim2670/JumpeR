@@ -1,3 +1,8 @@
+# JumpeR 0.2.14 November 12th, 2021
+
+* Bug fix where horizontal jump hytek results would have split_attempts applied
+erroneously
+
 # JumpeR 0.2.13 October 8th, 2021
 
 * Changes to `hytek_parse` and `flash_parse` such that they don't hang on heat

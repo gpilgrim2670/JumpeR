@@ -77,6 +77,9 @@ hytek_parse <-
     #   "http://tfresultsdata.deltatiming.com/2018-hurricane-invitational/180316F028.htm" %>%
     #   read_results() %>%
     #   add_row_numbers()
+    # hytek_file <- "http://tfresultsdata.deltatiming.com/2019-ysu-icebreaker/191206F031.htm" %>%
+    #   read_results() %>%
+    #   add_row_numbers()
 
 
         #### Pulls out event labels from text ####
@@ -149,6 +152,7 @@ hytek_parse <-
             stringr::str_replace_all("(?<=\\d\\.\\d) (?=\\d{1,2}\\s)", "  ") %>% # tf specific - split off wind and heat number
             stringr::str_replace_all("(?<=\\d) (?=\\d{1,}$)", "  ") %>% # tf specific - split off row_numb
             stringr::str_replace_all("(?<=\\dm)[:upper:](?=\\s)", "  ") %>% # tf specific - sometimes an M for Meet record is added to a distance 1.23m as 1.23mM
+            stringr::str_replace_all("(?<=\\dm)[:graph:](?=\\s)", "  ") %>% # tf specific - sometimes an M for Meet record is added to a distance 1.23m as 1.23mM
             stringr::str_replace_all(" \\., ", "  Period, ") %>% # for people with no first/last name, like Indian runners in some Singapore results
             stringr::str_replace_all("([:alpha])(\\.[:alpha:])", "\\1 \\2") %>%
             trimws()
@@ -848,7 +852,10 @@ hytek_parse <-
             transform(round_attempts_df, Row_Numb_Adjusted = data$Row_Numb[findInterval(Row_Numb, data$Row_Numb)]) %>%
             dplyr::select(-Row_Numb)
 
-          data <- dplyr::left_join(data, round_attempts_df, by = c("Row_Numb" = "Row_Numb_Adjusted"))
+          data <- dplyr::left_join(data, round_attempts_df, by = c("Row_Numb" = "Row_Numb_Adjusted")) %>%
+            dplyr::mutate(dplyr::across(dplyr::contains("_Attempts"), ~ dplyr::case_when(stringr::str_detect(Event, "ong|riple") ~ "Unknown",
+                                                                                       stringr::str_detect(Event, "ong|riple", negate = TRUE) ~ .))) %>%
+            na_if("Unknown")
         }
 
         if(hytek_split_attempts == TRUE){
