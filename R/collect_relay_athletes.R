@@ -33,11 +33,9 @@ collect_relay_athletes <- function(x){
 
   #### find row numbers of relay athletes ####
   row_numbs_relay_athlete <- x %>%
-    .[purrr::map_lgl(.,
-                     stringr::str_detect,
+    .[stringr::str_detect(.,
                      relay_athlete_string)] %>%
-    .[purrr::map_lgl(.,
-                     stringr::str_detect,
+    .[stringr::str_detect(.,
                      score_string, negate = TRUE)] %>%
     stringr::str_extract_all("\\d{1,}$")
 
@@ -48,11 +46,9 @@ collect_relay_athletes <- function(x){
     #### clean up incoming data, mostly to remove grade/age strings and reaction times ####
     suppressWarnings(
       data_1_relay_athlete <- x %>%
-        .[purrr::map_lgl(.,
-                         stringr::str_detect,
+        .[stringr::str_detect(.,
                          relay_athlete_string)] %>%
-        .[purrr::map_lgl(.,
-                         stringr::str_detect,
+        .[stringr::str_detect(.,
                          score_string, negate = TRUE)] %>%
         stringr::str_remove_all("\n") %>%
         stringr::str_replace_all("\\s(?=\\d)", "  ") %>% # make to sure have enough spaces between athlete names

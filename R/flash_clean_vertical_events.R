@@ -34,8 +34,9 @@ flash_clean_vertical_events <- function(df, wide_format_vertical = wide_format_c
 
   #### begin actual function ####
 
-  if (any(stringr::str_detect(df[1, ], "(^Place$)|(^Athlete$)|(^Order$)|(^Jump$)"), na.rm = TRUE)) {
-    df <- df[-1,] # remove first row if it contains header information
+  if (any(stringr::str_detect(df[1,], "(^Place$)|(^Athlete$)|(^Order$)|(^Jump$)"),
+          na.rm = TRUE)) {
+    df <- df[-1, ] # remove first row if it contains header information
   }
 
   df <- df %>% # remove tibble class because it doesn't work well with reshape
@@ -49,8 +50,7 @@ flash_clean_vertical_events <- function(df, wide_format_vertical = wide_format_c
 
 
 
-  if(any(stringr::str_detect(names(df), "[:lower:]\\d\\.\\d\\dm"))){
-
+  if (any(stringr::str_detect(names(df), "[:lower:]\\d\\.\\d\\dm"))) {
     wide_format_vertical <- TRUE
     # if("Finals_Result" %in% names(df))
     message("Duplicate column names fixed in results.  Please check column names.")
@@ -58,24 +58,22 @@ flash_clean_vertical_events <- function(df, wide_format_vertical = wide_format_c
 
   # if (all(wide_format_vertical == FALSE & any(stringr::str_detect(names(df), "[0-9]")))) {
   if (wide_format_vertical == FALSE) {
-
     varying_cols <- names(df)[grepl("[0-9]", names(df))]
 
     # only attempt to convert to long format if there are actual round columns present
-    if(length(varying_cols) > 0) {
+    if (length(varying_cols) > 0) {
+      df <- df %>%
+        reshape(
+          direction = "long",
+          varying = varying_cols,
+          sep = "",
+          timevar = "Height",
+          ids = row.names(df)
+        ) %>%
+        dplyr::select(dplyr::everything(), "Result" = "X",-id) %>%
+        dplyr::filter(is.na(Result) == FALSE) # remove rows without a result
 
-    df <- df %>%
-      reshape(
-        direction = "long",
-        varying = varying_cols,
-        sep = "",
-        timevar = "Height",
-        ids = row.names(df)
-      ) %>%
-      dplyr::select(dplyr::everything(), "Result" = "X", -id) %>%
-      dplyr::filter(is.na(Result) == FALSE) # remove rows without a result
-
-    rownames(df) <- NULL # reshape sets row names, remove them
+      rownames(df) <- NULL # reshape sets row names, remove them
     }
   }
 
@@ -83,23 +81,27 @@ flash_clean_vertical_events <- function(df, wide_format_vertical = wide_format_c
   #   dplyr::rename_with(cols = dplyr::starts_with("Best"), ~stringr::str_remove(., "(?<=(Best)).*"))
 
   # break out team names, which are sometimes included in Name
-  if("Team" %!in% names(df)){
-  df <- df %>%
-    dplyr::mutate(Team = stringr::str_split_fixed(Name, "\\\n", 2)[,2],
-                  Name = stringr::str_split_fixed(Name, "\\\n", 2)[,1],)
+  if ("Team" %!in% names(df)) {
+    df <- df %>%
+      dplyr::mutate(
+        Team = stringr::str_split_fixed(Name, "\\\n", 2)[, 2],
+        Name = stringr::str_split_fixed(Name, "\\\n", 2)[, 1],
+      )
   }
 
   # remove standard unit heights from Best
-  if("Finals_Result" %in% names(df)){
+  if ("Finals_Result" %in% names(df)) {
     df <- df %>%
-      mutate(Finals_Result = stringr::str_split_fixed(Finals_Result, "\\\n", 2)[,1],
-             Finals_Result = stringr::str_split_fixed(Finals_Result, "\\s", 2)[,1])
+      dplyr::mutate(
+        Finals_Result = stringr::str_split_fixed(Finals_Result, "\\\n", 2)[, 1],
+        Finals_Result = stringr::str_split_fixed(Finals_Result, "\\s", 2)[, 1]
+      )
   }
 
   # remove standard unit heights from Height
-  if("Height" %in% names(df)){
+  if ("Height" %in% names(df)) {
     df <- df %>%
-      mutate(Height = str_replace_all(Height, "m\\d{0,}\\-?\\.?\\d{0,}\\.?\\d{0,}", "m"))
+      dplyr::mutate(Height = stringr::str_replace_all(Height, "m\\d{0,}\\-?\\.?\\d{0,}\\.?\\d{0,}", "m"))
   }
 
   # remove residual standard units from names
@@ -117,11 +119,11 @@ flash_clean_vertical_events <- function(df, wide_format_vertical = wide_format_c
 
   # if (tidy_table == "table") {
 
-    # original version, uses tidyr
-    # clean_vertical_data <- clean_vertical_data %>%
-    #   tidyr::pivot_wider(names_from = Height, values_from = Result)
+  # original version, uses tidyr
+  # clean_vertical_data <- clean_vertical_data %>%
+  #   tidyr::pivot_wider(names_from = Height, values_from = Result)
 
-    # return(clean_vertical_data)
+  # return(clean_vertical_data)
   # }
 
   return(df)

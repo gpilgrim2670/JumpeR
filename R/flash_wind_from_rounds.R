@@ -1,4 +1,4 @@
-#' Pulls Wind Data by Round from Horizonatl Flash Table Results
+#' Pulls Wind Data by Round from Horizontal Flash Table Results
 #'
 #' In some Flash Table results for horizontal events (long jump, triple jump,
 #' throwing events), a wind value is listed for each round/attempt.  This
@@ -6,9 +6,6 @@
 #' the round data is in a column called Round_1)
 #'
 #' @importFrom dplyr left_join
-#' @importFrom dplyr select
-#' @importFrom dplyr contains
-#' @importFrom dplyr starts_with
 #' @importFrom purrr map
 #' @importFrom purrr reduce
 #' @importFrom stringr str_sort
@@ -55,9 +52,6 @@ wind_from_rounds <- function(df) {
         unique()
     )
 
-    # df_corrected <- df_corrected %>%
-    #   dplyr::select(!dplyr::starts_with("^R"), stringr::str_sort(names(.), numeric = TRUE))
-
     return(df_corrected)
   } else {
     return(df)
@@ -67,7 +61,9 @@ wind_from_rounds <- function(df) {
 #' Helper function for extracting wind data from round columns
 #'
 #' @importFrom dplyr mutate
+#' @importFrom dplyr na_if
 #' @importFrom stringr str_extract
+#' @importFrom stringr str_remove
 #'
 #' @param df a data frame containing round columns with both results and wind
 #'   data
@@ -97,11 +93,9 @@ wind_from_rounds_helper <- function(df = df, i, round_cols, ...) {
   # define positions of column ranges
 
   df <- df %>%
-    dplyr::mutate(
-      !!as.name(wind_cols[i]) := str_extract(!!as.name(round_cols[i]), wind_string)
-      ) %>%
-    dplyr::mutate(!!as.name(wind_cols[i]) := str_remove(!!as.name(wind_cols[i]), "w\\:?")) %>%
-  na_if("NA")
+    dplyr::mutate(!!as.name(wind_cols[i]) := stringr::str_extract(!!as.name(round_cols[i]), wind_string)) %>%
+    dplyr::mutate(!!as.name(wind_cols[i]) := stringr::str_remove(!!as.name(wind_cols[i]), "w\\:?")) %>%
+    dplyr::na_if("NA")
 
   df <- df[, colSums(is.na(df)) != nrow(df)]
 

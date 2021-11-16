@@ -18,7 +18,7 @@ flash_col_names <- function(df) {
   col_names <- names(df)
 
   old_names <-
-    col_names[str_detect(col_names, "(^X\\d+m)|(^Lap.*\\d+m)|(^L.*\\d+m)")]
+    col_names[stringr::str_detect(col_names, "(^X\\d+m)|(^Lap.*\\d+m)|(^L.*\\d+m)")]
 
   df <- df %>%
     dplyr::rename_with(.fn = flash_col_names_helper, .cols = old_names)

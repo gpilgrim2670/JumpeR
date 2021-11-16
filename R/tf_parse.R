@@ -200,8 +200,6 @@ tf_parse <-
 
       } else {
         # Hy-Tek
-
-
         data <- hytek_parse(
           hytek_file = raw_results,
           hytek_relay_athletes = relay_athletes,

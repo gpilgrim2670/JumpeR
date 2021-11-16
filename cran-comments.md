@@ -1,4 +1,5 @@
-# JumpeR v. 0.2.0
+# JumpeR v. 0.3.0 November 16th 2021
+
 
 # JumpeR v. 0.1.4 March 5th, 2021
 ## Per communication from CRAN team

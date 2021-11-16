@@ -1,3 +1,7 @@
+# JumpeR 0.3.0 November 16th, 2021
+
+* CRAN release containing all dev versions back to v0.1.4
+
 # JumpeR 0.2.14 November 12th, 2021
 
 * Bug fix where horizontal jump hytek results would have split_attempts applied

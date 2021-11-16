@@ -15,7 +15,7 @@ JumpeR is available on CRAN
 
 `devtools::install_github("gpilgrim2670/JumpeR")`
 
-v0.2.14 - November 12th, 2021
+v0.3.0 - November 16th, 2021
 
 Package is still under heavy development so development versions will be unstable.
 Please use the stable CRAN release unless you have a very good reason not to.
@@ -29,7 +29,7 @@ Please use the stable CRAN release unless you have a very good reason not to.
 `JumpeR` currently supports reading in *single column* Hy-tek/Active.com style results in either .html or .pdf format.  `JumpeR` also supports Flash Results style results in .pdf format (but not html).
 
 ### Hy-tek/Active.com Results
-[These](http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm) are Hy-tek results in html format, from the 2019 Greg Page relays at Cornell University.  This particular file contains the entire meet.
+[These](https://www.leonetiming.com/2019/Indoor/GregPageRelays/Results.htm) are Hy-tek results in html format, from the 2019 Greg Page relays at Cornell University.  This particular file contains the entire meet.
 
 ![Will work](https://github.com/gpilgrim2670/Pilgrim_Data/raw/master/JumepR_readme_files/HyTek_Cornell_60m_html.png)
 
@@ -37,7 +37,7 @@ It can be imported into `R` using `JumpeR`:
 ```r
 tf_parse(
     read_results(
-      "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
+      "https://www.leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
     )
   )
 ```
@@ -60,7 +60,7 @@ tf_parse(
 
 ### Flash Results
 
-[This](https://www.flashresults.com/2019_Meets/Outdoor/06-05_NCAAOTF-Austin/001-1.pdf) is a Flash Results .pdf result, from the prelims of the 2019 NCAA Mens 100m Championships.
+[This](https://www.flashresults.com/2019_Meets/Outdoor/06-05_NCAAOTF-Austin/001-1.pdf) is a Flash Results .pdf result, from the prelims of the 2019 NCAA Men's 100m Championships.
 
 ![Will work](https://github.com/gpilgrim2670/Pilgrim_Data/raw/master/JumepR_readme_files/Flash_Results_NCAA_100m.png)
 
@@ -92,13 +92,13 @@ Flash Results also post .html version of results like [these](https://www.flashr
 
 * `file` is the output of `read_results` and is required.
 
-* `avoid` is a list of strings.  Rows in `file` containing any of those strings will not be included in the final results.  `avoid` is optional.  Incorrectly specifying it may lead to nonsense rows in the final dataframe, but will not cause an error.  Nonsense rows can be removed after import.  
+* `avoid` is a list of strings.  Rows in `file` containing any of those strings will not be included in the final results.  `avoid` is optional.  Incorrectly specifying it may lead to nonsense rows in the final data frame, but will not cause an error.  Nonsense rows can be removed after import.  
 
 * `typo` and `replacement` work together to fix typos, by replacing them with replacements.  Strings in `typo` will be replaced by strings in `replacement` in element index order - that is the first element of `typo` will be replaced everywhere it appears by the first element of `replacement`.  Uncorrected typos can cause lost data and nonsense rows.
 
 * `relay_athletes` defaults to `FALSE`.  Setting it to `TRUE` will cause `tf_parse` to try to pull out the names of athletes participating in relays.  Athlete names will be in separate columns called `Relay_Athlete_1`, `Relay_Athlete_2` etc. etc.
 
-[Here's](http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm) the Womens 4x400m relay from the 2019 Greg Page relays at Cornell University.
+[Here's](https://www.leonetiming.com/2019/Indoor/GregPageRelays/Results.htm) the Women's 4x400m relay from the 2019 Greg Page relays at Cornell University.
 
 ![Relay results](https://github.com/gpilgrim2670/Pilgrim_Data/raw/master/JumepR_readme_files/HyTek_Cornell_4x400mRelay_html.png)
 
@@ -106,7 +106,7 @@ Here's the same thing after importing with `JumpeR`
 ```r
 tf_parse(
     read_results(
-      "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
+      "https://www.leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
     ),
     relay_athletes = TRUE
   )
@@ -199,7 +199,7 @@ The best use of `math_format` is to convert an entire column, like `Finals_Resul
 ```r
 df <- tf_parse(
   read_results(
-    "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
+    "https://www.leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
   )
 )
 

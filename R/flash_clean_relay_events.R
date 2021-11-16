@@ -39,7 +39,10 @@ flash_clean_relay_events <- function(df, wide_format_relay) {
       data.frame() %>%
       dplyr::select(-dplyr::matches("X\\.\\d+")) %>%
       dplyr::mutate(Time = stringr::str_remove(Time, "(?<!D)[Q|q]")) %>%
-      dplyr::mutate(dplyr::across(dplyr::matches("[0-9]"), ~stringr::str_remove(.x, " ?\\[(.*)\\]")))
+      dplyr::mutate(dplyr::across(
+        dplyr::matches("[0-9]"),
+        ~ stringr::str_remove(.x, " ?\\[(.*)\\]")
+      ))
 
 
     varying_cols <-
@@ -47,22 +50,29 @@ flash_clean_relay_events <- function(df, wide_format_relay) {
 
     # only attempt to convert to long format if there are actual split columns present
     if (length(varying_cols) > 0) {
-
       df <- flash_pivot_longer(df, varying = varying_cols)
     }
   } else {
     df <- df %>%
       dplyr::select(-dplyr::matches("X\\.\\d+")) %>%
       flash_col_names() %>%
-      dplyr::mutate(dplyr::across(dplyr::matches("Split_"), ~stringr::str_remove(.x, " ?\\[(.*)\\]")))
+      dplyr::mutate(dplyr::across(
+        dplyr::matches("Split_"),
+        ~ stringr::str_remove(.x, " ?\\[(.*)\\]")
+      ))
   }
 
   # begin actual function
   clean_relay_data <- df %>%
     dplyr::mutate(Time = stringr::str_remove(Time, "(?<!D)[Q|q]")) %>%
     dplyr::rename("Result" = "Time") %>%
-    dplyr::mutate(Tiebreaker = dplyr::case_when(stringr::str_detect(Result, "\\(\\d{1,2}\\.\\d{3}\\)") == TRUE ~ stringr::str_extract(Result, "\\d{1,2}\\.\\d{3}"), # pull tiebreakers out of Results column
-                                                TRUE ~ "NA")) %>%
+    dplyr::mutate(
+      Tiebreaker = dplyr::case_when(
+        stringr::str_detect(Result, "\\(\\d{1,2}\\.\\d{3}\\)") == TRUE ~ stringr::str_extract(Result, "\\d{1,2}\\.\\d{3}"),
+        # pull tiebreakers out of Results column
+        TRUE ~ "NA"
+      )
+    ) %>%
     dplyr::mutate(Result = stringr::str_remove(Result, "\\(\\d{1,2}\\.\\d{3}\\)")) %>% # remove tiebreakers
     dplyr::mutate(Result = stringr::str_remove(Result, "\\\n[:upper:]{1,2}")) %>% # remove PB, SB type strings
     dplyr::na_if("NA") %>%

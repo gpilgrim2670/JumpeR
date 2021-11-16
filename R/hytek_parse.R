@@ -104,9 +104,9 @@ hytek_parse <-
         suppressWarnings(
           data_1 <- raw_results %>%
             .[purrr::map(., length) > 0] %>%
-            .[purrr::map(., stringr::str_length) > 50] %>%
-            .[purrr::map_dbl(., stringr::str_count, "\\d\\)") < 2] %>%  # remove inline splits and team scores as 1) Alfred 2) Ithaca etc.
-            .[purrr::map_lgl(., stringr::str_detect, paste0(Result_String, "|DQ|DNS|DNF|FOUL|NH|SCR|FS|ND"))] %>% # must Results_String because all results do
+            .[stringr::str_length(.) > 50] %>%
+            .[stringr::str_count(., "\\d\\)") < 2] %>%  # remove inline splits and team scores as 1) Alfred 2) Ithaca etc.
+            .[stringr::str_detect(., paste0(Result_String, "|DQ|DNS|DNF|FOUL|NH|SCR|FS|ND"))] %>% # must Results_String because all results do
             .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "\\d{3}\\.\\d{2}")))] %>% # closes loophole in Result_String where a number like 100.00 could get through even though it's not a valid result
             .[purrr::map_lgl(., ~ !any(
               stringr::str_detect(., "^[0-9\\(\\)\\.FOULPASSm\\s\\-\\+]+$")
@@ -114,7 +114,7 @@ hytek_parse <-
             .[purrr::map_lgl(., ~ !any(
               stringr::str_detect(., "Event .*\\d")
             ))] %>% # removes event titles that also include distances, like "Event 1 Short Hurdles 0.762m"
-            .[purrr::map_lgl(., stringr::str_detect, "[:alpha:]{2,}")] %>% # must have at least two letters in a row
+            .[stringr::str_detect(., "[:alpha:]{2,}")] %>% # must have at least two letters in a row
             # .[purrr::map_lgl(., ~ !any(stringr::str_detect(., avoid)))] %>% # remove lines contained in avoid
             stringr::str_remove_all("\n\\s*") %>%
             # stringr::str_remove_all("\\d{0,2}\\:?\\d{1,2}\\.\\d{3}") %>% # ties

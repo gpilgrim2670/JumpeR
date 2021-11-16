@@ -7,11 +7,11 @@
 remove_unneeded_rounds(x)
 }
 \arguments{
-\item{x}{dataframe with columns called both "Round_X" and "Round_X_Results"
+\item{x}{data frame with columns called both "Round_X" and "Round_X_Results"
 where X is a number}
 }
 \value{
-returns a dataframe where Round_X columns that do not have a
+returns a data frame where Round_X columns that do not have a
 corresponding Round_X_Results have been removed
 }
 \description{

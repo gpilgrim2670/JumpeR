@@ -32,44 +32,52 @@ flash_clean_sprint_events <- function(df, wide_format_sprint) {
   #   flash_parse_table()
 
   if (wide_format_sprint == FALSE) {
-
     df <- df %>%
       data.frame() %>%
       dplyr::mutate(Time = stringr::str_remove(Time, "(?<!D)[Q|q]")) %>%
-      dplyr::mutate(dplyr::across(dplyr::matches("[0-9]"), ~stringr::str_remove(.x, " ?\\[(.*)\\]")))
-
+      dplyr::mutate(dplyr::across(
+        dplyr::matches("[0-9]"),
+        ~ stringr::str_remove(.x, " ?\\[(.*)\\]")
+      ))
 
     varying_cols <-
       names(df)[grep("(^X\\d)|(^Lap)|(^L\\d)", names(df))] # determine names of varying columns
 
     # only attempt to convert to long format if there are actual split columns present
     if (length(varying_cols) > 0) {
-
       df <- flash_pivot_longer(df, varying = varying_cols)
     }
   } else {
     df <- df %>%
       flash_col_names() %>%
-      dplyr::mutate(dplyr::across(dplyr::matches("Split_"), ~stringr::str_remove(.x, " ?\\[(.*)\\]")))
+      dplyr::mutate(dplyr::across(
+        dplyr::matches("Split_"),
+        ~ stringr::str_remove(.x, " ?\\[(.*)\\]")
+      ))
   }
 
   # begin actual function
   clean_sprint_data <- df %>%
     dplyr::mutate(Time = stringr::str_remove(Time, "(?<!D)[Q|q]")) %>%
     dplyr::rename("Result" = "Time") %>%
-    dplyr::mutate(Tiebreaker = dplyr::case_when(stringr::str_detect(Result, "\\(\\d{1,2}\\.\\d{3}\\)") == TRUE ~ stringr::str_extract(Result, "\\d{1,2}\\.\\d{3}"), # pull tiebreakers out of Results column
-                                                TRUE ~ "NA")) %>%
+    dplyr::mutate(
+      Tiebreaker = dplyr::case_when(
+        stringr::str_detect(Result, "\\(\\d{1,2}\\.\\d{3}\\)") == TRUE ~ stringr::str_extract(Result, "\\d{1,2}\\.\\d{3}"),
+        # pull tiebreakers out of Results column
+        TRUE ~ "NA"
+      )
+    ) %>%
     dplyr::mutate(Result = stringr::str_remove(Result, "\\(\\d{1,2}\\.\\d{3}\\)")) %>% # remove tiebreakers
     dplyr::mutate(Result = stringr::str_remove(Result, "\\\n[:upper:]{1,2}")) %>% # remove PB, SB type strings
     dplyr::na_if("NA") %>%
     dplyr::mutate(dplyr::across(where(is.character), stringr::str_trim))  # remove whitespaces
 
-  if("Team" %in% names(clean_sprint_data) == FALSE){
+  if ("Team" %in% names(clean_sprint_data) == FALSE) {
     clean_sprint_data <- clean_sprint_data %>%
-    dplyr::mutate(
-      Team = stringr::str_split_fixed(Name, "\\\n", 3)[, 2],
-      Name = stringr::str_split_fixed(Name, "\\\n", 3)[, 1]
-    )
+      dplyr::mutate(
+        Team = stringr::str_split_fixed(Name, "\\\n", 3)[, 2],
+        Name = stringr::str_split_fixed(Name, "\\\n", 3)[, 1]
+      )
   }
 
   return(clean_sprint_data)

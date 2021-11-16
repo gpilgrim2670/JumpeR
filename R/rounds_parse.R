@@ -42,7 +42,7 @@ rounds_parse <- function(text) {
 
       suppressWarnings(
         data_1 <- text %>%
-          .[purrr::map_lgl(., stringr::str_detect, attempt_string)] %>%
+          .[stringr::str_detect(., attempt_string)] %>%
           .[purrr::map_lgl(., ~ stringr::str_detect(., "^\n\\s*\\d+\\s|^\n\\s*--", negate = TRUE))] %>% # removes rows that start with a place, to remove main results
           .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "[:lower:]{2,}")))] %>% # removes rows that have two lower case letters in a row
           .[purrr::map_lgl(., ~ !any(stringr::str_detect(., ":")))] %>% # helps with removing records like "NYS: 1.45m"

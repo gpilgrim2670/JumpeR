@@ -73,7 +73,7 @@ flash_parse <-
     #### Pulls out event date ####
     Date_String <- paste(paste0("\\d{1,2}\\s", month.abb, "\\s20\\d{2}"), collapse = "|")
 
-    event_date <- str_extract(flash_file, Date_String)
+    event_date <- stringr::str_extract(flash_file, Date_String)
     event_date <- event_date[is.na(event_date) == FALSE]
     event_date <- event_date[1] # in case there are birthdates
 
@@ -100,8 +100,8 @@ flash_parse <-
         data_1 <- flash_file %>%
           .[purrr::map(., length) > 0] %>%
           .[purrr::map(., stringr::str_length) > 50] %>%
-          .[purrr::map_dbl(., stringr::str_count, "\\d\\)") < 2] %>%  # remove inline splits and team scores as 1) Alfred 2) Ithaca etc.
-          .[purrr::map_lgl(., stringr::str_detect, paste0(Result_String_Spaces, "|DQ|DNS|DNF|FOUL|NH|SCR|FS"))] %>% # must Results_String because all results do
+          .[stringr::str_count(., "\\d\\)") < 2] %>%  # remove inline splits and team scores as 1) Alfred 2) Ithaca etc.
+          .[stringr::str_detect(., paste0(Result_String_Spaces, "|DQ|DNS|DNF|FOUL|NH|SCR|FS"))] %>% # must Results_String because all results do
           .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "\\d{3}\\.\\d{2}")))] %>% # closes loophole in Result_String where a number like 100.00 could get through even though it's not a valid result
           .[purrr::map_lgl(., ~ !any(
             stringr::str_detect(., "^[0-9\\(\\)\\.FOULPASSm\\s\\-\\+]+$")
@@ -109,7 +109,7 @@ flash_parse <-
           .[purrr::map_lgl(., ~ !any(
             stringr::str_detect(., "Event .*\\d")
           ))] %>% # removes event titles that also include distances, like "Event 1 Short Hurdles 0.762m"
-          .[purrr::map_lgl(., stringr::str_detect, "[:alpha:]{2,}")] %>% # must have at least two letters in a row
+          .[stringr::str_detect(., "[:alpha:]{2,}")] %>% # must have at least two letters in a row
           # .[purrr::map_lgl(., ~ !any(stringr::str_detect(., avoid)))] %>% # remove lines contained in avoid
           stringr::str_remove_all("\n\\s*") %>%
           stringr::str_replace_all("(?<=\\d{1,2}) (?=Jan |Feb |Mar |Apr |May |Jun |Jul |Aug |Sep |Oct |Nov |Dec )", "-") %>% # need space after month.abb to not roll up e.g. "1 Marie"
@@ -443,7 +443,7 @@ flash_parse <-
         suppressWarnings(
           df_11 <- data_length_11 %>%
             list_transform() %>%
-          dplyr::mutate(Place = V1) %>%
+            dplyr::mutate(Place = V1) %>%
             dplyr::mutate(
               Bib_Number = dplyr::case_when(stringr::str_detect(V2, "^\\d{1,6}$") == TRUE ~ V2,
                                             TRUE ~ "NA")
@@ -475,7 +475,8 @@ flash_parse <-
                   stringr::str_detect(V4, "[:alpha:]{2,}") == TRUE ~ V4,
                 stringr::str_detect(V4, Age_String) == TRUE &
                   stringr::str_detect(V2, Name_String) == TRUE &
-                  stringr::str_detect(V3, "[:alpha:]{2,}") == TRUE ~ V3, # for results with date of birth instead of age
+                  stringr::str_detect(V3, "[:alpha:]{2,}") == TRUE ~ V3,
+                # for results with date of birth instead of age
                 TRUE ~ "NA"
               )
             ) %>%
@@ -536,10 +537,12 @@ flash_parse <-
               )
             ) %>%
             dplyr::mutate(
-              Tiebreaker = dplyr::case_when(stringr::str_detect(V9, Tiebreaker_String) == TRUE ~ V9,
-                                       stringr::str_detect(V6, Tiebreaker_String) == TRUE ~ V6,
-                                       stringr::str_detect(V5, Tiebreaker_String) == TRUE ~ V5,
-                                       TRUE ~ "NA")
+              Tiebreaker = dplyr::case_when(
+                stringr::str_detect(V9, Tiebreaker_String) == TRUE ~ V9,
+                stringr::str_detect(V6, Tiebreaker_String) == TRUE ~ V6,
+                stringr::str_detect(V5, Tiebreaker_String) == TRUE ~ V5,
+                TRUE ~ "NA"
+              )
             ) %>%
             dplyr::select(
               Place,
@@ -556,6 +559,7 @@ flash_parse <-
             )
         )
       } else {
+
         df_11 <- data.frame(Row_Numb = character(),
                             stringsAsFactors = FALSE)
       }
@@ -986,7 +990,7 @@ flash_parse <-
             dplyr::mutate(
               Points = dplyr::case_when(
                   stringr::str_detect(V6, Points_String) &
-                    stringr:: str_detect(V1, "[:alpha:]") == FALSE ~ V6, # decathalon points
+                    stringr::str_detect(V1, "[:alpha:]") == FALSE ~ V6, # decathalon points
                 TRUE ~ "NA"
               )
             ) %>%
@@ -1029,7 +1033,7 @@ flash_parse <-
                 TRUE ~ "NA"
               )
             ) %>%
-            dplyr::mutate(Bib_Number = case_when(str_detect(V2, "^\\d{1,6}$") == TRUE ~ V2,
+            dplyr::mutate(Bib_Number = dplyr::case_when(stringr::str_detect(V2, "^\\d{1,6}$") == TRUE ~ V2,
                                                  TRUE ~ "NA")) %>%
             dplyr::mutate(
               Age = dplyr::case_when(
@@ -1097,7 +1101,7 @@ flash_parse <-
             dplyr::mutate(
               Points = dplyr::case_when(
                 stringr::str_detect(V5, Points_String) &
-                  stringr:: str_detect(V1, "[:alpha:]") == FALSE ~ V5, # decathalon points
+                  stringr::str_detect(V1, "[:alpha:]") == FALSE ~ V5, # decathalon points
                 TRUE ~ "NA"
               )
             ) %>%

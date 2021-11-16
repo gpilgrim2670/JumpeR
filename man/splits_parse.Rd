@@ -10,7 +10,7 @@ splits_parse(text, split_len = 1)
 \item{text}{output of \code{read_results} with row numbers appended by
 \code{add_row_numbers}}
 
-\item{split_len}{the distance at which splits are meausred}
+\item{split_len}{the distance at which splits are measured}
 }
 \value{
 returns a data frame with split times and row numbers

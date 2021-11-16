@@ -7,6 +7,8 @@
 #' @param link_to_test a link
 #' @param duration the lowest row number
 #' @return \code{FALSE} if the link works, \code{TRUE} if it fails
+#'
+#' @export
 
 
 is_link_broken <- function(link_to_test, duration = 1) {

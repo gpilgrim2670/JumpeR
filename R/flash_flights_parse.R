@@ -57,14 +57,14 @@ flash_rounds_parse <- function(text) {
 
   #### collect row numbers from rows containing rounds ####
   row_numbs <- text %>%
-    .[purrr::map_lgl(., stringr::str_detect, attempt_string_flash)] %>%
-    str_extract("\\d{1,}$")
+    .[stringr::str_detect(., attempt_string_flash)] %>%
+    stringr::str_extract("\\d{1,}$")
 
   #### pull out rows containing rounds ####
 
   suppressWarnings(
     data_rounds <- text %>%
-      .[purrr::map_lgl(., stringr::str_detect, attempt_string_flash)] %>%
+      .[stringr::str_detect(., attempt_string_flash)] %>%
       # .[purrr::map_lgl(., ~ stringr::str_detect(., "^\\d", negate = TRUE))] %>% # removes rows that start with a place, to remove main results and scores with decimal places (5 Alfred U. 2.50 etc.)
       stringr::str_extract_all(attempt_string_flash, simplify = TRUE) %>%
       trimws()
@@ -76,8 +76,10 @@ flash_rounds_parse <- function(text) {
     dplyr::na_if("") %>%
     dplyr::rename(V1 = row_numbs) # for list_sort, needs V1 to be row numbers, but named V1
 
-  if(any(stringr::str_detect(text, "Scored")) == TRUE){ # gets rid of team scores in vertical jump events
-    row_score <- min(as.numeric(stringr::str_extract(text[stringr::str_detect(text, "Scored")], "\\d{1,}$")))
+  if (any(stringr::str_detect(text, "Scored")) == TRUE) {
+    # gets rid of team scores in vertical jump events
+    row_score <-
+      min(as.numeric(stringr::str_extract(text[stringr::str_detect(text, "Scored")], "\\d{1,}$")))
     data_rounds <- data_rounds %>%
       dplyr::filter(as.numeric(row_numbs) < row_score)
   }
@@ -102,7 +104,7 @@ flash_rounds_parse <- function(text) {
     return(data_rounds)
   } else {
     data_rounds <- data.frame(Row_Numb = character(),
-                                stringsAsFactors = FALSE)
+                              stringsAsFactors = FALSE)
     return(data_rounds)
   }
 

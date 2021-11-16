@@ -42,8 +42,7 @@ event_parse <- function(text) {
 
   #### Pull out event names ####
   events <- text %>%
-    .[purrr::map_lgl(.,
-                     stringr::str_detect,
+    .[stringr::str_detect(.,
                      event_string)]
 
   if (length(events) > 0) {
@@ -57,7 +56,7 @@ event_parse <- function(text) {
     events <- stringr::str_replace(events, " Class [:alpha:]", "")
     events <- stringr::str_replace(events, " m ", "m ")
     events <- events %>% # Addition
-      .[purrr::map_lgl(., stringr::str_detect, "[[:alpha:]]")] %>%
+      .[stringr::str_detect(., "[[:alpha:]]")] %>%
       stringr::str_replace_all("\\\n", "") %>%
       stringr::str_replace_all("\\(", "") %>%
       stringr::str_replace_all("\\)", "") %>%
@@ -70,7 +69,7 @@ event_parse <- function(text) {
       unlist(purrr::map(events, stringr::str_split, "\\s{2,}"),
              recursive = FALSE)
 
-    # dataframe for events with names and row number ranges
+    # data frame for events with names and row number ranges
     events <- events %>%
       list_transform() %>%
       dplyr::mutate(

@@ -2,7 +2,7 @@
 % Please edit documentation in R/flash_wind_from_rounds.R
 \name{wind_from_rounds}
 \alias{wind_from_rounds}
-\title{Pulls Wind Data by Round from Horizonatl Flash Table Results}
+\title{Pulls Wind Data by Round from Horizontal Flash Table Results}
 \usage{
 wind_from_rounds(df)
 }

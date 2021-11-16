@@ -41,8 +41,7 @@ wind_parse_hytek <- function(text) {
   wind_string <- "(?<=[:alpha:]\\s?\\()(\\+|\\-)?\\d\\.\\d|(?<=[:alpha:]\\s?\\()w\\:\\+?\\-?\\d\\.\\d"
 
   row_numbs <- text %>%
-    .[purrr::map_lgl(.,
-                     stringr::str_detect,
+    .[stringr::str_detect(.,
                      wind_string)] %>%
     stringr::str_extract_all("\\d{1,}$")
 
@@ -56,14 +55,11 @@ wind_parse_hytek <- function(text) {
 
     text <- stringr::str_replace_all(text, "(?<=\\sX)\\s{5,}(?=\\d)", "  NA  ")
 
-
-
     #### pull out rows containing wind results, which will remove row numbers ####
 
       suppressWarnings(
         data_1_wind <- text %>%
-          .[purrr::map_lgl(.,
-                           stringr::str_detect,
+          .[stringr::str_detect(.,
                            paste0(wind_string, "|\\s{2}NA\\s{2}"))] %>%
           stringr::str_replace_all("\n", "") %>%
           stringr::str_extract_all(
@@ -86,7 +82,6 @@ wind_parse_hytek <- function(text) {
     data_1_wind <-
       unlist(purrr::map(data_1_wind, stringr::str_split, "\\s{2,}"),
              recursive = FALSE)
-
 
     data_wind_length_2 <- data_1_wind[purrr::map(data_1_wind, length) == 2]
     data_wind_length_3 <- data_1_wind[purrr::map(data_1_wind, length) == 3]

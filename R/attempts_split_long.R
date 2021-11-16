@@ -97,7 +97,7 @@ attempts_split_long <- function(data_to_split) {
 
     data_split <- data_to_split %>%
       flash_attempts_split_long_helper() %>%
-      left_join(data_to_split %>% select(-Result), by = "Row_Numb") %>%
+      dplyr::left_join(data_to_split %>% dplyr::select(-Result), by = "Row_Numb") %>%
       dplyr::select(-Row_Numb)
 
     return(df_split)

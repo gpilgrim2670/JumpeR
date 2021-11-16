@@ -42,7 +42,7 @@ flash_round_attempts_parse <- function(text) {
 
   #### define strings ####
   flash_attempts_string <-
-     " P  | ?PPP ?| O | X | XO ?| ?XXO ?| XX | ?XX\\- | ?XX\U2013 | ?X\\-{2} | ?X\U2013{2} | ?XXX | XR | ?\\-{3} | ?\U2013{3} " # for metric and imperial units, also has special dash "em-dash", code is \U2013
+    " P  | ?PPP ?| O | X | XO ?| ?XXO ?| XX | ?XX\\- | ?XX\U2013 | ?X\\-{2} | ?X\U2013{2} | ?XXX | XR | ?\\-{3} | ?\U2013{3} " # for metric and imperial units, also has special dash "em-dash", code is \U2013
 
 
   #### Clean up incoming text ####
@@ -56,13 +56,13 @@ flash_round_attempts_parse <- function(text) {
   #   str_extract("\\d{1,}$")
 
   #### pull out rows containing rounds ####
-  suppressWarnings(data_1 <- text %>%
-                     stringr::str_replace_all(" ", "  ") %>% # if attempts are close together "XO XO" to "XO   XO"
-                     .[purrr::map_lgl(., stringr::str_detect, flash_attempts_string)] %>%
-                     stringr::str_replace_all("\U2013", "\\-") %>% # replace em dashes with regular dashes
-                     stringr::str_extract_all(paste0(
-                       flash_attempts_string, "|\\d{1,}$"
-                     )))
+  suppressWarnings(
+    data_1 <- text %>%
+      stringr::str_replace_all(" ", "  ") %>% # if attempts are close together "XO XO" to "XO   XO"
+      .[stringr::str_detect(., flash_attempts_string)] %>%
+      stringr::str_replace_all("\U2013", "\\-") %>% # replace em dashes with regular dashes
+      stringr::str_extract_all(paste0(flash_attempts_string, "|\\d{1,}$"))
+  )
 
 
   #### break out by length ####
@@ -233,13 +233,6 @@ flash_round_attempts_parse <- function(text) {
       dplyr::mutate(Row_Numb = as.numeric(Row_Numb)) %>%
       dplyr::arrange(Row_Numb)
 
-
-    # names(data_round_attempts)[ncol(data_round_attempts)] <-
-    #   "Row_Numb" # to rename last column since we don't know how many columns there will be
-
-    # data_round_attempts <- data_round_attempts %>%
-    #   dplyr::mutate(Row_Numb = as.numeric(Row_Numb)) # make row number of split match row number of performance
-
     #### rename columns V1, V2 etc. at Attempt_1, Attempt_2 etc. ####
     old_names <-
       names(data_round_attempts)[grep("^V", names(data_round_attempts))]
@@ -262,7 +255,7 @@ flash_round_attempts_parse <- function(text) {
     return(data_round_attempts)
   } else {
     data_round_attempts <- data.frame(Row_Numb = character(),
-                                        stringsAsFactors = FALSE)
+                                      stringsAsFactors = FALSE)
     return(data_round_attempts)
   }
 

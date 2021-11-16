@@ -177,11 +177,11 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   # athlete column
   athlete_col <-
     which(stringr::str_detect(as.vector(t(df)), "^Athlete$"))
-  if(all(length(athlete_col) > 0, athlete_col > ncol(df))){
-    n_rows_to_remove <- ceiling(-athlete_col/ncol(df))
+  if (all(length(athlete_col) > 0, athlete_col > ncol(df))) {
+    n_rows_to_remove <- ceiling(-athlete_col / ncol(df))
 
     athlete_col <- athlete_col %>%
-  flash_correct_column_overshoot(df = df)
+      flash_correct_column_overshoot(df = df)
 
   } else {
     n_rows_to_remove <- 0
@@ -251,23 +251,18 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   }
 
   df <- df %>%
-    purrr::when(all(length(blank_col) > 0, sum(is.na(blank_col)) < length(blank_col)) ~ rename(., "Placeholder" = all_of(blank_col)), ~ .) %>%
+    purrr::when(all(length(blank_col) > 0, sum(is.na(blank_col)) < length(blank_col)) ~ rename(., "Placeholder" = all_of(blank_col)),
+                ~ .) %>%
     purrr::when(all(length(age_col) > 0, sum(is.na(age_col)) < length(age_col)) ~ rename(., "Age" = all_of(age_col)), ~ .) %>%
     purrr::when(all(length(wind_col) > 0, sum(is.na(wind_col)) < length(wind_col)) ~ rename(., "Wind" = all_of(wind_col)), ~ .) %>%
     purrr::when(all(length(athlete_col) > 0, sum(is.na(athlete_col)) < length(athlete_col)) ~ rename(., "Athlete" = all_of(athlete_col)), ~ .) %>%
-    purrr::when(all(length(reaction_time_col) > 0, sum(is.na(reaction_time_col)) < length(reaction_time_col)) ~ rename(., "Reaction_Time" = all_of(reaction_time_col)), ~ .) %>%
+    purrr::when(all(
+      length(reaction_time_col) > 0,
+      sum(is.na(reaction_time_col)) < length(reaction_time_col)
+    ) ~ rename(., "Reaction_Time" = all_of(reaction_time_col)),
+    ~ .) %>%
     purrr::when(all(length(place_col) > 0, sum(is.na(place_col)) < length(place_col)) ~ rename(., "Place" = all_of(place_col)), ~ .) %>%
     purrr::when(all(length(position_col) > 0, sum(is.na(position_col)) < length(position_col)) ~ rename(., "Pos" = all_of(position_col)), ~ .) %>%
-    # dplyr::rename(
-    #   "Placeholder" = all_of(blank_col),
-    #   "Age" = dplyr::all_of(age_col),
-    #   "Wind" = dplyr::all_of(wind_col),
-    #   "Athlete" = dplyr::all_of(athlete_col),
-    #   "Reaction_Time" = dplyr::all_of(reaction_time_col),
-    #   "Place" = dplyr::all_of(place_col),
-    #   "Pos" = dplyr::all_of(position_col),
-    #   "Placeholder" = dplyr::all_of(blank_col)
-    # ) %>%
     dplyr::select(-dplyr::contains("Placeholder"))
 
   # remove unnamed columns
@@ -311,25 +306,6 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
     iconv(x, "latin1", "ASCII", sub = "")
   }))
 
-  # if (is.na(age_col) == FALSE) {
-  #   df <- df %>%
-  #     dplyr::rename("Age" = dplyr::all_of(age_col))
-  # }
-  #
-  # df <- df %>%
-  #   dplyr::rename(
-  #     # "Placeholder" = all_of(blank_col),
-  #          "Athlete" = dplyr::all_of(athlete_col),
-  #          "Reaction_Time" = dplyr::all_of(reaction_time_col),
-  #          "Place" = dplyr::all_of(place_col),
-  #          "Pos" = dplyr::all_of(position_col),
-  #          "Placeholder" = dplyr::all_of(blank_col)
-  #          ) %>%
-  #   dplyr::select(-dplyr::contains("Placeholder"))
-  #
-  # # remove unnamed columns
-  # df <- df[names(df) != ""]
-
   # remove empty columns
   df <- Filter(function(x)
     !all(is.na(x)), df)
@@ -357,8 +333,8 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   event_year <- stringr::str_extract(link, "20\\d\\d")
 
   # converted to date fromat in flash_clean_events
-  if(event_date %in% c("Unknown", NA) == FALSE){
-  event_date <- paste(event_date, event_year, sep = " ")
+  if (event_date %in% c("Unknown", NA) == FALSE) {
+    event_date <- paste(event_date, event_year, sep = " ")
   }
 
   # include event name and gender
@@ -380,13 +356,6 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   # keep all columns as characters for consistency's sake
   df <- df %>%
     dplyr::mutate(dplyr::across(dplyr::everything(), as.character))
-
-
-  # keep times as characters for consistency's sake
-  # if("Time" %in% names(df)){
-  #   df <- df %>%
-  #     dplyr::mutate(Time = as.character(Time))
-  # }
 
   # regularize Name and Athlete columns
   if ("Athlete" %in% names(df)) {
@@ -413,7 +382,7 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
   }
 
   # regularize Finals_Result column name
-  if (any(str_detect(names(df), "Best.*")) == TRUE) {
+  if (any(stringr::str_detect(names(df), "Best.*")) == TRUE) {
     df <- df %>%
       dplyr::rename("Finals_Result" = dplyr::contains("Best"))
   }

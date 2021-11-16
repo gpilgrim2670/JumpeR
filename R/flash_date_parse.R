@@ -13,7 +13,7 @@
 #' @seealso \code{flash_date_parse} is a helper function inside
 #'   \code{\link{flash_parse_table}}
 
-flash_date_parse <- function(text){
+flash_date_parse <- function(text) {
 
   # testing
   # text <- page_content %>%
@@ -23,7 +23,8 @@ flash_date_parse <- function(text){
   #### begin actual function ####
 
   # build list of regex for all dates of form "Jul 25"
-  Date_String <- paste(paste0(month.abb, "\\s\\d{1,2}"), collapse = "|")
+  Date_String <-
+    paste(paste0(month.abb, "\\s\\d{1,2}"), collapse = "|")
 
   # find event date in text
   event_date <- stringr::str_extract_all(text, Date_String)
@@ -32,7 +33,7 @@ flash_date_parse <- function(text){
   event_date <-
     event_date[lapply(event_date, length) > 0] # remove empty elements from list
 
-  if(length(event_date) == 0){
+  if (length(event_date) == 0) {
     event_date <- NA
     # message("No event date detected, defaulting to 'Unknown'")
   }
