@@ -1,5 +1,10 @@
 # JumpeR v. 0.3.0 November 16th 2021
 
+## Test environments
+* local Windows R install, R 4.0.5
+* local Mac OS R install, R 4.0.4
+* win-devel
+* rhub
 
 # JumpeR v. 0.1.4 March 5th, 2021
 ## Per communication from CRAN team
