@@ -8,7 +8,7 @@ test_that("tf_parse heat sheet - no results", {
     read_results() %>%
     tf_parse(), "No results found in file")
 
-  expect_null(out)
+  expect_equivalent(out, data.frame())
 
 })
 
@@ -665,4 +665,4 @@ test_that("hytek_parse long jump with wind speeds by round/attempt, missing spee
 })
 
 
-# testthat::test_file("tests/testthat/test-tf_parse_works.R")
+# testthat::test_file("tests/testthat/test-tf_parse.R")

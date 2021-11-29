@@ -5,4 +5,4 @@ test_that("math_format works", {
 
 })
 
-# testthat::test_file("tests/testthat/test-math_format_works.R")
+# testthat::test_file("tests/testthat/test-math_format.R")

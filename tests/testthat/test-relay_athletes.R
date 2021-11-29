@@ -31,4 +31,4 @@ test_that("relay athletes two lines, one athlete missing works", {
 
 })
 
-# testthat::test_file("tests/testthat/test-relay_athletes_works.R")
+# testthat::test_file("tests/testthat/test-relay_athletes.R")

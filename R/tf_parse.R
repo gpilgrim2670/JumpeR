@@ -72,6 +72,7 @@ tf_parse <-
     # file <- "http://www.leonetiming.com/2020/Indoor/IvyLeague/Results.htm"
     # file <- read_results(file)
     # file <- read_results("http://tfresultsdata.deltatiming.com/2019-horizon-outdoor-championships/190503F026.htm")
+    # file <- read_results("http://tfresultsdata.deltatiming.com/2019-sun-belt-outdoor-championships/190510F042.htm")
     # typo <- typo_default
     # replacement <- replacement_default
     # avoid <- avoid_default
@@ -197,7 +198,9 @@ tf_parse <-
             flash_round_attempts = round_attempts,
             flash_split_attempts = split_attempts
           )
-
+      } else if (any(stringr::str_detect(raw_results[1:10], "^\\\n\\s+Points"))) {
+        data <- data.frame()
+        message("No results found in file")
       } else {
         # Hy-Tek
         data <- hytek_parse(

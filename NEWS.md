@@ -1,3 +1,7 @@
+# JumpeR 0.3.1 November 29th, 2021
+
+* Bug fixes for blank results and multi-event score pages
+
 # JumpeR 0.3.0 November 16th, 2021
 
 * CRAN release containing all dev versions back to v0.1.4

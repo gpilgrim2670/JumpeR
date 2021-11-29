@@ -130,3 +130,5 @@ test_that("hytek splits 2", {
   expect_equivalent(df_test, df_standard)
 
 })
+
+# testthat::test_file("tests/testthat/test-splits.R")
