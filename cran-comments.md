@@ -6,6 +6,8 @@
 * win-devel
 * rhub
 
+0 errors √ | 0 warnings √ | 0 notes √
+
 # JumpeR v. 0.1.4 March 5th, 2021
 ## Per communication from CRAN team
 * I had receive notification on Feb 19th that this package would be removed if issues relating to testing external resources were not fixed by March 5th.  Those issues were fixed in version 0.1.3, submitted February 22th - see below.  None the less this package was still removed.  Submitting again to get it back up.
