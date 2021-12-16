@@ -1,6 +1,6 @@
 Package: JumpeR
 Title: Importing and Working with Track and Field Data
-Version: 0.3.1
+Version: 0.3.2
 Authors@R: 
     c(person(given = "Greg",
             family = "Pilgrim",
@@ -14,7 +14,7 @@ Description: Primarily used to convert human readable track and field results in
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Imports: 
     magrittr,
     dplyr,

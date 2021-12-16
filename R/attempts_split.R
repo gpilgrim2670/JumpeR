@@ -15,8 +15,7 @@
 #' @importFrom purrr map
 #' @importFrom purrr reduce
 #'
-#' @param data_to_split output from \code{read_results} followed by
-#'   \code{add_row_numbers}
+#' @param data_to_split data frame with columns named "Round_X_Attempts" where X is a number
 #' @return returns a data frame with Round_X_Attempts columns split into
 #'   individual attempts inside \code{tf_parse}
 #'
@@ -29,6 +28,7 @@ attempts_split <- function(data_to_split) {
   #### get names of all Round_X_Attempts columns ####
   cols_to_split <-
     stringr::str_subset(names(data_to_split), "^Round_\\d{1,}_Attempts")
+
   if (length(cols_to_split) >= 1) {
     #### create ending for new split columns ####
     ending <- paste0("_", seq(1, 3, 1))

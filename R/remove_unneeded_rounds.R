@@ -5,8 +5,9 @@
 #'
 #' @importFrom dplyr select
 #' @importFrom dplyr all_of
-#' @importFrom stringr str_remove
-#' @importFrom stringr str_subset
+#' @importFrom dplyr na_if
+#' @importFrom stringr str_detect
+#' @importFrom purrr keep
 #'
 #' @param x data frame with columns called both "Round_X" and "Round_X_Results"
 #'   where X is a number
@@ -17,13 +18,25 @@
 #'   & \code{\link{tf_parse}}
 
 remove_unneeded_rounds <- function(x) {
-  attempt_cols <-
-    stringr::str_remove(stringr::str_subset(names(x), "^Round_"),
-                        "_Attempts?_?\\d{0,}")
 
-  keep_cols <- attempt_cols[duplicated(attempt_cols)]
+  # attempt_cols <-
+  #   stringr::str_remove(stringr::str_subset(names(x), "^Round_"),
+  #                       "_Attempts?_?\\d{0,}")
 
-  remove_cols <- attempt_cols[!attempt_cols %in% keep_cols]
+  remove_cols <- x %>%
+    dplyr::na_if("") %>%
+    purrr::keep( ~ all(is.na(.x))) %>%
+    names() %>%
+    .[stringr::str_detect(., "Round")]
+
+  # x %>%
+  #   select(ColNums_NotAllMissing(.)) %>%
+  #   names() %>%
+  #   .[str_detect(., "Round")]
+  #
+  # keep_cols <- attempt_cols[duplicated(attempt_cols)]
+
+  # remove_cols <- attempt_cols[!attempt_cols %in% keep_cols]
 
   x <- x %>%
     dplyr::select(-dplyr::all_of(remove_cols))

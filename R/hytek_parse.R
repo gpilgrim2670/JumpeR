@@ -84,6 +84,10 @@ hytek_parse <-
     #   read_results() %>%
     #   add_row_numbers()
 
+    # hytek_file <- "http://tfresultsdata.deltatiming.com/2019-sun-belt-outdoor-championships/190510F029.htm" %>%
+    #   read_results() %>%
+    #   add_row_numbers()
+
 
         #### Pulls out event labels from text ####
 
@@ -181,6 +185,7 @@ hytek_parse <-
       data_length_8 <- data_1[purrr::map(data_1, length) == 8]
       data_length_9 <- data_1[purrr::map(data_1, length) == 9]
       data_length_10 <- data_1[purrr::map(data_1, length) == 10]
+      data_length_11 <- data_1[purrr::map(data_1, length) == 11]
 
       # treatment of DQs
       # suppressWarnings(DQ <-
@@ -188,6 +193,28 @@ hytek_parse <-
       # DQ_length_3 <- DQ[purrr::map(DQ, length) == 3]
       # DQ_length_4 <- DQ[purrr::map(DQ, length) == 4]
 
+
+      #### eleven variables ####
+      if (length(data_length_11) > 0) {
+        suppressWarnings(
+          df_11 <- data_length_11 %>%
+            list_transform() %>%
+            dplyr::select(
+              Place = V1,
+              Bib_Number = V2,
+              Name = V3,
+              Age = V4,
+              Team = V5,
+              Finals_Result = V6,
+              Wind_Speed = V7,
+              'Row_Numb' = V11
+            )
+        )
+
+      } else {
+        df_11 <- data.frame(Row_Numb = character(),
+                            stringsAsFactors = FALSE)
+      }
 
       #### ten variables ####
       if (length(data_length_10) > 0) {
@@ -251,6 +278,7 @@ hytek_parse <-
             ) %>%
             dplyr::mutate(
               Wind_Speed = dplyr::case_when(stringr::str_detect(V8, Wind_String) ~ V8,
+                                            stringr::str_detect(V7, Wind_String) ~ V7,
                                             TRUE ~ "NA")
             ) %>%
             dplyr::mutate(
@@ -259,6 +287,8 @@ hytek_parse <-
                   stringr::str_detect(V8, "^\\d\\.?\\d?$") == TRUE &
                   stringr::str_detect(V9, "\\d{1,2}") == FALSE ~ V8,
                 stringr::str_detect(V8, Wind_String) == TRUE &
+                  stringr::str_detect(V9, "^\\d\\.?\\d?$") == TRUE ~ V9,
+                stringr::str_detect(V7, Wind_String) == TRUE &
                   stringr::str_detect(V9, "^\\d\\.?\\d?$") == TRUE ~ V9,
                 TRUE ~ "NA"
               )
@@ -728,7 +758,7 @@ hytek_parse <-
       Min_Row_Numb <- min(events$Event_Row_Min)
       suppressWarnings(
         data <-
-          dplyr::bind_rows(df_10, df_9, df_8, df_7, df_6, df_5, df_4) %>%
+          dplyr::bind_rows(df_11, df_10, df_9, df_8, df_7, df_6, df_5, df_4) %>%
           dplyr::mutate(Row_Numb = as.numeric(Row_Numb)) %>%
           dplyr::arrange(Row_Numb) %>%
           dplyr::mutate(Exhibition = 0) %>%
@@ -858,7 +888,9 @@ hytek_parse <-
           dplyr::select(-Row_Numb)
 
         data <-
-          dplyr::left_join(data, rounds_df, by = c("Row_Numb" = "Row_Numb_Adjusted"))
+          dplyr::left_join(data, rounds_df, by = c("Row_Numb" = "Row_Numb_Adjusted")) %>%
+          dplyr::distinct(dplyr::across(c(dplyr::contains("Name"), dplyr::contains("Team"), dplyr::contains("Final"), dplyr::contains("Place"), dplyr::contains("Event"))), .keep_all = TRUE)
+
       }
 
       #### adding in rounds results ####
@@ -880,7 +912,9 @@ hytek_parse <-
               stringr::str_detect(Event, "ong|riple", negate = TRUE) ~ .
             )
           )) %>%
-          na_if("Unknown")
+          na_if("Unknown") %>%
+          dplyr::distinct(dplyr::across(c(dplyr::contains("Name"), dplyr::contains("Team"), dplyr::contains("Final"), dplyr::contains("Place"), dplyr::contains("Event"))), .keep_all = TRUE)
+
       }
 
       if (hytek_split_attempts == TRUE) {
@@ -921,7 +955,16 @@ hytek_parse <-
       data <- data %>%
         dplyr::select(which(SwimmeR::`%!in%`(
           names(.), c("Row_Numb", "Exhibition", "Points", "Heat")
-        )))
+        ))) %>%
+        dplyr::distinct(dplyr::across(
+          c(
+            dplyr::contains("Name"),
+            dplyr::contains("Team"),
+            dplyr::contains("Final"),
+            dplyr::contains("Place"),
+            dplyr::contains("Event")
+          )
+        ), .keep_all = TRUE)
 
       row.names(data) <- NULL
 

@@ -4,6 +4,7 @@
 #' extracts split times and associated row numbers
 #'
 #' @importFrom dplyr bind_rows
+#' @importFrom dplyr all_of
 #' @importFrom dplyr rename_at
 #' @importFrom dplyr mutate_at
 #' @importFrom dplyr rename
@@ -13,8 +14,8 @@
 #' @importFrom stringr str_extract_all
 #' @importFrom stringr str_split
 #' @importFrom stringr str_detect
-#' @importFrom purrr map_lgl
 #' @importFrom purrr map
+#' @importFrom purrr modify_if
 #'
 #' @param text output of \code{read_results} with row numbers appended by
 #'   \code{add_row_numbers}
@@ -34,26 +35,33 @@ wind_parse_hytek <- function(text) {
   # text <- read_results("http://results.deltatiming.com/tf/2019-tiger-track-classic/190405F032") %>%
   #   add_row_numbers()
 
+  # text_1 <- read_results("http://tfresultsdata.deltatiming.com/2019-sun-belt-outdoor-championships/190510F029.htm") %>%
+  #   add_row_numbers()
+
+  # text_1 <- read_results("https://results.deltatiming.com/tf/2019-tiger-track-classic/190405F032") %>%
+  #   add_row_numbers()
+
   #### Actual Function ####
   ### collect row numbers from rows containing splits ###
   ### define strings ###
 
-  wind_string <- "(?<=[:alpha:]\\s?\\()(\\+|\\-)?\\d\\.\\d|(?<=[:alpha:]\\s?\\()w\\:\\+?\\-?\\d\\.\\d"
+  wind_string <- "(?<=[:alpha:]\\s?\\()(\\+|\\-)?\\d\\.\\d|(?<=[:alpha:]\\s?\\()w\\:\\+?\\-?\\d\\.\\d| X   |(?<=^\\s{1,10}\\()\\+?\\-?\\d\\.\\d"
 
   row_numbs <- text %>%
     .[stringr::str_detect(.,
                      wind_string)] %>%
     stringr::str_extract_all("\\d{1,}$")
 
-  #### if there are still no valid splits return blank dataframe ####
+  #### if there are still no valid splits return blank data frame ####
   if (length(row_numbs) > 0) {
     minimum_row <- min(as.numeric(row_numbs))
     maximum_row <- as.numeric(length(text))
 
     #### help out a little, in case there are wind results that only have one space between them ####
-    text <- stringr::str_replace_all(text, "(\\)) (\\d)", "\\1  \\2")
-
-    text <- stringr::str_replace_all(text, "(?<=\\sX)\\s{5,}(?=\\d)", "  NA  ")
+    text <- text %>%
+      stringr::str_replace_all("(\\)) (\\d)", "\\1  \\2") %>%
+      stringr::str_replace_all("(?<=\\sX)\\s{5,}(?=\\d)", "  NA  ") %>%
+      stringr::str_replace_all(" X   ", "  NA  ")
 
     #### pull out rows containing wind results, which will remove row numbers ####
 
@@ -61,10 +69,12 @@ wind_parse_hytek <- function(text) {
         data_1_wind <- text %>%
           .[stringr::str_detect(.,
                            paste0(wind_string, "|\\s{2}NA\\s{2}"))] %>%
+          # str_remove_all("X") %>%
           stringr::str_replace_all("\n", "") %>%
           stringr::str_extract_all(
-           wind_string
+           paste0(wind_string, "|NA")
           ) %>%
+          purrr::modify_if(~length(.) == 0, ~NA_character_) %>%
           stringr::str_remove_all('\\"') %>% # to coerce into atomic vector
           stringr::str_replace_all("\\(", " ") %>%
           stringr::str_replace_all("\\)", " ") %>%
@@ -190,8 +200,9 @@ wind_parse_hytek <- function(text) {
       paste("Round", seq(1, length(old_names)), "Wind", sep = "_")
 
     data_wind <- data_wind %>%
-      dplyr::rename_at(dplyr::vars(old_names), ~ new_names) %>%
+      dplyr::rename_at(dplyr::vars(dplyr::all_of(old_names)), ~ new_names) %>%
       dplyr::na_if("NA")
+      # dplyr::distinct(dplyr::across(dplyr::contains("Round")), .keep_all = TRUE)
 
   } else { # if there are no rows with valid splits return blank data frame
     data_wind <- data.frame(Row_Numb = as.numeric())

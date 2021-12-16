@@ -1,3 +1,10 @@
+
+# JumpeR 0.3.2 December 16th, 2021
+
+* Bug fixes for long jump events that use X instead of FOUL
+* Better handling of wind speed for long jump events
+* Minor changes to `remove_unneeded_rounds` to enable the above
+
 # JumpeR 0.3.1 November 29th, 2021
 
 * Bug fixes for blank results and multi-event score pages
@@ -8,7 +15,7 @@
 
 # JumpeR 0.2.14 November 12th, 2021
 
-* Bug fix where horizontal jump hytek results would have split_attempts applied
+* Bug fix where horizontal jump Hytek results would have split_attempts applied
 erroneously
 
 # JumpeR 0.2.13 October 8th, 2021

@@ -29,6 +29,7 @@ round_attempts_parse <- function(text) {
   # file <- "http://leonetiming.com/2019/Indoor/GregPageRelays/Results.htm"
   # file <-
   #    system.file("extdata", "Results-IVP-Track-Field-Championship-2019-20-v2.pdf", package = "JumpeR")
+  # file <- "http://tfresultsdata.deltatiming.com/2019-sun-belt-outdoor-championships/190510F029.htm"
 
   # file <- read_results(file)
   # text <- add_row_numbers(file)
@@ -43,6 +44,7 @@ round_attempts_parse <- function(text) {
   suppressWarnings(
     data_1 <- text %>%
       .[stringr::str_detect(., attempts_string)] %>%
+      .[stringr::str_detect(., "\\d\\.\\d", negate = TRUE)] %>%
       .[purrr::map_lgl(., ~ stringr::str_detect(., "^\n\\s*\\d+\\s|^\n\\s*--", negate = TRUE))] %>% # removes rows that start with a place, to remove main results
       .[purrr::map_lgl(., ~ !any(stringr::str_detect(., "[:lower:]{2,}")))] %>% # removes rows that have two lower case letters in a row
       .[purrr::map_lgl(., ~ !any(stringr::str_detect(., ":")))] %>% # helps with removing records like "NYS: 1.45m"
@@ -184,6 +186,7 @@ round_attempts_parse <- function(text) {
   round_attempts_data <- round_attempts_data %>%
     dplyr::rename_at(dplyr::vars(dplyr::all_of(old_names)), ~ new_names) %>%
     dplyr::arrange(Row_Numb)
+    # dplyr::distinct(dplyr::across(dplyr::contains("Round")), .keep_all = TRUE)
 
   return(round_attempts_data)
 

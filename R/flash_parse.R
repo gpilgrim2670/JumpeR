@@ -64,6 +64,9 @@ flash_parse <-
     # flash_file <- read_results("https://www.flashresults.com/2018_Meets/Outdoor/04-20_DukeInvite/014-1.pdf") %>%
     #   add_row_numbers()
 
+    # flash_file <- read_results("https://www.flashresults.com/2018_Meets/Outdoor/04-20_VirginiaChallenge/034-1.pdf") %>%
+    #   add_row_numbers()
+
     #### Begin actual function ####
 
     #### Pulls out event labels from text ####

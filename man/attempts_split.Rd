@@ -7,8 +7,7 @@
 attempts_split(data_to_split)
 }
 \arguments{
-\item{data_to_split}{output from \code{read_results} followed by
-\code{add_row_numbers}}
+\item{data_to_split}{data frame with columns named "Round_X_Attempts" where X is a number}
 }
 \value{
 returns a data frame with Round_X_Attempts columns split into
