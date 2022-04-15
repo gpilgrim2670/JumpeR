@@ -74,6 +74,7 @@ event_parse <- function(text) {
       list_transform() %>%
       dplyr::mutate(
         Event = stringr::str_extract(V1, "[[:graph:] ]*"),
+        # Event = flash_event_parse(Event),
         Event_Row_Min = as.numeric(V2),
         Event_Row_Max = dplyr::lead(Event_Row_Min, 1L, default = length(text)) - 1,
         V1 = NULL,

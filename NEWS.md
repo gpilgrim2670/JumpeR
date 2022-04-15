@@ -2,6 +2,8 @@
 
 * Bug fixes for `flash_year_links` to handle meet results split over multiple
 days
+* Changes to `flash_gender_parse` and `flash_event_parse` to make them more 
+applicable to also cleaning hytek results
 
 # JumpeR 0.3.2 December 16th, 2021
 

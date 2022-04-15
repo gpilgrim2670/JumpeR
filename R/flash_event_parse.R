@@ -6,6 +6,7 @@
 #' @importFrom stringr str_match
 #' @importFrom stringr str_replace
 #' @importFrom stringr str_to_title
+#' @importFrom stringr str_trim
 #'
 #' @param text raw text of an event page from Flash Results
 #' @return a one element list containing the name of the event
@@ -46,8 +47,8 @@ flash_event_parse <- function(text){
         "DMR",
         "\\d{3,4}?\\s?SMR\\s?(Swedish)?",
         "[:alpha:]+ medley( relay)?",
-        "\\d?\\s?x?\\s?\\d{3,4} (meter)?\\srelay",
-        "\\d?\\s?x?\\s?\\d{3,4} [m|M](eter)?\\sshuttle\\shurdle",
+        "\\d?\\s?x?\\s?\\d{3,4}\\s?(meter)?\\srelay",
+        "\\d?\\s?x?\\s?\\d{3,4}\\s?[m|M](eter)?\\sshuttle\\shurdle",
         "\\d?\\s?x?\\s?\\d [m|M](ile)?\\srelay",
         "\\dx\\d{2,}\\s*m\\srelay", # for relays
         "((Hep|Pen|Dec)(.*\\s))?\\d{2,5}\\s*[m|M](eter)?(\\shurdles)?", # also captures regular running events like 400m etc.
@@ -74,13 +75,14 @@ flash_event_parse <- function(text){
     stringr::str_to_title() %>%  # capitalizes every word and also m/M
     stringr::str_replace("(\\d)\\sM$", "\\1m") %>% # bring M next to digit as m
     stringr::str_replace("(\\d)\\sM ", "\\1m ") %>% # bring M next to digit as m
-    stringr::str_replace("(\\d)\\s[M|m](eter)? Hurdles$", "\\1m Hurdles") %>%
-    stringr::str_replace("(\\d)\\s[M|m](eter)? Relay$", "\\1m Relay") %>%
+    stringr::str_replace("(\\d)\\s[M|m]?(eter)? Hurdles$", "\\1m Hurdles") %>%
+    stringr::str_replace("(\\d)\\s[M|m]?(eter)? Relay$", "\\1m Relay") %>%
     stringr::str_replace("(\\d)\\s[M|m](eter)", "\\1m ") %>% # bring Meter next to digit as m
     stringr::str_replace("(?<![x|X])1 Mile", "Mile") %>%  # reformat mile event name, but not 4x1 Mile Relay
     stringr::str_remove("(Women )|(Men )|(Boys )|(Girls)|(Mixed )") %>%
     stringr::str_replace("Distance Medley", "Dmr") %>%
-    stringr::str_replace("Sprint Medley", "Smr")
+    stringr::str_replace("Sprint Medley", "Smr") %>%
+    stringr::str_trim()
     # stringr::str_replace("(\\d)0000m$", "\\10000m Race Walk") # name race walks
 
   return(event_name)

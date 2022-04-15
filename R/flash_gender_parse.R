@@ -23,7 +23,7 @@ flash_gender_parse <- function(text) {
   #### actual function ####
 
   # build list of regex for all T&F event genders
-  genders <- paste0("(?i)", c("(?<=\\s)men", "women", "boys", "girls", "mixed"), collapse = "|")
+  genders <- paste0("(?i)", c("(?<=\\s)men", "^men", "women", "boys", "girls", "mixed"), collapse = "|")
 
   # find event gender in text
   event_gender <- stringr::str_match(text, genders)
