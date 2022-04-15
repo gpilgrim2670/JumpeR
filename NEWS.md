@@ -1,3 +1,7 @@
+# JumpeR 0.3.3 April 15th, 2022
+
+* Bug fixes for `flash_year_links` to handle meet results split over multiple
+days
 
 # JumpeR 0.3.2 December 16th, 2021
 
