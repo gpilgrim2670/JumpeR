@@ -1,6 +1,6 @@
 test_that("flash year 2015", {
 
-  # skip_on_cran() # due to risk of external resources failing
+  skip_on_cran() # due to risk of external resources failing
 
   year_link <- "https://flashresults.com/2015results.htm"
 
