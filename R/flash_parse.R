@@ -83,6 +83,9 @@ flash_parse <-
     if(length(event_date) > 0){
       event_date <- as.Date(event_date, format = "%d %b %Y")
     }
+    
+    #### Pulls out stage (e.g., Heat 2, Semifinal 1, Final)
+    stage <- stage_parse(flash_file)
 
     #### set up strings ####
     Name_String <-
@@ -1397,6 +1400,11 @@ flash_parse <-
       # add in date
       flash_data <- flash_data %>%
         dplyr::mutate(Event_Date = event_date)
+      
+      # add in stage
+      flash_data <- flash_data %>%
+        dplyr::mutate(Stage = stage$Stage,
+                      Stage_Number, stage$Stage_Number)
 
       #### remove empty columns (all values are NA) ####
       flash_data <- Filter(function(x)
