@@ -201,7 +201,7 @@ wind_parse_hytek <- function(text) {
 
     data_wind <- data_wind %>%
       dplyr::rename_at(dplyr::vars(dplyr::all_of(old_names)), ~ new_names) %>%
-      dplyr::na_if("NA")
+      replace_character_na("NA")
       # dplyr::distinct(dplyr::across(dplyr::contains("Round")), .keep_all = TRUE)
 
   } else { # if there are no rows with valid splits return blank data frame

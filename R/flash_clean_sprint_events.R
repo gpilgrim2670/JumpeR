@@ -7,7 +7,6 @@
 #' @importFrom dplyr mutate
 #' @importFrom dplyr rename
 #' @importFrom dplyr across
-#' @importFrom dplyr na_if
 #' @importFrom stringr str_trim
 #' @importFrom stringr str_remove
 #' @importFrom stringr str_split_fixed
@@ -69,7 +68,7 @@ flash_clean_sprint_events <- function(df, wide_format_sprint) {
     ) %>%
     dplyr::mutate(Result = stringr::str_remove(Result, "\\(\\d{1,2}\\.\\d{3}\\)")) %>% # remove tiebreakers
     dplyr::mutate(Result = stringr::str_remove(Result, "\\\n[:upper:]{1,2}")) %>% # remove PB, SB type strings
-    dplyr::na_if("NA") %>%
+    replace_character_na("NA") %>%
     dplyr::mutate(dplyr::across(where(is.character), stringr::str_trim))  # remove whitespaces
 
   if ("Team" %in% names(clean_sprint_data) == FALSE) {

@@ -7,7 +7,6 @@
 #' @importFrom dplyr group_split
 #' @importFrom dplyr bind_rows
 #' @importFrom dplyr case_when
-#' @importFrom dplyr na_if
 #' @importFrom dplyr rename
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_extract
@@ -89,7 +88,7 @@ flash_clean_events <- function(df, wide_format_clean = FALSE){
     dplyr::mutate(Age = dplyr::case_when(stringr::str_detect(Team, Age_String) == TRUE ~ stringr::str_extract(Team, Age_String),
                            TRUE ~ "NA")) %>%
     dplyr::mutate(Age = stringr::str_trim(Age)) %>%
-    dplyr::na_if("NA") %>%
+    replace_character_na("NA") %>%
     dplyr::mutate(Team = dplyr::case_when(is.na(Age) == FALSE ~ stringr::str_remove(Team, Age_String),
                                           TRUE ~ Team)) %>%
     dplyr::mutate(Team = stringr::str_remove(Team, "&nbsp$")) %>%
@@ -131,8 +130,7 @@ flash_clean_events <- function(df, wide_format_clean = FALSE){
     ! all(is.na(x)), df)
 
   df <- df %>%
-    dplyr::na_if("") %>%
-    dplyr::na_if("-")
+    replace_character_na("")
 
   if(unique(df$Event_Date) %in% c("Unknown", NA) == FALSE){
   df <- df %>%

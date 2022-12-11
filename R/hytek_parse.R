@@ -5,7 +5,6 @@
 #' @importFrom dplyr mutate
 #' @importFrom dplyr filter
 #' @importFrom dplyr case_when
-#' @importFrom dplyr na_if
 #' @importFrom dplyr select
 #' @importFrom dplyr bind_rows
 #' @importFrom dplyr arrange
@@ -782,7 +781,7 @@ hytek_parse <-
               TRUE ~ DQ
             )
           ) %>%
-          dplyr::na_if(10000) %>%
+          replace_numeric_na(10000) %>%
           {
             # Names column might or might not exist
             if ("Name" %!in% names(.))
@@ -812,7 +811,7 @@ hytek_parse <-
             Row_Numb = as.numeric(Row_Numb)) %>%
           dplyr::filter(Row_Numb >= Min_Row_Numb) %>%
           dplyr::filter(stringr::str_detect(Place, "\\.") %in% c(FALSE, NA)) %>%
-          dplyr::na_if("NA")
+          replace_character_na("NA")
       )
 
       #### Address Gendered Ages
@@ -912,7 +911,7 @@ hytek_parse <-
               stringr::str_detect(Event, "ong|riple", negate = TRUE) ~ .
             )
           )) %>%
-          na_if("Unknown") %>%
+          replace_character_na("Unknown") %>%
           dplyr::distinct(dplyr::across(c(dplyr::contains("Name"), dplyr::contains("Team"), dplyr::contains("Final"), dplyr::contains("Place"), dplyr::contains("Event"))), .keep_all = TRUE)
 
       }
@@ -925,7 +924,7 @@ hytek_parse <-
       # removes unneeded Round_X columns (i.e. those that don't have an associated Round_Result)
       if (any(stringr::str_detect(names(data), "Round_\\d{1,}_Attempt")) == TRUE) {
         data <- remove_unneeded_rounds(data) %>%
-          dplyr::na_if("")
+          replace_character_na("")
       }
 
       # add in wind for rounds

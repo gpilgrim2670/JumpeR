@@ -73,7 +73,7 @@ flash_rounds_parse <- function(text) {
   #### reattach row numbers ####
   data_rounds <- cbind(row_numbs, data_rounds) %>%
     as.data.frame() %>%
-    dplyr::na_if("") %>%
+    replace_character_na("") %>%
     dplyr::rename(V1 = row_numbs) # for list_sort, needs V1 to be row numbers, but named V1
 
   if (any(stringr::str_detect(text, "Scored")) == TRUE) {

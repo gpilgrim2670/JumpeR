@@ -6,7 +6,6 @@
 #' @importFrom dplyr mutate
 #' @importFrom dplyr rename
 #' @importFrom dplyr across
-#' @importFrom dplyr na_if
 #' @importFrom dplyr select
 #' @importFrom dplyr matches
 #' @importFrom stringr str_trim
@@ -75,7 +74,7 @@ flash_clean_relay_events <- function(df, wide_format_relay) {
     ) %>%
     dplyr::mutate(Result = stringr::str_remove(Result, "\\(\\d{1,2}\\.\\d{3}\\)")) %>% # remove tiebreakers
     dplyr::mutate(Result = stringr::str_remove(Result, "\\\n[:upper:]{1,2}")) %>% # remove PB, SB type strings
-    dplyr::na_if("NA") %>%
+    replace_character_na("NA") %>%
     dplyr::mutate(dplyr::across(where(is.character), stringr::str_trim))  # remove whitespaces
 
   # if("Team" %in% names(clean_relay_data) == FALSE){
