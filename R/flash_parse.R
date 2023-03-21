@@ -6,7 +6,6 @@
 #' @importFrom dplyr mutate
 #' @importFrom dplyr filter
 #' @importFrom dplyr case_when
-#' @importFrom dplyr na_if
 #' @importFrom dplyr select
 #' @importFrom dplyr bind_rows
 #' @importFrom dplyr arrange
@@ -1232,7 +1231,7 @@ flash_parse <-
                                               Exhibition == 0 ~ 1, # added exhibition condition 8/27
                                               Finals_Result %in% c("FOUL", "DNF", "NH", "DQ") == TRUE ~ 1,
                                               TRUE ~ DQ)) %>%
-          dplyr::na_if(10000) %>%
+          replace_numeric_na(10000) %>%
           { # Name column might or might not exist
             if("Name" %!in% names(.)) dplyr::mutate(., Name = "NA") else . # relay entries don't have a team column
           } %>%
@@ -1251,7 +1250,7 @@ flash_parse <-
           if("Tiebreaker" %in% names(.)) dplyr::mutate(., Tiebreaker = dplyr::case_when(stringr::str_detect(Tiebreaker, "^0\\.\\d{3}$") == TRUE ~ "NA",
                                                                            TRUE ~ Tiebreaker)) else .
         } %>%
-          dplyr::na_if("NA")
+          replace_character_na("NA")
       )
 
       #### Address Gendered Ages - not sure if needed for flash results ####
@@ -1271,7 +1270,7 @@ flash_parse <-
                                                      TRUE ~ "NA")) %>%
           dplyr::mutate(Age = dplyr::case_when(stringr::str_detect(Birthdate, "NA") == FALSE ~ "NA",
                                                TRUE ~ Age)) %>%
-          dplyr::na_if("NA")
+          replace_character_na("NA")
       }
 
       #### Address Names with "." renamed to "Period" - not sure if needed for flash results ####
@@ -1311,7 +1310,7 @@ flash_parse <-
               stringr::str_detect(Event, "Relay|relay|MR|Unknown") == FALSE ~ "NA",
             TRUE ~ Team
           )) %>%
-          dplyr::na_if("NA")
+          replace_character_na("NA")
 
         flash_data <- flash_data %>% # to remove team scores that can be captured if they are \\d\\.\\d\\d (like in the case of times)
           dplyr::filter(is.na(Team) == FALSE | all(
@@ -1394,7 +1393,7 @@ flash_parse <-
       # removes unneeded Attempt_X columns (i.e. those that don't have an associated Attempt_Result)
       if (any(stringr::str_detect(names(flash_data), "Round_\\d{1,}_Attempt")) == TRUE) {
         flash_data <- remove_unneeded_rounds(flash_data) %>%
-          dplyr::na_if("")
+          replace_character_na("")
       }
 
       # add in date

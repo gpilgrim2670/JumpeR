@@ -6,7 +6,6 @@
 #' @importFrom dplyr select
 #' @importFrom dplyr mutate
 #' @importFrom dplyr everything
-#' @importFrom dplyr na_if
 #' @importFrom dplyr contains
 #' @importFrom dplyr filter
 #' @importFrom dplyr rename_with
@@ -107,7 +106,7 @@ flash_clean_horizontal_events <- function(df, wide_format_horizontal = wide_form
     # dplyr::mutate(Wind = stringr::str_remove(Wind, "\\\n"),
     #               Wind = stringr::str_remove(Wind, "w\\:")
     #               ) %>%
-    dplyr::na_if("") %>%
+    replace_character_na("") %>%
     dplyr::filter(is.na(Result) == FALSE) %>%
     dplyr::select(-Standard)
   }

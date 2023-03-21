@@ -5,7 +5,6 @@
 #'
 #' @importFrom dplyr select
 #' @importFrom dplyr all_of
-#' @importFrom dplyr na_if
 #' @importFrom stringr str_detect
 #' @importFrom purrr keep
 #'
@@ -24,7 +23,7 @@ remove_unneeded_rounds <- function(x) {
   #                       "_Attempts?_?\\d{0,}")
 
   remove_cols <- x %>%
-    dplyr::na_if("") %>%
+    replace_character_na("") %>%
     purrr::keep( ~ all(is.na(.x))) %>%
     names() %>%
     .[stringr::str_detect(., "Round")]

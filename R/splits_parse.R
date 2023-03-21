@@ -250,7 +250,7 @@ splits_parse <- function(text, split_len = 1) {
           ~ dplyr::case_when(stringr::str_detect(., "qq") == FALSE ~ "NA",
                              TRUE ~ .)
         )) %>%
-        dplyr::na_if("NA") %>%
+        replace_character_na("NA") %>%
         dplyr::mutate(dplyr::across(
           dplyr::everything(),
           ~ stringr::str_replace_all(., "qq", "")

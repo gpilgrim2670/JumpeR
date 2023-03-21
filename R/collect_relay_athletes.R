@@ -3,7 +3,6 @@
 #' @importFrom dplyr mutate
 #' @importFrom dplyr rename
 #' @importFrom dplyr bind_rows
-#' @importFrom dplyr na_if
 #' @importFrom dplyr select
 #' @importFrom stringr str_remove_all
 #' @importFrom stringr str_replace_all
@@ -138,7 +137,7 @@ collect_relay_athletes <- function(x){
         "Relay_Athlete_4" = V5,
         Row_Numb
       ) %>%
-      dplyr::na_if("NA")
+      replace_character_na("NA")
 
   } else {
     relay_athletes_data <- data.frame(Row_Numb = as.numeric())

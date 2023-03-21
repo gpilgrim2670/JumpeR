@@ -5,7 +5,6 @@
 #' Flash Results that cannot be parsed by code{rvest::html_table} (due to
 #' formatting issues in the html code)
 #'
-#' @importFrom dplyr na_if
 #' @importFrom stringr str_remove
 #' @importFrom stringr str_replace_all
 #' @importFrom stringr str_split
@@ -61,7 +60,7 @@ flash_rebuild_event_table <- function(event_url_rebuild) {
            byrow = TRUE) %>%
     data.frame(stringsAsFactors = FALSE) %>%
     setNames(ths) %>% # names from column names in html table
-    dplyr::na_if("")
+    replace_character_na("")
 
   # rebuilding non-rectangular data frames
   x <- c(t(df)) # convert to vector
@@ -116,7 +115,7 @@ flash_rebuild_event_table <- function(event_url_rebuild) {
     setNames(transform(do.call(rbind, lapply(x, "[", 1:ncol(
       df
     )))), names(df)) %>%
-    dplyr::na_if("NA")
+    replace_character_na("NA")
 
   if(nrow(df_new) >= nrow(df)){
     df <- df_new

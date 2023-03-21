@@ -4,7 +4,6 @@
 #'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr select
-#' @importFrom dplyr na_if
 #' @importFrom dplyr all_of
 #' @importFrom dplyr rename
 #' @importFrom dplyr contains
@@ -344,8 +343,7 @@ flash_parse_table <- function(link, wide_format = FALSE, clean = FALSE) {
                   Event_Date = event_date) %>%
     # dplyr::select(-matches("Placeholder")) %>%
     dplyr::mutate(dplyr::across(where(is.character), stringr::str_trim)) %>%  # remove whitespaces
-    dplyr::na_if("") %>%  # blank cells to NA
-    dplyr::na_if("-")
+    replace_character_na("") # blank cells to NA
 
   # include wind (if present in separate table)
   if(all(is.na(wind_value) == FALSE & "Wind" %in% names(df) == FALSE)){

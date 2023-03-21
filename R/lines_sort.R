@@ -7,7 +7,6 @@
 #' @importFrom dplyr mutate
 #' @importFrom dplyr lag
 #' @importFrom dplyr case_when
-#' @importFrom dplyr na_if
 #' @importFrom dplyr select
 #' @importFrom dplyr n
 #' @importFrom dplyr arrange
@@ -39,7 +38,7 @@ lines_sort <- function(x, min_row = minimum_row) {
                                   Row_Numb_2 == "Same" ~ 0),
       Row_Fill = as.character(Row_Fill)
     ) %>%
-    dplyr::na_if(0) %>%
+    replace_numeric_na(0) %>%
     dplyr::mutate(Row_Fill = fill_down(Row_Fill)) %>%
 
     dplyr::select(-V1, -Row_Numb, -Row_Numb_2) %>%

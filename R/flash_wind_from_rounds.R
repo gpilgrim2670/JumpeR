@@ -61,7 +61,6 @@ wind_from_rounds <- function(df) {
 #' Helper function for extracting wind data from round columns
 #'
 #' @importFrom dplyr mutate
-#' @importFrom dplyr na_if
 #' @importFrom stringr str_extract
 #' @importFrom stringr str_remove
 #'
@@ -95,7 +94,7 @@ wind_from_rounds_helper <- function(df = df, i, round_cols, ...) {
   df <- df %>%
     dplyr::mutate(!!as.name(wind_cols[i]) := stringr::str_extract(!!as.name(round_cols[i]), wind_string)) %>%
     dplyr::mutate(!!as.name(wind_cols[i]) := stringr::str_remove(!!as.name(wind_cols[i]), "w\\:?")) %>%
-    dplyr::na_if("NA")
+    replace_character_na("NA")
 
   df <- df[, colSums(is.na(df)) != nrow(df)]
 
